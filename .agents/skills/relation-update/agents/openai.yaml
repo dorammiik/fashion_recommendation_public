@@ -1,0 +1,3 @@
+interface:
+  display_name: "Relation Update"
+  short_description: "Preserve Relation Agent contracts during changes"

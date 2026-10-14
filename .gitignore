@@ -1,0 +1,45 @@
+# Credentials and local state
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+.aws/
+.ssh/
+.netrc
+usage/
+*.sqlite3
+*.sqlite3-*
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+# Environments and generated files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+playwright-report/
+test-results/
+coverage/
+.coverage*
+*.log
+.DS_Store
+# Private evaluation and working material
+evals/
+eval_results/
+smoke_results/
+analysis/
+benchmarks/
+doc/
+*.xlsx

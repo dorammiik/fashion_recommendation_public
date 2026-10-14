@@ -1,0 +1,3 @@
+interface:
+  display_name: "Ranking Update"
+  short_description: "Preserve Ranking Agent contracts during changes"

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Search Update"
+  short_description: "Preserve Search Agent contracts during changes"

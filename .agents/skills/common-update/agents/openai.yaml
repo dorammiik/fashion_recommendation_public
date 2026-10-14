@@ -1,0 +1,3 @@
+interface:
+  display_name: "Common Update"
+  short_description: "Preserve shared contracts across agent changes"

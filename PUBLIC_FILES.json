@@ -1,0 +1,1478 @@
+{
+  "service_versions": {
+    "orchestrator": "v10",
+    "planner": "v4",
+    "stylist": "v6",
+    "search": "v56",
+    "relation": "v8",
+    "ranking": "v15",
+    "summary": "v11",
+    "preference": "v4"
+  },
+  "files": [
+    {
+      "path": ".agents/skills/common-update/SKILL.md",
+      "reason": "service maintenance skill",
+      "bytes": 7353,
+      "sha256": "53a9555f1ac1b3fb942f18002cc32d4bafca986c467c9ba7d65910e26e0db82d"
+    },
+    {
+      "path": ".agents/skills/common-update/agents/openai.yaml",
+      "reason": "service maintenance skill",
+      "bytes": 113,
+      "sha256": "e3655e944568860ffd87ae3f8068db0cccdd764a089520e9570750bf3a196f49"
+    },
+    {
+      "path": ".agents/skills/preference-update/SKILL.md",
+      "reason": "service maintenance skill",
+      "bytes": 10743,
+      "sha256": "9bbcb52918d23a6a73e5652431a7c102923f33c90d03e4d795717d5ffa358d46"
+    },
+    {
+      "path": ".agents/skills/preference-update/agents/openai.yaml",
+      "reason": "service maintenance skill",
+      "bytes": 121,
+      "sha256": "323df595c6bf7ddc44abf4c930a7da6f2aee78537567fd1961ea9ec95cb7cfd2"
+    },
+    {
+      "path": ".agents/skills/ranking-update/SKILL.md",
+      "reason": "service maintenance skill",
+      "bytes": 10171,
+      "sha256": "f9b0faca53bf419e4fc66098c37d1c9059519175855e4637f981dbf73731e678"
+    },
+    {
+      "path": ".agents/skills/ranking-update/agents/openai.yaml",
+      "reason": "service maintenance skill",
+      "bytes": 115,
+      "sha256": "1e90dfdd96574a94d72a5ff524fc13919b14a619ba82df714c741ab1b18c60dc"
+    },
+    {
+      "path": ".agents/skills/relation-update/SKILL.md",
+      "reason": "service maintenance skill",
+      "bytes": 9090,
+      "sha256": "633c28d9e0f9a18efa7b8eddc1d72b1b0bdf1fe678c51ec7985e5fd93411e2b9"
+    },
+    {
+      "path": ".agents/skills/relation-update/agents/openai.yaml",
+      "reason": "service maintenance skill",
+      "bytes": 117,
+      "sha256": "60e1ff94747665c09af10968dff10eb66675b55f70545fc75f90951b4c004c6e"
+    },
+    {
+      "path": ".agents/skills/search-update/SKILL.md",
+      "reason": "service maintenance skill",
+      "bytes": 7080,
+      "sha256": "443575a1ae9dfa358e59a77d2f8f592e4747264c1662c12ae11836b15a308a5b"
+    },
+    {
+      "path": ".agents/skills/search-update/agents/openai.yaml",
+      "reason": "service maintenance skill",
+      "bytes": 113,
+      "sha256": "0c9b973125e58cbd0e11f4ee097cbbb8c466454a022d6b0898bbd7a3286bc827"
+    },
+    {
+      "path": ".env.example",
+      "reason": "public setup, documentation or dependency validation",
+      "bytes": 132,
+      "sha256": "f50774a68cd136375e646d134d8c60c4b7d416020919a7b9f27d645954ed35ac"
+    },
+    {
+      "path": ".gitignore",
+      "reason": "public setup, documentation or dependency validation",
+      "bytes": 507,
+      "sha256": "c8b42663fdb027b1e715b99958a8e52321bb24d051d62f2cf18e645641a2cae1"
+    },
+    {
+      "path": "PUBLIC_REVIEW.md",
+      "reason": "public setup, documentation or dependency validation",
+      "bytes": 6771,
+      "sha256": "96078ed3b3c98a4b1c54e2066ba57c605f6ea654c18634dc60cdcc36e7d9ab64"
+    },
+    {
+      "path": "README.md",
+      "reason": "public setup, documentation or dependency validation",
+      "bytes": 10282,
+      "sha256": "c885451afb2974acf1e5a0624a64263559bebb848e3f921107e6ceb5871199dc"
+    },
+    {
+      "path": "docs/architecture.md",
+      "reason": "current service implementation documentation",
+      "bytes": 9555,
+      "sha256": "dd9149ffd2345c42a7d1194d4e34a67132bfaae3209bd667024935e584c06602"
+    },
+    {
+      "path": "docs/orchestrator.md",
+      "reason": "current service implementation documentation",
+      "bytes": 9334,
+      "sha256": "6c4743c6a0a045f587533a51a88330e9bf8022b2c2104201bb8caa7d17545d11"
+    },
+    {
+      "path": "docs/planner.md",
+      "reason": "current service implementation documentation",
+      "bytes": 6682,
+      "sha256": "39a8ad9e6c426ca7eb57f32f0b529fcd7a2b4098ab6134ad35c1f4a05448970e"
+    },
+    {
+      "path": "docs/preference.md",
+      "reason": "current service implementation documentation",
+      "bytes": 12468,
+      "sha256": "fc0860f219d4cf5f348df594af9686eecc4da0560515400779eddd0e4962a87e"
+    },
+    {
+      "path": "docs/ranking.md",
+      "reason": "current service implementation documentation",
+      "bytes": 11839,
+      "sha256": "5bd2e77162a1c6dc08b9e0f65101c68d28d6258348d3058df7ad7f04bf18dcda"
+    },
+    {
+      "path": "docs/relation.md",
+      "reason": "current service implementation documentation",
+      "bytes": 9730,
+      "sha256": "73b9bc9afbe464984591a94315e34ce4028fd7c0288a216de9ffec01b6885b62"
+    },
+    {
+      "path": "docs/search.md",
+      "reason": "current service implementation documentation",
+      "bytes": 12700,
+      "sha256": "0de63ff5a3745b09a1fc49ceaf3868dd0a7231ede6a4c4373bd4b0b1ebeba1cf"
+    },
+    {
+      "path": "docs/stylist.md",
+      "reason": "current service implementation documentation",
+      "bytes": 8891,
+      "sha256": "71f41abb5dc7d568a5c2d37294c3f26b9c7fe86845a8f5cf3dcd9682c3d96386"
+    },
+    {
+      "path": "docs/summary.md",
+      "reason": "current service implementation documentation",
+      "bytes": 9560,
+      "sha256": "32786eb76ff2da6f06e06ed3261c1d4079733cf6e6f8bf988915dffff8f040f2"
+    },
+    {
+      "path": "frontend/.env.example",
+      "reason": "current frontend",
+      "bytes": 40,
+      "sha256": "b3d883eeb8a73bbb739789c8b0dbe7cae895f01a7efe375a360ec8f4f7218703"
+    },
+    {
+      "path": "frontend/.gitignore",
+      "reason": "current frontend",
+      "bytes": 78,
+      "sha256": "46839dd566628bac90230b3c5a216427f4928e6f0b374d03bba8a952b3e95105"
+    },
+    {
+      "path": "frontend/README.md",
+      "reason": "public frontend instructions (adapted)",
+      "bytes": 1084,
+      "sha256": "065749d19b4bc3bcc5d47ed05299427e3b75631483820e0d538b1fe732b430e8"
+    },
+    {
+      "path": "frontend/index.html",
+      "reason": "current frontend",
+      "bytes": 430,
+      "sha256": "0431890bb75e3139b82463276b940d6d59bc712be9be4182f190f3caebea2ba0"
+    },
+    {
+      "path": "frontend/package-lock.json",
+      "reason": "current frontend",
+      "bytes": 57944,
+      "sha256": "5679329d61deb3f30dcb71d86dc0b152a7bd97da3fc8bfa7607e129e7ef1eb41"
+    },
+    {
+      "path": "frontend/package.json",
+      "reason": "current frontend",
+      "bytes": 702,
+      "sha256": "b8749104542af7d5a9b987be9203fe5867a01427e4ee87a592807e8e21aef8cd"
+    },
+    {
+      "path": "frontend/playwright.config.ts",
+      "reason": "current frontend",
+      "bytes": 322,
+      "sha256": "c503674297deb9f9e77f83f575948e846d4ee0fa90e524b6f49dcce09fe5b0ff"
+    },
+    {
+      "path": "frontend/public/mock/pants-0.svg",
+      "reason": "current frontend",
+      "bytes": 1120,
+      "sha256": "59f3a3e9aa0c34c94b32c38cb9909dd3018c0bd1849d8d8c13be6b99ac29804a"
+    },
+    {
+      "path": "frontend/public/mock/pants-1.svg",
+      "reason": "current frontend",
+      "bytes": 1120,
+      "sha256": "9eb0d3e20321f02d6b98ff89806fcf9c4ad5f4c9d8d16ef7ca4bd0fef29068e3"
+    },
+    {
+      "path": "frontend/public/mock/pants-2.svg",
+      "reason": "current frontend",
+      "bytes": 1120,
+      "sha256": "85c7c70577c1b1059cd698805ed4a98978a36e772a6f981ba5db9827767c8e5f"
+    },
+    {
+      "path": "frontend/public/mock/pants-3.svg",
+      "reason": "current frontend",
+      "bytes": 1202,
+      "sha256": "0d64f284fc72e621f6c353610c7ed58315726167b54c1fa709497f3dec4264a1"
+    },
+    {
+      "path": "frontend/scripts/check-connection.mjs",
+      "reason": "current frontend",
+      "bytes": 3481,
+      "sha256": "eca5672b14a557e062df39a01aceeffc3ce956fdcad025bd07e6a2fa71a9e518"
+    },
+    {
+      "path": "frontend/src/App.tsx",
+      "reason": "current frontend",
+      "bytes": 17602,
+      "sha256": "85bd9e5138603d85c5f4c53e7f89e2ccb73a23e1ca53b0d5ab5b849a562b5b0d"
+    },
+    {
+      "path": "frontend/src/HomeExamples.tsx",
+      "reason": "current frontend",
+      "bytes": 3986,
+      "sha256": "ea965d83c380d040d7dd29210822085f4523127efb087c6c7fb5f5f085404364"
+    },
+    {
+      "path": "frontend/src/ProductCarousel.tsx",
+      "reason": "current frontend",
+      "bytes": 2334,
+      "sha256": "9d16c90691a796f5b03fe32ed3d07380f6c0d01fa30e9e0769204a927c7731ad"
+    },
+    {
+      "path": "frontend/src/api.ts",
+      "reason": "current frontend",
+      "bytes": 2718,
+      "sha256": "edccb85b68963eca9eb237c8b5cde7962b0ce2eaa27e3660008b0de3631fe2be"
+    },
+    {
+      "path": "frontend/src/main.tsx",
+      "reason": "current frontend",
+      "bytes": 1069,
+      "sha256": "0059e2ab26724e960ec8cd2150d125a49a355b1a25c44f4d12f0ebd5aeabe51f"
+    },
+    {
+      "path": "frontend/src/mock.ts",
+      "reason": "current frontend",
+      "bytes": 5182,
+      "sha256": "3825e980e90b86fc2a1e70233929f3db1251588bf3e9ae2b626856b03599b7fb"
+    },
+    {
+      "path": "frontend/src/mockSummary.ts",
+      "reason": "current frontend",
+      "bytes": 4379,
+      "sha256": "4c1dc8691c8dbe86e945f4dcf3e438a6a1a20ff7f15ecbb4c0e4cedca6fb21b8"
+    },
+    {
+      "path": "frontend/src/sessionExit.ts",
+      "reason": "current frontend",
+      "bytes": 3873,
+      "sha256": "ec8fdfd2ca4ab4a2f1dc4ff927833a9b865da343731b542a76513bb8e4c9f076"
+    },
+    {
+      "path": "frontend/src/store.ts",
+      "reason": "current frontend",
+      "bytes": 12118,
+      "sha256": "6a2f3fec1de97e0900f86396ddc5fd69b4aac97e029a5d45880de6046318401e"
+    },
+    {
+      "path": "frontend/src/style.css",
+      "reason": "current frontend",
+      "bytes": 20859,
+      "sha256": "00cb45f899cc2ccd1ef4b7b11dfe09fd3f4b036bdc47078a678fcc4a415ebd61"
+    },
+    {
+      "path": "frontend/src/types.ts",
+      "reason": "current frontend",
+      "bytes": 2493,
+      "sha256": "3c972e0d40a4720690d5188133c9cf4e05bbf3e85b3b7ef8b57f66f389af0d0a"
+    },
+    {
+      "path": "frontend/tests/api.test.ts",
+      "reason": "current frontend",
+      "bytes": 2535,
+      "sha256": "8628f1eb21216f8975bff54135772b8f2e1d491f0b66d7859c0fe154d4be29ca"
+    },
+    {
+      "path": "frontend/tests/browser/production-mode.spec.ts",
+      "reason": "current frontend",
+      "bytes": 2122,
+      "sha256": "13065f121ea98846ba2dc72f68cf81e4a4e4872b4f573510806360f4e54846d7"
+    },
+    {
+      "path": "frontend/tests/browser/session-exit.spec.ts",
+      "reason": "current frontend",
+      "bytes": 5890,
+      "sha256": "6ca5df93b94299ea07c86954cd4bad18a4cd68b090b93b917cb7f7a61bff9d9c"
+    },
+    {
+      "path": "frontend/tests/browser/summary-v7.spec.ts",
+      "reason": "current frontend",
+      "bytes": 4957,
+      "sha256": "a59a0b04aaf728c4c0f8b52d58bfe6fc5b8b82a4f118256a4bd14db01ee071f8"
+    },
+    {
+      "path": "frontend/tests/browser/summary-v9.spec.ts",
+      "reason": "current frontend",
+      "bytes": 1565,
+      "sha256": "edaeef137f7ca993880940ec7081a5c67a1890bda83f324575e98fbe8e592032"
+    },
+    {
+      "path": "frontend/tests/browser/ui.spec.ts",
+      "reason": "current frontend",
+      "bytes": 12310,
+      "sha256": "6d75ecee8fdc8dff8ba65a33b3f3041de0b7ea7f40bec73570ba9a7f56cdb389"
+    },
+    {
+      "path": "frontend/tests/store.test.ts",
+      "reason": "current frontend",
+      "bytes": 15850,
+      "sha256": "d00ff76b60d0978dccaf9ee1186a240f9beec93414db240188ed331759b168fc"
+    },
+    {
+      "path": "frontend/tsconfig.json",
+      "reason": "current frontend",
+      "bytes": 316,
+      "sha256": "c8dbb8ec49b41400a3d97247d226548a553e731cd031548ff206bab18d282d7b"
+    },
+    {
+      "path": "frontend/vite.config.ts",
+      "reason": "current frontend",
+      "bytes": 204,
+      "sha256": "f86c45a00f6f53ddc2c7ce49346c7fd4861698a37304a0ac0fe06db5f0a0a215"
+    },
+    {
+      "path": "requirements-dev.txt",
+      "reason": "public setup, documentation or dependency validation",
+      "bytes": 44,
+      "sha256": "0f535ac0886ae04571aadc745f9bb26149fbf4c925bcf125c953c9fd367f8e0a"
+    },
+    {
+      "path": "requirements-preference.txt",
+      "reason": "public setup, documentation or dependency validation",
+      "bytes": 68,
+      "sha256": "183241a5ac6486d96ada024b2d87490f30a138052da914b5ed8856980fd00af8"
+    },
+    {
+      "path": "scripts/init_preference_db.py",
+      "reason": "service entry point",
+      "bytes": 909,
+      "sha256": "5c5dfc641c6ace6d77d98dab92903ee52c72d675cecc5414ce6383eb06722430"
+    },
+    {
+      "path": "scripts/run_preference_server.py",
+      "reason": "service entry point",
+      "bytes": 4125,
+      "sha256": "d5037cc05ca9906f4f509da8207a9ac4aaf05fa96a0adffe58e7f6b7736a2ad2"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/__init__.py",
+      "reason": "Search v56 dynamic contract",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/__init__.py",
+      "reason": "Preference v4 dynamic contract",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/candidate_pool.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/search_runner.py",
+      "bytes": 20276,
+      "sha256": "45e1ae0d738a549603e4ab494d0229c941564f97f81f4ebec5e064546ec675e9"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/orchestrator_brain.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 14676,
+      "sha256": "9f5a2b5f3655c4e9fe6ac80f237bd6ceea23f9f1110bad2ad295c7a4bd530775"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/orchestrator_contracts.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/orchestrator_runner.py",
+      "bytes": 11166,
+      "sha256": "f735d7dd384bd41f3ac94ed96bee21b2454047aa90e8a8244cedbfd765b606d5"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/orchestrator_preferences.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/ranking_preferences.py",
+      "bytes": 2139,
+      "sha256": "d5e1eac75ee74854ad5a4aef0d1ac676485f53f21f746e64270a555163067e33"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/orchestrator_runner.py",
+      "reason": "imported by src/fashion_recommendation_v2/server/recommendation_factory.py",
+      "bytes": 37522,
+      "sha256": "be21a7f94b6984b9ad527ad59df5980e9d0f75fb113c9c14a3cea73933539568"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/planner.py",
+      "reason": "imported by src/fashion_recommendation_v2/server/recommendation_factory.py",
+      "bytes": 1178,
+      "sha256": "31ba44a55ac98aec95df9349aabfe08da34603939991d210aa118d630876a303"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/preference.py",
+      "reason": "imported by scripts/run_preference_server.py",
+      "bytes": 2579,
+      "sha256": "19c3e9e58d961c9276624c21f2ea8bde9e43da4c1e8e1b5387f5546b25c1c02b"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/preference_brain.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/preference.py",
+      "bytes": 588,
+      "sha256": "723039bbbae42ebe01c5bfca72a2c0e7b29a0c56bcbde2d129b17819542a20e7"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/preference_interpretation_runner.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 6628,
+      "sha256": "4aeb2e12ca059260da7917792252e75a5bedb9950f147149c24469713c15ba65"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/preference_runner.py",
+      "reason": "imported by tests/test_preference_server.py",
+      "bytes": 16038,
+      "sha256": "1e58df6e8264af7401231fed66bfbe68561d646234ee1be407c6e7358124a269"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/preference_scoring.py",
+      "reason": "imported by src/fashion_recommendation_v2/storage/preference.py",
+      "bytes": 8823,
+      "sha256": "cbf27b630d8eb91e294570ddde62254a7848edac6ad7433ba2f70880cfd7fcee"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/ranking.py",
+      "reason": "imported by src/fashion_recommendation_v2/server/recommendation_factory.py",
+      "bytes": 1014,
+      "sha256": "fd85e4dc74e46a01d5c5f0763575132d7056e3385610fa8f3d88cdaefc10d924"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/ranking_brain.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 3796,
+      "sha256": "837919e44c7667831571668b102d7006569c9e78ab9ebbd0066b6c3ea0d99341"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/ranking_preferences.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/ranking.py",
+      "bytes": 13344,
+      "sha256": "0f367a87dafeb71ad22842e6535cf4b9200a7138b30fb0de84f02f9c81391dd5"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/ranking_runner.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/ranking_preferences.py",
+      "bytes": 43549,
+      "sha256": "8be42058dbe816f9cb222270ea01d14b5e588cea6b68cccfc89f3ebc8e20ed88"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/registry.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/orchestrator_runner.py",
+      "bytes": 1401,
+      "sha256": "e5a02f50f6d83f92feda4b746a0d8add8636b23815a719fa52ace8ecfaf3780b"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/relation.py",
+      "reason": "imported by src/fashion_recommendation_v2/server/recommendation_factory.py",
+      "bytes": 10819,
+      "sha256": "3d33eaf5e08a91a6656e79093a8529c97bf0bcf97c1872624ca57fef1bd02aa9"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/search_brain.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 124963,
+      "sha256": "041c6e89a0c601fdedc4b2b935733d069776ca616ec57b6b050b1be70ac770d2"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/search_runner.py",
+      "reason": "imported by src/fashion_recommendation_v2/server/recommendation_factory.py",
+      "bytes": 164683,
+      "sha256": "99bbf4139712ff6c3314547bf9086a4389a873bdbb71fc6b70cb421ed10746cd"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/search_visual_analysis.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 68624,
+      "sha256": "2eab847bfd2eb91a394a81fb4ee498d12862a1588d1cb4e84b6b0ad5f4cec847"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/stylist_brain.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 13028,
+      "sha256": "ed652a655b537e4441db70e9578cabb984b715d6349e382e8c09ee330ef29973"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/stylist_runner.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/search_brain.py",
+      "bytes": 5849,
+      "sha256": "5c505bcf3d6180349cee663df2ce4fd661d62878eb77cb4464b37c2ea1431a92"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/agents/summary.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 28994,
+      "sha256": "47fd697887b8bee7788e9a33bacbad0b6cbadb4fffc7438cfb23e02c035434b5"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/compatibility.py",
+      "reason": "imported by src/fashion_recommendation_v2/stylist_personalization.py",
+      "bytes": 4497,
+      "sha256": "552a914e4bdf5a78a96923554ba5efa5acd87d8dc3935c88067b7c26ea30090b"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/llm/__init__.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/ranking_runner.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/llm/base.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/ranking_runner.py",
+      "bytes": 1239,
+      "sha256": "45215a99c37e337a8e98492b9cc76e2e6ee185cdda94b965975df0f21a4847eb"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/llm/cost_tracking.py",
+      "reason": "imported by src/fashion_recommendation_v2/relation/execution_v7.py",
+      "bytes": 10856,
+      "sha256": "5a247fc7065d18565bf6846f1156893e14e3a25963db1f76084fa8241734d7c8"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/llm/openai_adapter.py",
+      "reason": "imported by tests/test_openai_stream_cleanup.py",
+      "bytes": 24115,
+      "sha256": "c335cdf091987152df63bb629d1014d3ff7911832508d0c265e34f35bde20725"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/module_compat.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 292758,
+      "sha256": "8d05674603ae2f03435e1fc48289d40f7b9e094c444398a7f62796e3e7e56700"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/orchestrator_policy.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
+      "bytes": 3657,
+      "sha256": "13752ffeb6eefadb9fa924c265c4e6e368c7166fd50cc51d767ea13d26b20152"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/orchestrator_validation.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
+      "bytes": 29147,
+      "sha256": "08731d0dba85d2741b80ff3b3f90f961840c68725df56ecffa62c7b0051d9645"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/personalization_policy.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
+      "bytes": 523,
+      "sha256": "034665363c4790c6ebf9812bc1d7d0395b4c31027de8072fb8c3afeb9be020f5"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/planner/planner_contracts.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/planner.py",
+      "bytes": 1175,
+      "sha256": "0a72b3710814909b8d9d735a1600f52460dbcd68be5cd31fb422ba6b9697a4d5"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/preference/contracts.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/preference_interpretation_runner.py",
+      "bytes": 2034,
+      "sha256": "329435dced244383cc4e418d1e75479e2218a24571deee682bf368b2e5dea7ae"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/preference/interpretation_attributes.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/preference_interpretation_runner.py",
+      "bytes": 926,
+      "sha256": "46f9140ea6a2d3cd02d89016d0981d2eecd4d3eebccc4f4359407028a5aa47c4"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/preference/interpretation_input.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/preference_interpretation_runner.py",
+      "bytes": 3805,
+      "sha256": "8bb0b4d22646e05cbc12a27e19cfa04b427d716263fe70d463207153e8372163"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/preference/interpretation_references.py",
+      "reason": "imported by src/fashion_recommendation_v2/preference/profile_lookup.py",
+      "bytes": 1379,
+      "sha256": "1fba136d58cbcb9f677cdbe0ac5ee8129087819376879cdeab1527140f5c4983"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/preference/interpretation_sources.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/preference_interpretation_runner.py",
+      "bytes": 3116,
+      "sha256": "9a088c943a9e2e1ad4e318f098191785c39e73b6b158e090c09b5a7892ed4aca"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/preference/observations.py",
+      "reason": "imported by src/fashion_recommendation_v2/storage/preference.py",
+      "bytes": 2966,
+      "sha256": "1112cd8c4ddcf72b55a581932fe0a32ab8c4d176aede4a48e4d91d859f3e18dd"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/preference/profile_lookup.py",
+      "reason": "imported by src/fashion_recommendation_v2/stylist_personalization.py",
+      "bytes": 3637,
+      "sha256": "251b90f726758480a0826d32f9ec48efa4513e06ee6b73c272db1fe382ad81b9"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/__init__.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 34,
+      "sha256": "a361932ace8a46839d2b24a627a9f2dfda412ee4c08ddac26656f4f2db206cda"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/_compat.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 75661,
+      "sha256": "daefbdce1bc09649ce4ab99754f82ea2021f9aaa8dfe731c1e2cb5007f31cd05"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/conversation.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 4193,
+      "sha256": "fa65d0be740ca1053c2448897b5555654bd26371c03001c71fae5c86f599bb20"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/orchestrator.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 158652,
+      "sha256": "ad796f948be269925b35efdb7bcf624e00f22a01dad5fba06e6708845c0d27fd"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/planner.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 8881,
+      "sha256": "fa6cfa5e7955a1d67aeeb822841155e9618e4a837c6bdd449ddb98ca005744a9"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/preference.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 12299,
+      "sha256": "b451c59153e20ebb4c0e31950a196a3490912425317517859a34874216a2f351"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/ranking.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 13599,
+      "sha256": "7bea9d4a849191b9c3560bf9b7d29a188a838f0452098c2d85bda6d676995f07"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/relation.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 34355,
+      "sha256": "4eb998624508f8a01b5bbe84cde3c055cb75122ba2695a7da422ab9503b44610"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/search/__init__.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 48,
+      "sha256": "2d2f7d5a03923cf81a2d181730b21e4eacaabde71f82c9ee63c847b7792cebe2"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/search/_shared.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 2649,
+      "sha256": "c2717cb3bea45a9a5d2081a5f9245639d5127336d97b78a2afe643bad74641f2"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/search/item_normalization.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 19322,
+      "sha256": "998357117c73e6c2644e453a7802f0d0b7821e3126ac6dea2413a496c2622e03"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/search/planning.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 338389,
+      "sha256": "c14bd1b9d8d9c98f80dcdaca0c232fe6efe7c560bbcbaa0ce1a2708e4defcc58"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/search/product_evaluation.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 40649,
+      "sha256": "41e21502dad64bfd91a1bd09e36049f32c8112b3d7adfd0529fabde51f025c0e"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/search/ranking_observation.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 79490,
+      "sha256": "18e662574a1cf1c426128a52fad1a3d977182ced0c2b307f7aef910c34bd854f"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/search/relation_observation.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 1389,
+      "sha256": "413994662e5a00c9e020fa5ef5a27747ca4ef068057bc0768f76f4c587688f47"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/search/requirements.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 54827,
+      "sha256": "fbf992bb3fbf845e111866e3659bbce848c419c67926f358fe5d0d6f499cbbf2"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/stylist.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 191165,
+      "sha256": "3493258e45c896ee245e4f2de866e23d9593dabbd1b81c34349ec9287f772d19"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/prompts/summary.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 171087,
+      "sha256": "106cd55ec0687177b11922e4c8936ca5a5a53c5d384d13a37d1bb98af23a9350"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/query_composition.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/search/requirements/search_requirements_v25.py",
+      "bytes": 5418,
+      "sha256": "de950da24749de916e024e0c1d501cf5cddeadba5915db51e09b77145b6f6ba9"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/ranking/partial_evaluation.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 8529,
+      "sha256": "25e522a3ec1b8b78ca5d7eb49f63805a309b6e254a3ceff753b9efe2f80c5191"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/ranking/personalization.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 39730,
+      "sha256": "16257fde42ba434be113b9011c49c1532e603f56599c3e88946be32303eea93b"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/ranking/ranking_contracts.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/ranking_preferences.py",
+      "bytes": 5214,
+      "sha256": "fccf09e94f380f5ead1d042d9a121fa430d4549524d32ccaebd6f7d3de31e7da"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/ranking/ranking_policy.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 794,
+      "sha256": "3b04a96db98e3f1a61c423f6e2ee38dfc94c0737827b75e62c4d9931fbaff454"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/ranking/ranking_scoring.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 14533,
+      "sha256": "11a2c280d3c82cf7000a4a7dc6cd1009bd77c4b1527906d6d0eef06b6c9e0ab3"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/relation/execution.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 4276,
+      "sha256": "01afcc87523b46cb13d0ea75f8c52446f2d47612e61c21a6b32d3ef355fed2ad"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/relation/relation_contracts.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 4332,
+      "sha256": "5d39602d504d4bd36ccc88c9b15bb6b6bc3f23da4238309804115108af0e2aa5"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/relation/relation_evidence.py",
+      "reason": "imported by src/fashion_recommendation_v2/relation/relation_evidence_v6.py",
+      "bytes": 54802,
+      "sha256": "a0572541e8d216f8ff74706f1d049c7044f198e8a14199631343b0ad2f873ae3"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/relation/relation_scoring.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 9092,
+      "sha256": "9d7e91c3a11fe086b968abd6dbffbfd1817e59bc402dc7545ab2bf1168c346fc"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/relation/streaming.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 10059,
+      "sha256": "332d3d0914dacee6878d9c900150c04bb2307d987f8cd96f537bb7515f47023f"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/__init__.py",
+      "reason": "Search v56 dynamic contract",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/base.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/search/retrieval/search_retrieval_v26.py",
+      "bytes": 262,
+      "sha256": "e0c375ae82f776083b72d31dcd305fde3710372f0ecd39ca4ebf7409b695fc25"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/common.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/planner.py",
+      "bytes": 1800,
+      "sha256": "dd7f7cb564c5d43350f54ec742fbde8d74f051bd7850ce6a2d8ca0abb65ce202"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/condition_routing.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/search/requirements/search_requirements_legacy.py",
+      "bytes": 2866,
+      "sha256": "938b61fdbc417d83b887d87b697d2f15ba9ea547a0e2908f117fd4ea792ec971"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/conversation.py",
+      "reason": "imported by src/fashion_recommendation_v2/storage/preference.py",
+      "bytes": 2456,
+      "sha256": "8949f8f9b2bcb5c160b780ff0b1f738ee82f427de0e3ce9dffcb69e84e80d376"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/exposure_suitability.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/search/product_evaluation/search_product_evaluation_legacy.py",
+      "bytes": 671,
+      "sha256": "f5607fc7ca3b53998237f015c33496a2baa2c183bf7aaab7a23a8b3c0b3602b5"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/orchestrator.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/conversation.py",
+      "bytes": 32595,
+      "sha256": "9cf0050fdfcc658a7082173a45b93187fd15e874e539866446837d7fd55620f2"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/planner.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/stylist.py",
+      "bytes": 2085,
+      "sha256": "9ef68f815b79bad2cbc84244c352b23a6a735ae41a391073060e2b32a924b009"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/preference/__init__.py",
+      "reason": "Preference v4 dynamic contract",
+      "bytes": 7571,
+      "sha256": "2c9ae6caa31693df4c3852bb9cdac2fbf6baa605dee3f672ad1e8fb3095b77d3"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/preference/interpretation/preference_interpretation.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 9327,
+      "sha256": "6b3188dfe71ca3cc1e66ef32d1b60f8df2dec0d9a0d899c90680591de6bb9334"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/preference_agent.py",
+      "reason": "imported by src/fashion_recommendation_v2/storage/preference.py",
+      "bytes": 2331,
+      "sha256": "25e5017f6cb5c67a118c060c92a4540f48115fc3eff1379072c42b3ffcd37aee"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/preference_profile.py",
+      "reason": "imported by src/fashion_recommendation_v2/server/preference_runtime.py",
+      "bytes": 5341,
+      "sha256": "4fd1492d064ab3ac8fb1ed73171ec8e8676377bc7dfcc05ee41e40de033e6f27"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/preference_saved.py",
+      "reason": "imported by src/fashion_recommendation_v2/storage/preference.py",
+      "bytes": 1791,
+      "sha256": "847b9a6214edbed6996ca9c1988df9dbb306064ab9465b4d996874cec2809903"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/price.py",
+      "reason": "imported by src/fashion_recommendation_v2/tools/price_translate.py",
+      "bytes": 2451,
+      "sha256": "e60b42d5053ca5f8e14ee2206c165a26fe3828c99fcfd3e43b61013853e9a3d6"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/product_evidence.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/product_evaluation_v36.py",
+      "bytes": 5514,
+      "sha256": "49687725a6b2124b91b076a72c2cdcb49cf9140b458ef9232061015158c4df8f"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/query_composition.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/search/requirements/search_requirements_v25.py",
+      "bytes": 2028,
+      "sha256": "5455177d3a6df7710d89a6fe95be7464fc026215e1677dfd0c22e9cc211fd13b"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/quick_start.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/conversation.py",
+      "bytes": 602,
+      "sha256": "7c2012314838b0cfe95e5fd0a14ace79a6ce22e7abd8336aafaf84d2022c984b"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/ranking.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
+      "bytes": 77164,
+      "sha256": "f2aef59bbd82a5dffd3f729d994e2463eb3539a26fad668afbac55585f9ab7f8"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/ranking_personalization/ranking_personalization.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 5306,
+      "sha256": "ac45be62e2b86e7d65672a77a3b2291ffb9fa15a5a7e2f13560d020654d46c56"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/relation.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
+      "bytes": 24454,
+      "sha256": "d6370230e85d64599e3f13238ad37379692ae3a9c7eeb0c727b631a6f5374210"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/relation_execution.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 1501,
+      "sha256": "42093653a238744336f57919667fb2c0ff823473816924cb5e92d1d65915f4b9"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/relation_intent.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/stylist.py",
+      "bytes": 1039,
+      "sha256": "acb9e6b1b3611c3024951990385170ca55db6f1c4cc5fc58c7cf4012215c1b0e"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/relation_scoring.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/relation.py",
+      "bytes": 3690,
+      "sha256": "6d1b5a048f9e3c12b227bffa805fc354cd7249f2989e2716e3f6daca3d22de1e"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/__init__.py",
+      "reason": "Search v56 dynamic contract",
+      "bytes": 86,
+      "sha256": "8576f55a28e9e64ed8e65505aa9d1e66f46f2edb1dc5193e4f8a87838107f024"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/_model_utils.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/search/retrieval/search_retrieval_v26.py",
+      "bytes": 1355,
+      "sha256": "414df104033264cf029a02f010db030afbe4c775252d15f538a9abde4cd1375b"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/candidate_pool/__init__.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
+      "bytes": 39,
+      "sha256": "6070833959e88cf528eedd961351844ff047bb72691644a1b7326395c70fa106"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/candidate_pool/search_candidate_pool.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
+      "bytes": 20365,
+      "sha256": "9e69f941601b25896ad340bc7fa84a557fcc27c6d5180a843e796706335dbf2a"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/item_normalization/__init__.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/search/retrieval/search_retrieval_v26.py",
+      "bytes": 43,
+      "sha256": "66c8f7b5e7338f70f219d4daa2a5102d9e9feb96830a28cded368c41eb9356cc"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/item_normalization/search_item_normalization.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 6265,
+      "sha256": "c7cf49163ae7dbbaf059b582a96e1da54ce0ac98a0a98fac97129ccfd003afa8"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/planning/__init__.py",
+      "reason": "Search v56 dynamic contract",
+      "bytes": 33,
+      "sha256": "ed4bff37c030d7a1877feac6898696967df730d2eb62a31dfe9bd2eeca1ee95a"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/planning/search_planning.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 58049,
+      "sha256": "b9e834f487fd6d2152cc80e81169debc04db5c70e8d5018a0903197fbe2e6ec8"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/product_evaluation/__init__.py",
+      "reason": "Search v56 dynamic contract",
+      "bytes": 43,
+      "sha256": "005f72702b7804faacf0e5448a1becd1b13a3e908946f4e927086dbf1e1028bd"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/product_evaluation/search_product_evaluation.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 77762,
+      "sha256": "13b94f4ca3d4c327f986fc65217f016118193635824376671906fb6343b3b821"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/product_evaluation/search_product_evaluation_validation.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/ranking_runner.py",
+      "bytes": 1960,
+      "sha256": "5bb1501fc09f6df4e6e7193af8fd3e55c95797bbbb120d80ac932cbcfe2635ad"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/ranking_observation/__init__.py",
+      "reason": "Search v56 dynamic contract",
+      "bytes": 44,
+      "sha256": "a6064fdde9f386d5a821ebbe51e715285c3cca66ef34085094d0930a0756ac68"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/ranking_observation/search_ranking_observation.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 13647,
+      "sha256": "7c6033980f5bcac950a38787bb3f12ff22c12d10ab56ed01bbbea3e363bc4080"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/relation_observation/__init__.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/search/product_evaluation/search_product_evaluation_legacy.py",
+      "bytes": 45,
+      "sha256": "8f54b946ef2f5df3a5750969b1e03001a0bff1af51229c53d1f2d185a5fa0e4b"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/relation_observation/search_relation_observation.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 5623,
+      "sha256": "ee82eed5b6fa2f037e5845b9bc74addf45200336c603405a1f83e04d947a190b"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/requirements/__init__.py",
+      "reason": "Search v56 dynamic contract",
+      "bytes": 37,
+      "sha256": "36394762c80dd9915dc6ec4b88cd2e62ff6c438047c4b846ec16be00726bd820"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/requirements/search_requirements.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 63405,
+      "sha256": "b6e96f50ff34defdc7f606ec0ff72863f6849ea539cb9efd6d6ebdbea6b17d66"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/requirements/search_requirements_context.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 12301,
+      "sha256": "96da0358ae342f8c12e373c2ccafdb5a6941f63f5f2c89752fdda77cfa8710d4"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/retrieval/__init__.py",
+      "reason": "imported by src/fashion_recommendation_v2/tools/price_translate.py",
+      "bytes": 34,
+      "sha256": "9d11788f411eec2402e3bcf667587b87d7fca4eb1a57ea0a4701973e82e98215"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/search/retrieval/search_retrieval.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/search/retrieval/search_retrieval_v26.py",
+      "bytes": 4323,
+      "sha256": "36102f70221c168581713c54f25b91e1548bff4724e9f0901280fcd478f1a09c"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/stylist.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/evidence_projection.py",
+      "bytes": 27392,
+      "sha256": "118995e988d65653e74e526796b23eb9c6725850ccbffe8196da52c08950c10a"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/stylist_condition_policy.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/condition_routing.py",
+      "bytes": 670,
+      "sha256": "a88db1ecf37830f70f4a00cf96a152200d23b3cd4da3f00b4153db2dce0b4b32"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/summary.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
+      "bytes": 26692,
+      "sha256": "0fa67653022f165b76ebd5bac8746e6301fc07cb0c80831e482652cfc8dca51d"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/summary_response.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
+      "bytes": 1019,
+      "sha256": "549dce5b2298550db0695dc59bb8eae711c13b9fa9c0aa823804fea324d04b95"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/schemas/visual_confirmation.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 10683,
+      "sha256": "2868b9a655a33727abf80466f6c0bafceb952dac201a26e2ecef71ac7acd51fd"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/__init__.py",
+      "reason": "Search v56 dynamic helper",
+      "bytes": 81,
+      "sha256": "b718952b0e02959c5cfe6ddf106a27af4dabc218190c512d468f260f56469ea5"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/audience_policy.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/product_evaluation_v36.py",
+      "bytes": 10588,
+      "sha256": "15b15e7926faf340583139d5bc0a3e8d69875aceff914531f948b10082f9809d"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/candidate_records.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/search_runner.py",
+      "bytes": 23400,
+      "sha256": "410dfccd06068a2764977489a98608845247427044ac9154d18d9d4894a33761"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/condition_semantics.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/evidence_projection.py",
+      "bytes": 9024,
+      "sha256": "5efda0eb3f29ab7194dbeeab7c09c7f6775b7f152f20226251215ce5894965ee"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/contracts.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 21785,
+      "sha256": "6de76d6ae4a841142cc6061e12f68e66afa0f5643173c2eadab83b3b4da20b4f"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/evaluation_execution.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 8987,
+      "sha256": "c5e980cbcd9645531b8fcad244762787875770608e6057ff843c6946e64caf08"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/evidence_projection.py",
+      "reason": "imported by src/fashion_recommendation_v2/preference/observations.py",
+      "bytes": 5233,
+      "sha256": "c4529b8a0b435b4f4e30b553d296d2d297ec5a14352603a819e54b3bf3c174e2"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/execution.py",
+      "reason": "role-based prompt consolidation / import wiring",
+      "bytes": 18813,
+      "sha256": "92e103bc353a2781914799684fa88605c303dcfd63045347b972a9ba640be697"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/item_normalization.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 20352,
+      "sha256": "b52a0eb1491a5e2929c2a31239fc3d6335ca63f2d6690147d834dc3ad3dc5fb8"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/observation_review.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/product_evaluation_v36.py",
+      "bytes": 4503,
+      "sha256": "c2d33bf706f2e6b72b1debd35a5df8ad3a3f4b8c9ec21fda73ea7b809467d42f"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/planning.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 18660,
+      "sha256": "91f2d1ad467fdfe6b3e8ba6b7df878a791296ffa3fc7d381ddbbd5038a77eff0"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/planning_feedback.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 7583,
+      "sha256": "fbfc15ed0642fe6f9e3a001e8030dccc4bc1c598199f271c52fd471ea05093d6"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/planning_rules.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/product_evaluation_v36.py",
+      "bytes": 21810,
+      "sha256": "22a2a0c34ed239f57618632259867414d5d407ef4feb5836dafa8d0670023aa3"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/policy.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/planning_rules.py",
+      "bytes": 11890,
+      "sha256": "ec945432adf662d88eaf3e215b8c9eb52d3074aac4397e4b9cd5a8c5fe462592"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/presentation_semantics.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 6140,
+      "sha256": "cd4ff2b93457725bdb2be505875ea2c77448f3a931044e86cf1786a0c052ddc4"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/product_evaluation.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 45523,
+      "sha256": "18a4dabe6c1c364adbfa0088475279c44713f6feb0a25a77cc0d93d49acdf7a1"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/product_identity.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 1593,
+      "sha256": "62e6cce9f35ef70a84b179697b47e4fe5ceaccf6aa4690c7b3314ff24b50a03d"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/product_semantics.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 12417,
+      "sha256": "019cee6f76e406250b4b5c99b3a9e5c4a17fb75cf235db9d932c7e5f9ea6d762"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/product_sources.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/evidence_projection.py",
+      "bytes": 792,
+      "sha256": "6745ad9902329823b86ef8eda2abe18c239a2269adb09ec6b7a81f3e7337a043"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/product_validation.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/ranking_preferences.py",
+      "bytes": 21956,
+      "sha256": "b03a5fe8b904271b5973c86a671a585909c3cfee84b0451aca69d229cc00ac74"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/reference_roles.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/requirements_v31.py",
+      "bytes": 1799,
+      "sha256": "72451d38da364f8a48d03f01232a7c8ec8fa3150835c7c585f377baf22cbf4c6"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/requirement_sources.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/requirements_v31.py",
+      "bytes": 27837,
+      "sha256": "ac3db1e01e5e760233f484129ac6e6f02f19e0d6c045ee3059b98f5017fa746b"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/requirements.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 86766,
+      "sha256": "eb946453186218aff659d21a598a926036a989cca03ff411556a218f18712abd"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/semantic_validation.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/requirements_v31.py",
+      "bytes": 6027,
+      "sha256": "be650565fd071064dc33ae8a7c9d5d50625c05f2a063df2761f3fe07178be0a5"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/stylist_policy.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 7247,
+      "sha256": "3433985bc01b3afb48b212706236310a4abed976b9d7369b491e41ed8cd17444"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/server/__init__.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/preference_interpretation_runner.py",
+      "bytes": 71,
+      "sha256": "55014600222fe9da20662a3dec80d5855b573e7eefbb58e77968cd08f000012c"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/server/preference_http.py",
+      "reason": "imported by tests/test_preference_server.py",
+      "bytes": 11122,
+      "sha256": "776b723efe471066d35c51a664b40a4b9be061dfcd78b2d2f43e7857a5487ab8"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/server/preference_runtime.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/preference_interpretation_runner.py",
+      "bytes": 9134,
+      "sha256": "1d1db4b4d2f3ddae639f586d8f59dfdf5f42c8cf3848e9c2a160692ccde05153"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/server/preference_service.py",
+      "reason": "imported by tests/test_preference_server.py",
+      "bytes": 6657,
+      "sha256": "2c293c94af0071157adf12f9657b160bb01106b4ce0e808a3d5cc82870eb1112"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/server/quick_start.py",
+      "reason": "imported by src/fashion_recommendation_v2/server/preference_http.py",
+      "bytes": 4121,
+      "sha256": "bbb642cdf9aebd0686903b512602d777ced563683d2acc0fed0fa339efa123f7"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/server/recommendation_factory.py",
+      "reason": "imported by scripts/run_preference_server.py",
+      "bytes": 4658,
+      "sha256": "7f7f0e21da58c3ef2d02ac4fafba0137894688c62f466199d4190eeec22a75ba"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/server/recommendation_runtime.py",
+      "reason": "imported by scripts/run_preference_server.py",
+      "bytes": 8597,
+      "sha256": "30d5c6be43e009b79a4c98403b81c156e9a753f3975427ba4c7e02649097c430"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/server/recommendation_service.py",
+      "reason": "imported by src/fashion_recommendation_v2/server/recommendation_factory.py",
+      "bytes": 13636,
+      "sha256": "4eb4a9d9903eb70ab276c6fb4653a274f92d07f40883fb8cbd0c4138e3a80c26"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/storage/__init__.py",
+      "reason": "imported by src/fashion_recommendation_v2/server/preference_runtime.py",
+      "bytes": 400,
+      "sha256": "dcd2085bb75d0bc2018711d134fc66640f5c0a9aa929a6868c261549f7cc7e9e"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/storage/preference.py",
+      "reason": "imported by src/fashion_recommendation_v2/storage/__init__.py",
+      "bytes": 46286,
+      "sha256": "ccea77a0afe097d22bc3e725fa492e34c8e6792d6dc222a4cbfa0800c4bb8d85"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/storage/preference.sql",
+      "reason": "database schema/migration",
+      "bytes": 3160,
+      "sha256": "febd2d29d81d3dc8b0664bad16cbac841b4981333cbf0d25d30976684fdba37b"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/storage/preference_v5.sql",
+      "reason": "database schema/migration",
+      "bytes": 897,
+      "sha256": "4b2499de3e5dae523f97edd1dee7bf09b58a68193c5ecc42df21a37661870ff5"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/stylist_context.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
+      "bytes": 2505,
+      "sha256": "284b0f30d9c788be51c56e1a9be71008f9d7595219f3ab076dc6150730cd66e0"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/stylist_personalization.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/stylist_policy_v47.py",
+      "bytes": 11118,
+      "sha256": "9fe178d144f60c859dbbb4ee43bdee593940084cd43027a232e038482df0f907"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/summary/evidence_references.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/summary.py",
+      "bytes": 3836,
+      "sha256": "716690b8c9fda3f559ac606b3483f9848a5576df7d816bdeadc5f60eac5e167f"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/summary/personalization_v9.py",
+      "reason": "imported by src/fashion_recommendation_v2/agents/summary.py",
+      "bytes": 1066,
+      "sha256": "e1fb23201421e0178dcba24f71b2e35e46ddfc3c5d8d21fca9143bfcff4fef75"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/summary/summary_policy.py",
+      "reason": "imported by src/fashion_recommendation_v2/server/recommendation_factory.py",
+      "bytes": 1463,
+      "sha256": "5c6b8a4641c50ca10506e6b904d5fd3b5564edc0ac2e82a6c088a2c60fcdfb06"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/tools/__init__.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/product_evaluation_v36.py",
+      "bytes": 55,
+      "sha256": "68d34e6e11b4b7de21d0f868abff12468fec348b293e1b88396f05aa5fa2f50e"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/tools/age_scope.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/product_evaluation_v36.py",
+      "bytes": 2125,
+      "sha256": "f2783f0b848b8296f136a08768195d34298a46f775188aa5d454556e12d8b8e7"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/tools/ebay_client.py",
+      "reason": "imported by tests/test_ebay_client.py",
+      "bytes": 15218,
+      "sha256": "a55a12231e3c8e36c9b1bbc18ea27a1c6887513d45a98e2f2a57cf1defe9260b"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/tools/ebay_search.py",
+      "reason": "imported by tests/test_price_fx.py",
+      "bytes": 21158,
+      "sha256": "d98b5e74dbcc4f92867190f8cce94c2407470e242062d589b27207a5962d65f1"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/tools/price_client.py",
+      "reason": "imported by src/fashion_recommendation_v2/tools/price_translate.py",
+      "bytes": 4375,
+      "sha256": "d92bc6d6959d2944ee5cb5fcaf45b4cb5b3b3852b423adaf0fca8a98430e4067"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/tools/price_translate.py",
+      "reason": "imported by src/fashion_recommendation_v2/search/product_evaluation_v36.py",
+      "bytes": 6475,
+      "sha256": "21765197d240a3744a7f51e1642d19a4d8e42befe74d3ad8daef25e2745c6f20"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/tools/ranking_judgments.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 8084,
+      "sha256": "4534fe2eeb63209c5779a576e2ef137c7dcede122c25d123cdd9e79c7d200699"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/tools/ranking_observations.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 2729,
+      "sha256": "df593ec7870eb87ace4f97559fd4f0910d12d33a4964f55cc654ee63247d47bd"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/validation_reuse.py",
+      "reason": "imported by src/fashion_recommendation_v2/schemas/summary_v6.py",
+      "bytes": 10191,
+      "sha256": "575c9913f13e105e971e704ed67212de11eaa324b994d080c263eb134cd11518"
+    },
+    {
+      "path": "tests/fixtures/prompt_fingerprints.json",
+      "reason": "public prompt consolidation or equivalence verification",
+      "bytes": 42783,
+      "sha256": "ffc93f0d95f6342311c80f71dbeadf5d63e08e90ac1a3c18b06d3a67822cb0d9"
+    },
+    {
+      "path": "tests/fixtures/role_behavior_expected.json.gz",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 11498,
+      "sha256": "a94f54dd74764beca77b2c1a388a3c215313d320773213b532abb0827508871c"
+    },
+    {
+      "path": "tests/fixtures/role_schema_fingerprints.json",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 659329,
+      "sha256": "16a9ad46e355f79a97ff1e8f8ec2425dca4a351cd37da011071deb582dc954f5"
+    },
+    {
+      "path": "tests/fixtures/role_synthetic_input.json.gz",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 13238,
+      "sha256": "85ff7ea2085a01bd1738c75085eea4dce4b6ad9b4b37b9203b56c5604146be54"
+    },
+    {
+      "path": "tests/prompt_capture.py",
+      "reason": "public prompt consolidation or equivalence verification",
+      "bytes": 5835,
+      "sha256": "f3c546b051aa89f04d8b157209132a31f8aefb99af3c3792d036c916b69a31cb"
+    },
+    {
+      "path": "tests/role_behavior_capture.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 4086,
+      "sha256": "2f76804f3e5b6b086f4e59c57c157a92f61d1d21387e1c22486990c54eca6251"
+    },
+    {
+      "path": "tests/test_ebay_client.py",
+      "reason": "test helper for tests/test_price_fx.py",
+      "bytes": 9136,
+      "sha256": "a7d454b2f1e6517fc2a45527fae5613ae3ead462000c311a011d4f288452ba9e"
+    },
+    {
+      "path": "tests/test_openai_stream_cleanup.py",
+      "reason": "representative offline test",
+      "bytes": 11184,
+      "sha256": "c992e21602b22849cdb91d08f1a5a6e2f21eff5d4b3803e2014233ec438bf04f"
+    },
+    {
+      "path": "tests/test_preference_server.py",
+      "reason": "representative offline test",
+      "bytes": 17621,
+      "sha256": "120fe4a098778f252ef846b00147a63cb0650debdcc7db6976e51df8a0fc0e8c"
+    },
+    {
+      "path": "tests/test_preference_storage.py",
+      "reason": "representative offline test",
+      "bytes": 20341,
+      "sha256": "3803e8d74b0b0b067ffbcc8aa7a9d93ee302747b0a045551b0151028908e91cf"
+    },
+    {
+      "path": "tests/test_price_fx.py",
+      "reason": "representative offline test",
+      "bytes": 10086,
+      "sha256": "178ebdf80c56364e61883a5420e6194be457f30c391ccf1d1f798f12ff86fb5f"
+    },
+    {
+      "path": "tests/test_prompt_equivalence.py",
+      "reason": "public prompt consolidation or equivalence verification",
+      "bytes": 2177,
+      "sha256": "e1b125ddc651041da385b66e56ea728b69786c41e626975866caf48bccc76a75"
+    },
+    {
+      "path": "tests/test_role_consolidation.py",
+      "reason": "service role consolidation and offline regression validation",
+      "bytes": 2877,
+      "sha256": "03c0a4b9d5b4ef86bf1a56e30099281e70e8397688e06420de607c96d2c00ff0"
+    },
+    {
+      "path": "tests/test_service_release.py",
+      "reason": "public setup, documentation or dependency validation",
+      "bytes": 2543,
+      "sha256": "e57cf4b8121757615819d0ce237c5e85dbaf8eaa632971f845d58bd01656a48e"
+    },
+    {
+      "path": "tests/test_summary_schema.py",
+      "reason": "representative offline test",
+      "bytes": 6995,
+      "sha256": "22753a5ced69569fc6ef578da26004a55d6672cf1579f65e3438569994c668bb"
+    }
+  ]
+}

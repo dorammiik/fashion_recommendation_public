@@ -1,0 +1,3 @@
+interface:
+  display_name: "Preference Update"
+  short_description: "Preserve Preference Agent contracts during changes"
