@@ -1,13 +1,18 @@
-"""Persistence contracts. LLM interpretation and recommendation integration are separate."""
-from __future__ import annotations
-from fashion_recommendation_v2.module_compat import import_module as _role_module
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
 
+from __future__ import annotations
+
+from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
+
+
+# ---- preference ----
+
+"""Persistence contracts. LLM interpretation and recommendation integration are separate."""
 from datetime import datetime
 from datetime import timezone
 from typing import Annotated
 from typing import Literal
 from typing import Self
-
 from pydantic import AfterValidator
 from pydantic import Field
 from pydantic import model_validator
@@ -20,7 +25,8 @@ from fashion_recommendation_v2.schemas.search.product_evaluation.search_product_
 from fashion_recommendation_v2.schemas.search.product_evaluation.search_product_evaluation import SearchItemAnalysisV43
 from fashion_recommendation_v2.schemas.search.product_evaluation.search_product_evaluation import SearchItemAnalysisV44
 from fashion_recommendation_v2.schemas.search.product_evaluation.search_product_evaluation import SearchItemAnalysisV45
-
+from fashion_recommendation_v2.schemas.search.product_evaluation.search_product_evaluation import SearchItemAnalysisV57_search_product_evaluation_v57 as SearchItemAnalysisV57
+from fashion_recommendation_v2.schemas.search.product_evaluation.search_product_evaluation import SearchItemAnalysisV59_search_product_evaluation_v59 as SearchItemAnalysisV59
 from fashion_recommendation_v2.schemas.base import StrictBaseModel
 from fashion_recommendation_v2.schemas.preference.interpretation.preference_interpretation import PreferenceProfileV1_v1 as PreferenceProfileV1
 from fashion_recommendation_v2.schemas.preference.interpretation.preference_interpretation import PreferenceProfileV2_v2 as PreferenceProfileV2
@@ -28,8 +34,6 @@ from fashion_recommendation_v2.schemas.preference.interpretation.preference_inte
 from fashion_recommendation_v2.schemas.preference.interpretation.preference_interpretation import PreferenceProfileV4
 from fashion_recommendation_v2.schemas.search.retrieval.search_retrieval import ProductRecord
 from fashion_recommendation_v2.schemas.product_evidence import ImageEvidence
-
-
 from fashion_recommendation_v2.schemas.preference_profile import utc
 from fashion_recommendation_v2.schemas.preference_profile import UTCDateTime
 from fashion_recommendation_v2.schemas.preference_profile import Identifier
@@ -43,20 +47,20 @@ from fashion_recommendation_v2.schemas.preference_profile import TitleKeyword
 from fashion_recommendation_v2.schemas.preference_profile import PreferenceGroup
 from fashion_recommendation_v2.schemas.preference_profile import PreferenceProfile
 
-
+@_preserve_class('AnonymousUser', 'fashion_recommendation_v2.schemas.preference')
 class AnonymousUser(StrictBaseModel):
     user_id: Identifier
     created_at: UTCDateTime
     expires_at: UTCDateTime
 
-
+@_preserve_class('PreferenceSession', 'fashion_recommendation_v2.schemas.preference')
 class PreferenceSession(StrictBaseModel):
     session_id: Identifier
     user_id: Identifier
     started_at: UTCDateTime
     ended_at: UTCDateTime | None = None
 
-
+@_preserve_class('PreferenceRequest', 'fashion_recommendation_v2.schemas.preference')
 class PreferenceRequest(StrictBaseModel):
     request_id: Identifier
     user_id: Identifier
@@ -72,7 +76,7 @@ class PreferenceRequest(StrictBaseModel):
             raise ValueError('Only followup requires parent_request_id')
         return self
 
-
+@_preserve_class('ItemSnapshot', 'fashion_recommendation_v2.schemas.preference')
 class ItemSnapshot(StrictBaseModel):
     item_snapshot_id: Identifier
     user_id: Identifier
@@ -81,7 +85,7 @@ class ItemSnapshot(StrictBaseModel):
     recommendation_id: Identifier
     rank: int = Field(ge=1)
     item: ProductRecord
-    search_analysis: SearchItemAnalysis | SearchItemAnalysisV36 | SearchItemAnalysisV40 | SearchItemAnalysisV41 | SearchItemAnalysisV42 | SearchItemAnalysisV43 | SearchItemAnalysisV44 | SearchItemAnalysisV45 | None = None
+    search_analysis: SearchItemAnalysis | SearchItemAnalysisV36 | SearchItemAnalysisV40 | SearchItemAnalysisV41 | SearchItemAnalysisV42 | SearchItemAnalysisV43 | SearchItemAnalysisV44 | SearchItemAnalysisV59 | SearchItemAnalysisV57 | SearchItemAnalysisV45 | None = None
     image_observations: list[ImageEvidence] = Field(default_factory=list)
     captured_at: UTCDateTime
 
@@ -89,7 +93,7 @@ class ItemSnapshot(StrictBaseModel):
     def evidence_image(self) -> Self:
         from fashion_recommendation_v2.search.evidence_projection import validate_analysis_identity
         validate_analysis_identity(self.item, self.search_analysis)
-        if any(e.image_url != self.item.image_url for e in self.image_observations):
+        if any((e.image_url != self.item.image_url for e in self.image_observations)):
             raise ValueError('Observation must reference the item image')
         return self
 
@@ -100,7 +104,7 @@ class ItemSnapshot(StrictBaseModel):
             data.pop('search_analysis', None)
         return data
 
-
+@_preserve_class('InteractionEvent', 'fashion_recommendation_v2.schemas.preference')
 class InteractionEvent(StrictBaseModel):
     event_id: Identifier
     user_id: Identifier
@@ -124,7 +128,7 @@ class InteractionEvent(StrictBaseModel):
             raise ValueError('Event cannot target itself')
         return self
 
-
+@_preserve_class('PreferenceEvidence', 'fashion_recommendation_v2.schemas.preference')
 class PreferenceEvidence(StrictBaseModel):
     evidence_id: Identifier
     user_id: Identifier
@@ -140,13 +144,13 @@ class PreferenceEvidence(StrictBaseModel):
     original_forms: list[str] = Field(default_factory=list)
     equivalent_attribute: Attribute | None = None
 
-
+@_preserve_class('ProfileLookup', 'fashion_recommendation_v2.schemas.preference')
 class ProfileLookup(StrictBaseModel):
     status: Literal['not_found', 'empty', 'available', 'failed']
     preference_profile: PreferenceProfile | PreferenceProfileV1 | PreferenceProfileV2 | PreferenceProfileV3 | PreferenceProfileV4 | None = None
     error: str | None = None
 
-
+@_preserve_class('PreferenceJob', 'fashion_recommendation_v2.schemas.preference')
 class PreferenceJob(StrictBaseModel):
     job_id: Identifier
     user_id: Identifier
@@ -158,7 +162,7 @@ class PreferenceJob(StrictBaseModel):
     lease_until: UTCDateTime | None = None
     last_error: str | None = None
 
-
+@_preserve_class('PreferenceStorageConfig', 'fashion_recommendation_v2.schemas.preference')
 class PreferenceStorageConfig(StrictBaseModel):
     cookie_days: Literal[90] = 90
     pending_scan_seconds: Literal[60] = 60

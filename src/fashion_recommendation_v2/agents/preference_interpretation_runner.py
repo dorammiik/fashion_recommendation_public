@@ -1,5 +1,13 @@
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
+from __future__ import annotations
+
+from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
+
+
+# ---- preference_interpretation_runner ----
+
 """Single interpretation stage with bounded correction, no feature-extraction call."""
-from fashion_recommendation_v2.module_compat import import_module as _role_module
 from time import perf_counter
 from uuid import uuid4
 from fashion_recommendation_v2.schemas.preference.interpretation.preference_interpretation import InterpretationConfig
@@ -8,10 +16,11 @@ from fashion_recommendation_v2.preference.interpretation_sources import fingerpr
 from fashion_recommendation_v2.preference.interpretation_sources import validate_references
 from fashion_recommendation_v2.server.preference_runtime import UpdateOutput
 
-
+@_preserve_class('PreferenceAgent', 'fashion_recommendation_v2.agents.preference_interpretation_runner')
 class PreferenceAgent:
+
     def __init__(self, llm, config=None, clock=None, *, version='v1'):
-        from fashion_recommendation_v2.module_compat import import_module
+        from fashion_recommendation_v2.module_compat import import_module as import_module
         from fashion_recommendation_v2.preference.contracts import get_contract
         if version not in {'v1', 'v2', 'v3', 'v4'}:
             raise ValueError('Unsupported interpretation version')
@@ -21,8 +30,7 @@ class PreferenceAgent:
         self.schema = import_module('fashion_recommendation_v2.' + schema_path)
         self.profile_schema = getattr(self.schema, profile_name)
         prompt_path, prompt_name = self.contract['prompt'].rsplit('.', 1)
-        from fashion_recommendation_v2.prompts._compat import resolve_prompt_module
-        self.prompt = getattr(resolve_prompt_module('fashion_recommendation_v2.' + prompt_path), prompt_name)
+        self.prompt = getattr(import_module('fashion_recommendation_v2.' + prompt_path), prompt_name)
         self.llm = llm
         self.config = config or InterpretationConfig()
         self.clock = clock
@@ -31,45 +39,37 @@ class PreferenceAgent:
         self.manifest = None
 
     def __call__(self, source):
-        if source.previous_profile and source.previous_profile.schema_version == '3.0' and self.version == 'v1':
+        if source.previous_profile and source.previous_profile.schema_version == '3.0' and (self.version == 'v1'):
             raise ValueError('Cannot downgrade a v2 profile using v1')
-        if source.previous_profile and getattr(source.previous_profile, 'interpretation_version', None) == 'preference-interpretation-v3' and self.version not in {'v3', 'v4'}:
+        if source.previous_profile and getattr(source.previous_profile, 'interpretation_version', None) == 'preference-interpretation-v3' and (self.version not in {'v3', 'v4'}):
             raise ValueError('Cannot downgrade a v3 profile')
-        if source.previous_profile and getattr(source.previous_profile, 'interpretation_version', None) == 'preference-interpretation-v4' and self.version != 'v4':
+        if source.previous_profile and getattr(source.previous_profile, 'interpretation_version', None) == 'preference-interpretation-v4' and (self.version != 'v4'):
             raise ValueError('Cannot downgrade a v4 profile')
         request, cursor = prepare_input(source, version=self.version)
         self.prepared = request.model_dump(mode='json')
-        self.manifest = dict(version=self.version, input_policy=self.contract['input_policy'],
-            input_sha256=fingerprint(self.prepared), cache_used=False,
-            as_of=source.as_of.isoformat(), target_cursor=cursor,
-            prompt_sha256=fingerprint(self.prompt),
-            schema_sha256=fingerprint(self.schema.InterpretationOutput.model_json_schema()))
+        self.manifest = dict(version=self.version, input_policy=self.contract['input_policy'], input_sha256=fingerprint(self.prepared), cache_used=False, as_of=source.as_of.isoformat(), target_cursor=cursor, prompt_sha256=fingerprint(self.prompt), schema_sha256=fingerprint(self.schema.InterpretationOutput.model_json_schema()))
         self.manifest['config'] = self.config.model_dump(mode='json')
-        self.manifest['model'] = getattr(self.llm,'model',None)
+        self.manifest['model'] = getattr(self.llm, 'model', None)
         from hashlib import sha256
         from pathlib import Path
         import inspect
-        from fashion_recommendation_v2.preference import interpretation_sources
-        from fashion_recommendation_v2.preference import interpretation_input
-        paths = [Path(__file__), Path(inspect.getfile(self.schema.InterpretationOutput)),
-                 Path(interpretation_sources.__file__), Path(interpretation_input.__file__)]
+        interpretation_sources = _role_module('fashion_recommendation_v2.preference.interpretation_sources')
+        interpretation_input = _role_module('fashion_recommendation_v2.preference.interpretation_input')
+        paths = [Path(__file__), Path(inspect.getfile(self.schema.InterpretationOutput)), Path(interpretation_sources.__file__), Path(interpretation_input.__file__)]
         if self.version in {'v2', 'v3', 'v4'}:
-            from fashion_recommendation_v2.preference import interpretation_attributes
+            interpretation_attributes = _role_module('fashion_recommendation_v2.preference.interpretation_attributes')
             paths.append(Path(interpretation_attributes.__file__))
-        self.manifest['code_hashes'] = {str(p):sha256(p.read_bytes()).hexdigest() for p in paths}
-        for attempt in range(self.config.max_retries+1):
+        self.manifest['code_hashes'] = {str(p): sha256(p.read_bytes()).hexdigest() for p in paths}
+        for attempt in range(self.config.max_retries + 1):
             # Explicit full-history byte budget; same correction ceiling as v0.
-            bound = (len(request.model_dump_json().encode()) + len(self.prompt.encode())
-                     + 2*len(str(self.schema.InterpretationOutput.model_json_schema()).encode()) + 1024)
+            bound = len(request.model_dump_json().encode()) + len(self.prompt.encode()) + 2 * len(str(self.schema.InterpretationOutput.model_json_schema()).encode()) + 1024
             if bound > self.config.max_input_bytes:
                 raise ValueError(f'Preference {self.version} input exceeds byte budget ({bound}>{self.config.max_input_bytes}); no partial profile published')
-            record = dict(attempt=attempt+1, input=request.model_dump(mode='json'),
-                          input_bytes_with_allowance=bound, status='started')
+            record = dict(attempt=attempt + 1, input=request.model_dump(mode='json'), input_bytes_with_allowance=bound, status='started')
             self.attempts.append(record)
             start = perf_counter()
             try:
-                raw = self.llm.generate(system_prompt=self.prompt,
-                                       user_input=request, output_schema=self.schema.InterpretationOutput)
+                raw = self.llm.generate(system_prompt=self.prompt, user_input=request, output_schema=self.schema.InterpretationOutput)
                 record['model_response'] = getattr(raw, '_model_response', None)
                 record['model_response_text'] = getattr(raw, '_model_response_text', None)
                 record['parsed_response'] = raw.model_dump(mode='json')
@@ -83,17 +83,10 @@ class PreferenceAgent:
                 if attempt == self.config.max_retries:
                     exc.preference_retry_exhausted = True
                     raise
-                request = request.model_copy(update={'feedback': 'Correct the same output contract: '+str(exc)})
+                request = request.model_copy(update={'feedback': 'Correct the same output contract: ' + str(exc)})
             finally:
-                record['elapsed_seconds'] = perf_counter()-start
-        profile = self.profile_schema(user_id=source.job.user_id,
-            profile_version=(source.previous_profile.profile_version if source.previous_profile else 0)+1,
-            updated_at=self.clock() if self.clock else source.as_of, as_of=source.as_of,
-            processed_event_cursor=cursor,
-            interpretations=[self.schema.StoredInterpretation(**i.model_dump(), interpretation_id='i_'+uuid4().hex)
-                             for i in output.interpretations], summary=output.summary)
+                record['elapsed_seconds'] = perf_counter() - start
+        profile = self.profile_schema(user_id=source.job.user_id, profile_version=(source.previous_profile.profile_version if source.previous_profile else 0) + 1, updated_at=self.clock() if self.clock else source.as_of, as_of=source.as_of, processed_event_cursor=cursor, interpretations=[self.schema.StoredInterpretation(**i.model_dump(), interpretation_id='i_' + uuid4().hex) for i in output.interpretations], summary=output.summary)
         return UpdateOutput(profile, request.evidence, [])
-
-
 # Preserve imports used by existing callers and evaluation scripts.
 PreferenceInterpretationRunner = PreferenceAgent

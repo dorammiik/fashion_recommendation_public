@@ -1,8 +1,12 @@
-"""Role-consolidated implementation; service contracts and behavior are preserved."""
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
 from __future__ import annotations
+
 from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
 
+
 # ---- search_relation_observation_v0 ----
+
 """Advisory, Search-owned visual facts for relationship evaluation; no scores."""
 import hashlib
 import json
@@ -10,23 +14,18 @@ from typing import Literal
 from pydantic import Field
 from pydantic import model_validator
 from fashion_recommendation_v2.schemas.base import StrictBaseModel
-
 DIMENSIONS = ('color', 'pattern', 'silhouette', 'length', 'details', 'style')
 Dimension = Literal['color', 'pattern', 'silhouette', 'length', 'details', 'style']
 REVISION = 'search-relation-observation-v0-1'
-
 
 @_preserve_function('canonical_hash', 'fashion_recommendation_v2.schemas.search.relation_observation.search_relation_observation_v0')
 def canonical_hash(value):
     if hasattr(value, 'model_dump'):
         value = value.model_dump(mode='json')
-    return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True,
-                                    separators=(',', ':')).encode()).hexdigest()
-
+    return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
 @_preserve_class('RelationVisualFact', 'fashion_recommendation_v2.schemas.search.relation_observation.search_relation_observation_v0')
 class RelationVisualFact(StrictBaseModel):
-    __qualname__ = 'RelationVisualFact'
     dimension: Dimension
     status: Literal['observed', 'unknown']
     value: str | None
@@ -41,10 +40,8 @@ class RelationVisualFact(StrictBaseModel):
             raise ValueError('Unknown facts require null value and explicit limitations.')
         return self
 
-
 @_preserve_class('RelationVisualOutput', 'fashion_recommendation_v2.schemas.search.relation_observation.search_relation_observation_v0')
 class RelationVisualOutput(StrictBaseModel):
-    __qualname__ = 'RelationVisualOutput'
     facts: list[RelationVisualFact]
 
     def validate_dimensions(self, dimensions):
@@ -53,18 +50,14 @@ class RelationVisualOutput(StrictBaseModel):
             raise ValueError('Return each requested visual dimension exactly once.')
         return self
 
-
 @_preserve_class('RelationVisualInput', 'fashion_recommendation_v2.schemas.search.relation_observation.search_relation_observation_v0')
 class RelationVisualInput(StrictBaseModel):
-    __qualname__ = 'RelationVisualInput'
     item_id: str
     dimensions: list[Dimension]
     validation_feedback: list[str] = Field(default_factory=list)
 
-
 @_preserve_class('RelationVisualObservation', 'fashion_recommendation_v2.schemas.search.relation_observation.search_relation_observation_v0')
 class RelationVisualObservation(StrictBaseModel):
-    __qualname__ = 'RelationVisualObservation'
     revision: Literal['search-relation-observation-v0-1'] = REVISION
     source: Literal['search_image_analysis', 'image_unavailable']
     item_id: str
@@ -81,10 +74,7 @@ class RelationVisualObservation(StrictBaseModel):
     def validate_against(self, item, analysis):
         data = analysis.model_dump(mode='json')
         data.pop('relation_observation_v0', None)
-        if (self.item_id != item.item_id or self.image_url != item.image_url
-                or self.item_sha256 != canonical_hash(item)
-                or self.source_analysis_sha256 != canonical_hash(data)
-                or self.prompt_sha256 != RELATION_V0_PROMPT_SHA256):
+        if self.item_id != item.item_id or self.image_url != item.image_url or self.item_sha256 != canonical_hash(item) or (self.source_analysis_sha256 != canonical_hash(data)) or (self.prompt_sha256 != RELATION_V0_PROMPT_SHA256):
             raise ValueError('Relation observation snapshot/provenance mismatch.')
         if len(self.requested_dimensions) != len(set(self.requested_dimensions)):
             raise ValueError('Duplicate requested visual dimensions.')
@@ -92,12 +82,11 @@ class RelationVisualObservation(StrictBaseModel):
             raise ValueError('Supplemental dimensions differ from missing Search visual features.')
         RelationVisualOutput(facts=self.facts).validate_dimensions(self.requested_dimensions)
         if self.source == 'image_unavailable':
-            if self.image_sha256 is not None or any(f.status != 'unknown' for f in self.facts):
+            if self.image_sha256 is not None or any((f.status != 'unknown' for f in self.facts)):
                 raise ValueError('Unavailable images cannot produce observed facts.')
         elif not self.image_sha256 or not self.model:
             raise ValueError('Image observations require image hash and model provenance.')
         return self
-
 
 @_preserve_function('missing_visual_dimensions', 'fashion_recommendation_v2.schemas.search.relation_observation.search_relation_observation_v0')
 def missing_visual_dimensions(analysis):
@@ -108,7 +97,5 @@ def missing_visual_dimensions(analysis):
             if dimension:
                 covered.add(dimension)
     return [d for d in DIMENSIONS if d not in covered]
-
-
 # Frozen v0 prompt identity; validated against the actual prompt in contract tests.
 RELATION_V0_PROMPT_SHA256 = 'c662ae6799a6d47add686d33518af2b1692102ec9104044f85848667e8d77dcc'

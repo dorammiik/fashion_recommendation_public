@@ -1,15 +1,16 @@
-"""Role-consolidated implementation; service contracts and behavior are preserved."""
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
 from __future__ import annotations
+
 from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
 
+
 # ---- stylist_policy_v47 ----
+
 """Shared v47 scope and explicit-user precedence; no model or agent imports."""
 from fashion_recommendation_v2.search.condition_semantics import provenance_dimension_v30 as dimension
-
 SEARCH_ATTRIBUTES = frozenset({'product_type', 'gender', 'color', 'sleeve_length', 'brand', 'occasion', 'theme'})
-
 SEARCH_ATTRIBUTES_V50 = SEARCH_ATTRIBUTES | {'pattern', 'fit'}
-
 SEMANTICS = """
 For positive, restricted target conditions, assign search scope to hard conditions
 in APPLICATION_RULES.hard_search_attributes. Other hard conditions remain item.
@@ -37,17 +38,13 @@ user's mandatory garment boundary stays hard; optional user types remain soft. D
 with one preferred subtype. All originals and reasons remain reviewable.
 """
 
-
 @_preserve_function('pair_key', 'fashion_recommendation_v2.search.stylist_policy_v47')
 def pair_key(comparison):
-    return comparison.stylist_requirement_id, comparison.user_requirement_id
-
+    return (comparison.stylist_requirement_id, comparison.user_requirement_id)
 
 @_preserve_function('expected_pairs', 'fashion_recommendation_v2.search.stylist_policy_v47')
 def expected_pairs(stylist, users):
-    return {(s.requirement_id, u.requirement_id) for s in stylist for u in users
-            if dimension(s.attribute, s.value) == dimension(u.attribute, u.value)}
-
+    return {(s.requirement_id, u.requirement_id) for s in stylist for u in users if dimension(s.attribute, s.value) == dimension(u.attribute, u.value)}
 
 @_preserve_function('validate_comparisons', 'fashion_recommendation_v2.search.stylist_policy_v47')
 def validate_comparisons(comparisons, pairs):
@@ -55,7 +52,6 @@ def validate_comparisons(comparisons, pairs):
     if set(keys) != pairs or len(keys) != len(pairs):
         raise ValueError('Stylist comparisons must cover exactly the same-dimension hard-user pairs.')
     return {pair_key(c) for c in comparisons if c.relationship == 'conflict'}
-
 
 @_preserve_function('source_stylist_conditions', 'fashion_recommendation_v2.search.stylist_policy_v47')
 def source_stylist_conditions(source):
@@ -70,9 +66,7 @@ def source_stylist_conditions(source):
             data['stylist_provenance'] = provenance
         if data not in unique:
             unique.append(data)
-    return [SimpleNamespace(requirement_id=f'stylist_{i:03d}', source='stylist',
-            role='target', polarity='positive', **data) for i, data in enumerate(unique, 1)]
-
+    return [SimpleNamespace(requirement_id=f'stylist_{i:03d}', source='stylist', role='target', polarity='positive', **data) for i, data in enumerate(unique, 1)]
 
 @_preserve_function('validate_resolved_stylist', 'fashion_recommendation_v2.search.stylist_policy_v47')
 def validate_resolved_stylist(source, result):
@@ -93,10 +87,8 @@ def validate_resolved_stylist(source, result):
         provenance = row.stylist_provenance.model_dump(mode='json') if row.stylist_provenance else None
         if provenance != getattr(original, 'stylist_provenance', None):
             raise ValueError('Stylist preference provenance must be preserved exactly.')
-        if row.kind != 'soft' or any(getattr(row, f) != getattr(original, f)
-                                    for f in ('attribute', 'value', 'source_text')):
+        if row.kind != 'soft' or any((getattr(row, f) != getattr(original, f) for f in ('attribute', 'value', 'source_text'))):
             raise ValueError('Stylist attribute/value/OR/source_text and soft kind are immutable.')
-
 
 @_preserve_function('validate_scopes', 'fashion_recommendation_v2.search.stylist_policy_v47')
 def validate_scopes(result, *, search_attributes=SEARCH_ATTRIBUTES):

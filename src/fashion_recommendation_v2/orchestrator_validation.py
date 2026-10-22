@@ -1,15 +1,21 @@
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
+from __future__ import annotations
+
+from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
+
+
+# ---- orchestrator_validation ----
+
 """Lossless request-span diagnostics shared by generation, correction and saved-state checks."""
-from fashion_recommendation_v2.module_compat import import_module as _role_module
 from collections import defaultdict
 from copy import deepcopy
 from pydantic import ValidationError
 from pydantic import TypeAdapter
 from typing import Annotated
 from typing import get_args
-
 ASSESSMENT_QUERY_PATH = 'user_query'
 CHARACTER_OFFSETS_PATH = 'character_offsets'
-
 TERMINAL_PERIOD_RULE = '''
 v9 원문 전체 포함 규칙의 유일한 예외: 코드가 독립적인 문장 종료 마침표로
 확인한 누락은 경고로 기록하고 진행한다. 그 외 문자 누락은 계속 오류다.
@@ -19,56 +25,54 @@ v9 원문 전체 포함 규칙의 유일한 예외: 코드가 독립적인 문�
 교정 시 이미 정확한 구간을 유지하며 전체 인용·누락·중복·의존관계를 재확인한다.
 '''
 
-
+@_preserve_function('independent_terminal_period', 'fashion_recommendation_v2.orchestrator_validation')
 def independent_terminal_period(query, position):
     """Conservative Korean request sentence ending; ambiguous punctuation stays strict."""
     import re
     if query[position] != '.' or position == 0:
         return False
-    if position + 1 < len(query) and not query[position + 1].isspace():
+    if position + 1 < len(query) and (not query[position + 1].isspace()):
         return False
     # Quoted/bracketed requests require the original strict punctuation ownership.
-    if any(c in query for c in '()[]{}<>\"\'“”‘’「」『』'):
+    if any((c in query for c in '()[]{}<>\"\'“”‘’「」『』')):
         return False
     return bool(re.search(r'[가-힣](?:다|요|줘|까|자|네|죠|어|음|함)$', query[:position]))
 
-
+@_preserve_function('apply_terminal_period_policy', 'fashion_recommendation_v2.orchestrator_validation')
 def apply_terminal_period_policy(report, query, version):
     from fashion_recommendation_v2.orchestrator_policy import ASSESSMENT_CONTRACTS
     contract = ASSESSMENT_CONTRACTS.get(version)
     if not contract or not contract.terminal_period_warning:
         return report
-    errors, warnings = [], []
+    errors, warnings = ([], [])
     for error in report['errors']:
-        start, end = error.get('start'), error.get('end')
-        if (error['code'] == 'uncovered_characters' and isinstance(start, int)
-                and end == start + 1 and independent_terminal_period(query, start)):
-            warnings.append(dict(error, code='uncovered_terminal_period', action='record_only',
-                                 reason='Independent sentence-ending period; original response preserved'))
+        start, end = (error.get('start'), error.get('end'))
+        if error['code'] == 'uncovered_characters' and isinstance(start, int) and (end == start + 1) and independent_terminal_period(query, start):
+            warnings.append(dict(error, code='uncovered_terminal_period', action='record_only', reason='Independent sentence-ending period; original response preserved'))
         else:
             errors.append(error)
     report['errors'] = errors
     report['warnings'] = warnings
     return report
 
-
+@_preserve_function('character_offsets', 'fashion_recommendation_v2.orchestrator_validation')
 def character_offsets(request):
     return [f'{i}:{char}' for i, char in enumerate(getattr(request, ASSESSMENT_QUERY_PATH))]
 
-
+@_preserve_function('validate_segmentation', 'fashion_recommendation_v2.orchestrator_validation')
 def validate_segmentation(assessment, query, *, version=None):
     from fashion_recommendation_v2.orchestrator_policy import ASSESSMENT_CONTRACTS
     contract = ASSESSMENT_CONTRACTS.get(version)
     if contract is not None and contract.collected_validation:
         raw = assessment.model_dump(mode='json') if hasattr(assessment, 'model_dump') else assessment
-        result, report = collect_segmentation(raw, query, schema=type(assessment))
+        result, report = collect_segmentation(raw, query, schema=type(assessment), quote_only=contract.quote_only)
         apply_terminal_period_policy(report, query, version)
         if report['errors'] or report['deferred_checks']:
             raise AssessmentValidationError(report)
         return result
     return _validate_segmentation_legacy(assessment, query)
 
-
+@_preserve_function('_validate_segmentation_legacy', 'fashion_recommendation_v2.orchestrator_validation')
 def _validate_segmentation_legacy(assessment, query):
     """Reject gaps/overlaps and cross-unit deletion hazards; no semantic inference."""
     assessment = assessment.validate_against(query)
@@ -83,9 +87,7 @@ def _validate_segmentation_legacy(assessment, query):
             raise ValueError('Only unresolved units must carry a state_id.')
         if unit.state_id is not None and unit.state_id not in states:
             raise ValueError('Unit references an unknown state.')
-        if len(unit.depends_on) != len(set(unit.depends_on)) or any(
-            key not in by_id or key == unit.unit_id for key in unit.depends_on
-        ):
+        if len(unit.depends_on) != len(set(unit.depends_on)) or any((key not in by_id or key == unit.unit_id for key in unit.depends_on)):
             raise ValueError('Invalid semantic dependency.')
         previous = -1
         for span in unit.spans:
@@ -97,19 +99,18 @@ def _validate_segmentation_legacy(assessment, query):
                 if index in covered:
                     raise ValueError('Source spans overlap; preserve shared meaning as one unit.')
                 covered[index] = unit
-    if any(not char.isspace() and i not in covered for i, char in enumerate(query)):
+    if any((not char.isspace() and i not in covered for i, char in enumerate(query))):
         raise ValueError('All non-whitespace request characters must be recorded.')
     for state_id, state in states.items():
         assigned = [u for u in units if u.state_id == state_id]
         if not assigned:
             raise ValueError('Every unresolved state needs a semantic unit.')
         for span in state.evidence:
-            if any(covered.get(i) is None or covered[i].state_id != state_id
-                   for i in range(span.start, span.end) if not query[i].isspace()):
+            if any((covered.get(i) is None or covered[i].state_id != state_id for i in range(span.start, span.end) if not query[i].isspace())):
                 raise ValueError('State evidence must belong to its assigned units.')
     if assessment.decision == 'proceed':
         for unit in units:
-            if unit.state_id is not None and not unit.independently_removable:
+            if unit.state_id is not None and (not unit.independently_removable):
                 raise ValueError('Unresolved meaning cannot be safely separated; regroup the units.')
             for key in unit.depends_on:
                 dependency = by_id[key]
@@ -117,44 +118,47 @@ def _validate_segmentation_legacy(assessment, query):
                     raise ValueError('Removing an unresolved condition could change retained meaning.')
     return assessment
 
-
+@_preserve_function('validate_similarity_assessment', 'fashion_recommendation_v2.orchestrator_validation')
 def validate_similarity_assessment(request, assessment):
     """A resolved product similarity phrase cannot itself require Stylist."""
     intent = assessment.relation_intent
     if not intent or intent.relation_type != 'similarity':
         return
-    anchors = [r for r in request.reference_items if r.item.item_id == intent.anchor_item_id
-               and (intent.anchor_rank is None or r.rank == intent.anchor_rank)]
+    anchors = [r for r in request.reference_items if r.item.item_id == intent.anchor_item_id and (intent.anchor_rank is None or r.rank == intent.anchor_rank)]
     if len(anchors) != 1:
         raise ValueError('Similarity requires exactly one supplied matching reference.')
+    from fashion_recommendation_v2.orchestrator_quotes import quote_based
+    from fashion_recommendation_v2.orchestrator_quotes import related_units
+    if quote_based(assessment):
+        units = related_units(assessment, intent.source_text)
+        if intent.source_text not in request.user_query or not units or any((u.kind == 'unresolved_condition' for u in units)):
+            raise ValueError('Known-product similarity must belong to clear/context units, not Stylist states.')
+        return
     # Keep independently ambiguous additions eligible for Stylist. Only the
     # supplied known-reference relationship must belong to clear/context units.
-    starts = [i for i in range(len(request.user_query))
-              if request.user_query.startswith(intent.source_text, i)]
-    unresolved = {i for u in assessment.semantic_units if u.kind == 'unresolved_condition'
-                  for span in u.spans for i in range(span.start, span.end)}
-    if not starts or all(any(i in unresolved for i in range(start, start + len(intent.source_text)))
-                         for start in starts):
-        raise ValueError('Known-product similarity is a clear condition, not a Stylist unresolved state; '
-                         'separate other ambiguous additions and cite only the known relationship.')
+    starts = [i for i in range(len(request.user_query)) if request.user_query.startswith(intent.source_text, i)]
+    unresolved = {i for u in assessment.semantic_units if u.kind == 'unresolved_condition' for span in u.spans for i in range(span.start, span.end)}
+    if not starts or all((any((i in unresolved for i in range(start, start + len(intent.source_text)))) for start in starts)):
+        raise ValueError('Known-product similarity is a clear condition, not a Stylist unresolved state; separate other ambiguous additions and cite only the known relationship.')
 
-
+@_preserve_class('AssessmentValidationError', 'fashion_recommendation_v2.orchestrator_validation')
 class AssessmentValidationError(ValueError):
+
     def __init__(self, report):
         self.report = deepcopy(report)
-        super().__init__('; '.join(f"{e['code']} at {e['path']}" + (": " + e['message'] if e.get('message') else "") for e in report['errors'])
-            or 'Required assessment checks are deferred.')
+        super().__init__('; '.join((f"{e['code']} at {e['path']}" + (": " + e['message'] if e.get('message') else "") for e in report['errors'])) or 'Required assessment checks are deferred.')
 
-
+@_preserve_class('Diagnostics', 'fashion_recommendation_v2.orchestrator_validation')
 class Diagnostics:
+
     def __init__(self):
-        self.errors, self.deferred = [], []
+        self.errors, self.deferred = ([], [])
         self.next_id = 1
 
     def error(self, code, path, **details):
         entry = dict(code=code, path=path, **details)
         for existing in self.errors:
-            if {k:v for k,v in existing.items() if k != 'error_id'} == entry:
+            if {k: v for k, v in existing.items() if k != 'error_id'} == entry:
                 return existing['error_id']
         error_id = f'error_{self.next_id:03d}'
         self.next_id += 1
@@ -162,9 +166,7 @@ class Diagnostics:
         return error_id
 
     def causes(self, path):
-        return [e['error_id'] for e in self.errors if e['path'] == path
-            or e['path'].startswith(path + '.') or e['path'].startswith(path + '[')
-            or path.startswith(e['path'] + '.') or path.startswith(e['path'] + '[')]
+        return [e['error_id'] for e in self.errors if e['path'] == path or e['path'].startswith(path + '.') or e['path'].startswith(path + '[') or path.startswith(e['path'] + '.') or path.startswith(e['path'] + '[')]
 
     def defer(self, check, path, causes, reason='Required preceding data is invalid or ambiguous.'):
         entry = dict(check=check, path=path, reason=reason, prerequisite_error_ids=list(dict.fromkeys(causes)))
@@ -176,29 +178,29 @@ class Diagnostics:
     def report(self):
         return dict(errors=self.errors, deferred_checks=self.deferred)
 
-
+@_preserve_function('diagnostic_path', 'fashion_recommendation_v2.orchestrator_validation')
 def diagnostic_path(location):
-    path = ''
+    path = ""
     for part in location:
-        path += f'[{part}]' if isinstance(part, int) else ('.' if path else '') + str(part)
+        path += f'[{part}]' if isinstance(part, int) else ('.' if path else "") + str(part)
     return path or '$'
 
-
+@_preserve_function('ranges', 'fashion_recommendation_v2.orchestrator_validation')
 def ranges(indices):
     """Compact consecutive code-point positions without dropping punctuation/space."""
     start = end = None
     for index in sorted(set(indices)):
         if end is not None and index != end:
-            yield start, end
+            yield (start, end)
             start = None
         if start is None:
             start = index
         end = index + 1
     if start is not None:
-        yield start, end
+        yield (start, end)
 
-
-def collect_segmentation(raw, query, *, schema):
+@_preserve_function('collect_segmentation', 'fashion_recommendation_v2.orchestrator_validation')
+def collect_segmentation(raw, query, *, schema, quote_only=False):
     """Inspect the original value, never construct a repaired/partial assessment.
 
     A bounded numeric interval is usable for geometry even when its quote is
@@ -211,14 +213,12 @@ def collect_segmentation(raw, query, *, schema):
         result = schema.model_validate(raw)
     except ValidationError as exc:
         for error in exc.errors(include_url=False, include_context=False, include_input=False):
-            diagnostics.error('schema_validation_error', diagnostic_path(error['loc']),
-                message=error['msg'], schema_error_type=error['type'])
+            diagnostics.error('schema_validation_error', diagnostic_path(error['loc']), message=error['msg'], schema_error_type=error['type'])
     if not isinstance(raw, dict):
         causes = [e['error_id'] for e in diagnostics.errors]
-        for check in ('span_quotes', 'coverage', 'overlap_and_order', 'id_references', 'state_evidence', 'dependency_safety'):
+        for check in ('span_quotes', 'id_references', 'state_evidence', 'dependency_safety') if quote_only else ('span_quotes', 'coverage', 'overlap_and_order', 'id_references', 'state_evidence', 'dependency_safety'):
             diagnostics.defer(check, '$', causes, 'No structured assessment object is available.')
-        return None, diagnostics.report()
-
+        return (None, diagnostics.report())
     # All field types, defaults and bounds come from the actual output schema.
     # These probes create no corrected response and never replace original fields.
     unit_schema = get_args(schema.model_fields['semantic_units'].annotation)[0]
@@ -243,46 +243,50 @@ def collect_segmentation(raw, query, *, schema):
         if not isinstance(value, list):
             return []
         return value
-
-    units, states = rows('semantic_units'), rows('unresolved_states')
-    geometry, unit_intervals = [], defaultdict(list)
+    units, states = (rows('semantic_units'), rows('unresolved_states'))
+    geometry, unit_intervals = ([], defaultdict(list))
+    seen_quotes = {}
     unknown_geometry = []
     state_spans = defaultdict(list)
-    unit_ids, state_ids = defaultdict(list), defaultdict(list)
-    unknown_unit_ids, unknown_state_ids, unknown_state_links = [], [], []
+    unit_ids, state_ids = (defaultdict(list), defaultdict(list))
+    unknown_unit_ids, unknown_state_ids, unknown_state_links = ([], [], [])
 
     def invalid_causes(path):
         return diagnostics.causes(path) or diagnostics.causes('$')
 
     def span_check(span, path, *, unit_id=None, state_id=None):
-        details = {k:v for k,v in dict(unit_id=unit_id, state_id=state_id).items() if isinstance(v, str)}
-        if not isinstance(span, dict) or not all(valid_field(span, span_schema, f) for f in ('start', 'end')):
+        details = {k: v for k, v in dict(unit_id=unit_id, state_id=state_id).items() if isinstance(v, str)}
+        if quote_only:
+            if not valid_field(span, span_schema, 'source_text'):
+                causes = invalid_causes(path)
+                diagnostics.defer('span_quote', path, causes)
+                return (None, False, causes)
+            if span['source_text'] not in query:
+                cause = diagnostics.error('quote_not_found', path, **details, source_text=span['source_text'])
+                return (None, False, [cause])
+            return (None, True, [])
+        if not isinstance(span, dict) or not all((valid_field(span, span_schema, f) for f in ('start', 'end'))):
             causes = invalid_causes(path)
             diagnostics.defer('span_range_and_quote', path, causes)
-            return None, False, causes
-        start, end = span['start'], span['end']
+            return (None, False, causes)
+        start, end = (span['start'], span['end'])
         details.update(start=start, end=end)
         if end <= start:
-            # SourceSpan's schema already owns this bound.
             causes = invalid_causes(path)
             diagnostics.defer('span_quote', path, causes, 'Span interval is reversed or empty.')
-            return None, False, causes
+            return (None, False, causes)
         if end > len(query):
-            cause = diagnostics.error('span_out_of_bounds', path, **details,
-                source_text=span.get('source_text') if isinstance(span.get('source_text'), str) else None,
-                message=f'Interval exceeds {ASSESSMENT_QUERY_PATH} length {len(query)}.')
+            cause = diagnostics.error('span_out_of_bounds', path, **details, source_text=span.get('source_text') if isinstance(span.get('source_text'), str) else None, message=f'Interval exceeds {ASSESSMENT_QUERY_PATH} length {len(query)}.')
             diagnostics.defer('span_quote', path, [cause], 'A complete in-range slice is unavailable.')
-            return None, False, [cause]
+            return (None, False, [cause])
         if not valid_field(span, span_schema, 'source_text'):
             causes = invalid_causes(path + '.source_text')
             diagnostics.defer('span_quote', path, causes)
-            return (start, end), False, causes
+            return ((start, end), False, causes)
         if query[start:end] != span['source_text']:
-            cause = diagnostics.error('span_text_mismatch', path, **details,
-                source_text=span['source_text'], actual_text=query[start:end])
-            return (start, end), False, [cause]
-        return (start, end), True, []
-
+            cause = diagnostics.error('span_text_mismatch', path, **details, source_text=span['source_text'], actual_text=query[start:end])
+            return ((start, end), False, [cause])
+        return ((start, end), True, [])
     if not isinstance(raw.get('semantic_units'), list):
         unknown_geometry.extend(invalid_causes('semantic_units'))
         unknown_unit_ids.extend(invalid_causes('semantic_units'))
@@ -292,7 +296,6 @@ def collect_segmentation(raw, query, *, schema):
             diagnostics.error('missing_semantic_units', 'semantic_units', message='Semantic units must be present with unique IDs.')
     if not isinstance(raw.get('unresolved_states', []), list):
         unknown_state_ids.extend(invalid_causes('unresolved_states'))
-
     for index, unit in enumerate(units):
         path = f'semantic_units[{index}]'
         if not isinstance(unit, dict):
@@ -313,47 +316,51 @@ def collect_segmentation(raw, query, *, schema):
         if not isinstance(spans, list):
             causes = invalid_causes(path + '.spans')
             unknown_geometry.extend(causes)
-            diagnostics.defer('unit_span_geometry', path + '.spans', causes)
+            diagnostics.defer('unit_quotes' if quote_only else 'unit_span_geometry', path + '.spans', causes)
             continue
         previous = None
         for n, span in enumerate(spans):
             span_path = f'{path}.spans[{n}]'
             interval, quoted, causes = span_check(span, span_path, unit_id=uid)
+            if quote_only:
+                if quoted:
+                    quote = span['source_text']
+                    if quote in seen_quotes:
+                        diagnostics.error('duplicate_quote', span_path, source_text=quote, related_paths=[seen_quotes[quote]])
+                    seen_quotes[quote] = span_path
+                continue
             if interval is None:
                 unknown_geometry.extend(causes)
                 diagnostics.defer('unit_span_order', path + '.spans', causes)
                 continue
             start, end = interval
             if previous is not None and start < previous[0]:
-                diagnostics.error('spans_out_of_order', span_path, unit_id=uid if isinstance(uid,str) else None,
-                    start=start, end=end, related_paths=[previous[2]])
+                diagnostics.error('spans_out_of_order', span_path, unit_id=uid if isinstance(uid, str) else None, start=start, end=end, related_paths=[previous[2]])
             previous = (start, end, span_path)
-            row = dict(start=start, end=end, path=span_path, index=index, unit_id=uid if isinstance(uid,str) else None)
+            row = dict(start=start, end=end, path=span_path, index=index, unit_id=uid if isinstance(uid, str) else None)
             geometry.append(row)
             unit_intervals[index].append(row)
-
     # Pairwise intersections are independent of ordering and count/state citations.
     for n, current in enumerate(geometry):
         for previous in geometry[:n]:
-            start, end = max(current['start'], previous['start']), min(current['end'], previous['end'])
+            start, end = (max(current['start'], previous['start']), min(current['end'], previous['end']))
             if start < end:
-                diagnostics.error('overlapping_spans', current['path'], start=start, end=end,
-                    actual_text=query[start:end], related_paths=[previous['path'], current['path']],
-                    related_unit_ids=[u for u in (previous['unit_id'], current['unit_id']) if u is not None])
+                diagnostics.error('overlapping_spans', current['path'], start=start, end=end, actual_text=query[start:end], related_paths=[previous['path'], current['path']], related_unit_ids=[u for u in (previous['unit_id'], current['unit_id']) if u is not None])
     covered = defaultdict(list)
     for row in geometry:
         for position in range(row['start'], row['end']):
             covered[position].append(row['index'])
-    if unknown_geometry:
-        diagnostics.defer('coverage', 'semantic_units', unknown_geometry,
-            'Unknown span intervals may cover apparent gaps; do not infer missing characters.')
+    if quote_only:
+        pass
+    elif unknown_geometry:
+        diagnostics.defer('coverage', 'semantic_units', unknown_geometry, 'Unknown span intervals may cover apparent gaps; do not infer missing characters.')
     else:
-        for start, end in ranges(i for i,c in enumerate(query) if not c.isspace() and i not in covered):
+        for start, end in ranges((i for i, c in enumerate(query) if not c.isspace() and i not in covered)):
             diagnostics.error('uncovered_characters', 'semantic_units', start=start, end=end, actual_text=query[start:end])
-
     for index, state in enumerate(states):
         path = f'unresolved_states[{index}]'
         if not isinstance(state, dict):
+            # SourceSpan's schema already owns this bound.
             causes = invalid_causes(path)
             unknown_state_ids.extend(causes)
             diagnostics.defer('state_evidence', path, causes)
@@ -364,7 +371,7 @@ def collect_segmentation(raw, query, *, schema):
         else:
             causes = invalid_causes(path + '.state_id')
             unknown_state_ids.extend(causes)
-            diagnostics.defer('state_unit_assignment_and_evidence_membership', path, causes)
+            diagnostics.defer('state_unit_assignment' if quote_only else 'state_unit_assignment_and_evidence_membership', path, causes)
         if not isinstance(state.get('evidence'), list):
             diagnostics.defer('state_evidence', path + '.evidence', invalid_causes(path + '.evidence'))
             continue
@@ -378,36 +385,32 @@ def collect_segmentation(raw, query, *, schema):
             span_check(span, f'count_evidence[{index}]')
     else:
         diagnostics.defer('count_evidence_quotes', 'count_evidence', invalid_causes('count_evidence'))
-
     for name, identities, field in [('semantic_units', unit_ids, 'unit_id'), ('unresolved_states', state_ids, 'state_id')]:
         for identity, indices in identities.items():
             if len(indices) > 1:
                 # Replace the same root schema diagnostic with a located diagnostic.
                 if field == 'state_id':
                     diagnostics.errors[:] = [e for e in diagnostics.errors if e.get('message') != 'Value error, Assessment state IDs must be unique.']
-                diagnostics.error('duplicate_' + field, name, referenced_id=identity,
-                    related_paths=[f'{name}[{i}].{field}' for i in indices])
-
+                diagnostics.error('duplicate_' + field, name, referenced_id=identity, related_paths=[f'{name}[{i}].{field}' for i in indices])
     for index, unit in enumerate(units):
         if not isinstance(unit, dict):
             continue
-        path, uid, sid = f'semantic_units[{index}]', unit.get('unit_id'), unit.get('state_id')
+        path, uid, sid = (f'semantic_units[{index}]', unit.get('unit_id'), unit.get('state_id'))
         valid_sid = valid_field(unit, unit_schema, 'state_id')
         if not valid_sid or not valid_field(unit, unit_schema, 'kind'):
             diagnostics.defer('state_assignment', path, invalid_causes(path))
         if valid_sid and valid_field(unit, unit_schema, 'kind'):
             if (unit['kind'] == 'unresolved_condition') != (sid is not None):
                 diagnostics.error('invalid_state_assignment', path, message='Only unresolved units must carry a state_id.')
-        if valid_sid and sid is not None and sid not in state_ids:
+        if valid_sid and sid is not None and (sid not in state_ids):
             if unknown_state_ids:
                 diagnostics.defer('state_reference', path + '.state_id', unknown_state_ids)
             else:
                 diagnostics.error('unknown_state', path + '.state_id', referenced_id=sid)
-        if raw.get('decision') == 'proceed' and valid_sid and sid is not None:
+        if raw.get('decision') == 'proceed' and valid_sid and (sid is not None):
             if valid_field(unit, unit_schema, 'independently_removable'):
                 if not unit['independently_removable']:
-                    diagnostics.error('unsafe_unresolved_unit', path, unit_id=uid if isinstance(uid,str) else None,
-                        message='Unresolved meaning cannot be safely separated; regroup the units.')
+                    diagnostics.error('unsafe_unresolved_unit', path, unit_id=uid if isinstance(uid, str) else None, message='Unresolved meaning cannot be safely separated; regroup the units.')
             else:
                 diagnostics.defer('removal_safety', path, invalid_causes(path + '.independently_removable'))
         if not isinstance(unit.get('depends_on', []), list):
@@ -434,34 +437,28 @@ def collect_segmentation(raw, query, *, schema):
                     diagnostics.error('unknown_dependency', dep_path, referenced_id=ref)
                 continue
             if len(targets) > 1:
-                diagnostics.defer('dependency_safety', f'{dep_path}[{n}]', diagnostics.causes('semantic_units'),
-                    'Referenced unit ID is ambiguous.')
+                diagnostics.defer('dependency_safety', f'{dep_path}[{n}]', diagnostics.causes('semantic_units'), 'Referenced unit ID is ambiguous.')
                 continue
             target = units[targets[0]]
             target_path = f'semantic_units[{targets[0]}].state_id'
             if not valid_sid or not valid_field(target, unit_schema, 'state_id'):
-                diagnostics.defer('dependency_safety', f'{dep_path}[{n}]',
-                    invalid_causes(path + '.state_id') + invalid_causes(target_path))
-            elif raw.get('decision') == 'proceed' and target.get('state_id') is not None and target['state_id'] != sid:
-                diagnostics.error('unsafe_dependency', dep_path, referenced_id=ref,
-                    message='Removing an unresolved condition could change retained meaning.')
-
+                diagnostics.defer('dependency_safety', f'{dep_path}[{n}]', invalid_causes(path + '.state_id') + invalid_causes(target_path))
+            elif raw.get('decision') == 'proceed' and target.get('state_id') is not None and (target['state_id'] != sid):
+                diagnostics.error('unsafe_dependency', dep_path, referenced_id=ref, message='Removing an unresolved condition could change retained meaning.')
     for sid, indices in state_ids.items():
         if len(indices) > 1:
             for index in indices:
-                diagnostics.defer('state_evidence_membership', f'unresolved_states[{index}].evidence',
-                    diagnostics.causes('unresolved_states'), 'State ID is ambiguous.')
+                diagnostics.defer('state_unit_assignment' if quote_only else 'state_evidence_membership', f'unresolved_states[{index}].evidence', diagnostics.causes('unresolved_states'), 'State ID is ambiguous.')
             continue
         index = indices[0]
         path = f'unresolved_states[{index}]'
-        assigned = [n for n,u in enumerate(units) if isinstance(u,dict)
-            and valid_field(u, unit_schema, 'state_id') and u.get('state_id') == sid]
+        assigned = [n for n, u in enumerate(units) if isinstance(u, dict) and valid_field(u, unit_schema, 'state_id') and (u.get('state_id') == sid)]
         if not assigned:
             if unknown_state_links:
                 diagnostics.defer('state_unit_assignment', path, unknown_state_links)
             else:
                 diagnostics.error('state_without_unit', path, state_id=sid)
-        for span_path, interval, quoted, causes in state_spans[index]:
+        for span_path, interval, quoted, causes in [] if quote_only else state_spans[index]:
             if not quoted or interval is None:
                 diagnostics.defer('state_evidence_membership', span_path, causes)
                 continue
@@ -469,31 +466,29 @@ def collect_segmentation(raw, query, *, schema):
             uncertain = []
             for pos in range(*interval):
                 if query[pos].isspace():
-                    continue  # Preserve the existing ownership rule for evidence whitespace.
+                    # Preserve the existing ownership rule for evidence whitespace.
+                    continue
                 owners = covered.get(pos, [])
                 if not owners and unknown_geometry:
                     uncertain.extend(unknown_geometry)
                 elif len(owners) > 1:
                     uncertain.extend(diagnostics.causes('semantic_units'))
-                elif any(not valid_field(units[o], unit_schema, 'state_id') for o in owners):
+                elif any((not valid_field(units[o], unit_schema, 'state_id') for o in owners)):
                     uncertain.extend(unknown_state_links)
                 elif not owners or units[owners[0]].get('state_id') != sid:
                     invalid.append(pos)
             if uncertain:
                 diagnostics.defer('state_evidence_membership', span_path, uncertain)
             for start, end in ranges(invalid):
-                diagnostics.error('state_evidence_outside_unit', span_path, state_id=sid,
-                    start=start, end=end, actual_text=query[start:end])
+                diagnostics.error('state_evidence_outside_unit', span_path, state_id=sid, start=start, end=end, actual_text=query[start:end])
     if result is None:
-        diagnostics.defer('schema_cross_field_contract', '$', [e['error_id'] for e in diagnostics.errors
-            if e['code'] == 'schema_validation_error'] or [e['error_id'] for e in diagnostics.errors],
-            'Complete schema validation must run again after structural or cross-field errors are corrected.')
+        diagnostics.defer('schema_cross_field_contract', '$', [e['error_id'] for e in diagnostics.errors if e['code'] == 'schema_validation_error'] or [e['error_id'] for e in diagnostics.errors], 'Complete schema validation must run again after structural or cross-field errors are corrected.')
     if not valid_field(raw, schema, 'decision'):
         diagnostics.defer('dependency_and_removal_safety', 'semantic_units', invalid_causes('decision'))
-    return result, diagnostics.report()
+    return (result, diagnostics.report())
 
-
-def inspect_received_response(snapshot, query, *, schema, error=None):
+@_preserve_function('inspect_received_response', 'fashion_recommendation_v2.orchestrator_validation')
+def inspect_received_response(snapshot, query, *, schema, error=None, derive_quote_coordinates=False, quote_only=False):
     """Return diagnostics and a lossless correction envelope, never a repaired payload."""
     import json
     raw = snapshot.get('model_response')
@@ -514,21 +509,26 @@ def inspect_received_response(snapshot, query, *, schema, error=None):
             diagnostics.error('parsing_error', '$', message=parsing_error)
         elif isinstance(error, ValidationError):
             for row in error.errors(include_url=False, include_context=False, include_input=False):
-                diagnostics.error('schema_validation_error', diagnostic_path(row['loc']),
-                    message=row['msg'], schema_error_type=row['type'])
+                diagnostics.error('schema_validation_error', diagnostic_path(row['loc']), message=row['msg'], schema_error_type=row['type'])
         else:
             diagnostics.error('response_unavailable', '$', message=str(error) if error else 'No API assessment response was received.')
         causes = [e['error_id'] for e in diagnostics.errors]
-        for check in ('schema', 'span_quotes', 'coverage', 'overlap_and_order', 'id_references', 'state_evidence', 'dependency_safety'):
+        for check in ('schema', 'span_quotes', 'id_references', 'state_evidence', 'dependency_safety') if quote_only else ('schema', 'span_quotes', 'coverage', 'overlap_and_order', 'id_references', 'state_evidence', 'dependency_safety'):
             diagnostics.defer(check, '$', causes, 'No parseable response is available; the failed response is not an assessment.')
-        return None, diagnostics.report(), previous
-    result, report = collect_segmentation(raw, query, schema=schema)
-    if error is not None and not report['errors']:
+        return (None, diagnostics.report(), previous)
+    inspected = raw
+    coordinates, coordinate_errors = ([], [])
+    if derive_quote_coordinates:
+        from fashion_recommendation_v2.orchestrator_spans import derive_coordinates
+        inspected, coordinates, coordinate_errors = derive_coordinates(raw, query)
+    result, report = collect_segmentation(inspected, query, schema=schema, quote_only=quote_only)
+    report['errors'].extend(coordinate_errors)
+    if derive_quote_coordinates:
+        report['coordinate_derivation'] = coordinates
+    if error is not None and (not report['errors']):
         report['errors'].append(dict(error_id='error_transport', code='response_error', path='$', message=str(error)))
     # An SDK/API failure is never promoted to a successful model response.
-    return result, report, previous
-
-
+    return (result, report, previous)
 REMOVAL_GUIDANCE_V8 = """
 해당 구절을 제외했을 때 남은 명확한 조건의 의미·부정·OR·범위가 유지되는지 다시 판단하라.
 단순 수식 관계와 의미 보존에 필요한 의존관계를 구분하라.
@@ -538,11 +538,10 @@ REMOVAL_GUIDANCE_V8 = """
 수정 후 원문 포함·인용 위치·상태 연결·의존관계를 모두 다시 확인하라.
 """
 
-
+@_preserve_function('add_removal_feedback', 'fashion_recommendation_v2.orchestrator_validation')
 def add_removal_feedback(report):
     """Enrich v8 diagnostics only; preserve error identity and the received response."""
     for error in report['errors']:
         if error['code'] == 'unsafe_unresolved_unit':
             unit = error.get('unit_id') or error['path']
-            error['message'] = (f'{unit}은 미해결 단위인데 independently_removable=false로 기록됐다.\n'
-                                + REMOVAL_GUIDANCE_V8.strip())
+            error['message'] = f'{unit}은 미해결 단위인데 independently_removable=false로 기록됐다.\n' + REMOVAL_GUIDANCE_V8.strip()

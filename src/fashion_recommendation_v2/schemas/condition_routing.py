@@ -1,5 +1,13 @@
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
+from __future__ import annotations
+
+from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
+
+
+# ---- condition_routing ----
+
 """Request scoring ownership, separate from product eligibility contracts."""
-from fashion_recommendation_v2.module_compat import import_module as _role_module
 from typing import Literal
 from pydantic import Field
 from pydantic import model_validator
@@ -8,34 +16,33 @@ from fashion_recommendation_v2.schemas.base import StrictBaseModel
 from fashion_recommendation_v2.schemas.relation_intent import RelationIntent
 from fashion_recommendation_v2.schemas.stylist_condition_policy import StylistPolicyV47
 
-
+@_preserve_class('RelationCondition', 'fashion_recommendation_v2.schemas.condition_routing')
 class RelationCondition(StrictBaseModel):
     requirement_id: str = Field(pattern=r'^[a-zA-Z][a-zA-Z0-9_]{0,79}$')
     intent: RelationIntent
     target: Literal['search_target']
     source_text: str = Field(min_length=1)
 
-
+@_preserve_class('ConditionAssignment', 'fashion_recommendation_v2.schemas.condition_routing')
 class ConditionAssignment(StrictBaseModel):
     requirement_id: str
     owner: Literal['relation', 'ranking']
 
-
+@_preserve_function('product_condition_owner', 'fashion_recommendation_v2.schemas.condition_routing')
 # Shared source-to-owner contract; scope/kind/product attribute never select owner.
 def product_condition_owner(source):
     return 'relation' if source == 'reference' else 'ranking'
 
-
+@_preserve_function('fixed_condition_owners', 'fashion_recommendation_v2.schemas.condition_routing')
 def fixed_condition_owners(conditions, relation_conditions=()):
-    pairs = [(c.requirement_id, product_condition_owner(c.source))
-             for c in conditions if c.role == 'target']
+    pairs = [(c.requirement_id, product_condition_owner(c.source)) for c in conditions if c.role == 'target']
     pairs += [(c.requirement_id, 'relation') for c in relation_conditions]
     owners = dict(pairs)
     if len(owners) != len(pairs):
         raise ValueError('Duplicate product/relation condition IDs.')
     return owners
 
-
+@_preserve_class('ConditionRoutingV37', 'fashion_recommendation_v2.schemas.condition_routing')
 class ConditionRoutingV37(StrictBaseModel):
     stylist_policy_v47: StylistPolicyV47 | None = None
     version: Literal['v37'] = 'v37'
@@ -58,7 +65,7 @@ class ConditionRoutingV37(StrictBaseModel):
         if len(ids) != len(set(ids)) or len(relations) != len(set(relations)):
             raise ValueError('Duplicate condition routing IDs.')
         owners = {r.requirement_id: r.owner for r in self.assignments}
-        if any(owners.get(rid) != 'relation' for rid in relations):
+        if any((owners.get(rid) != 'relation' for rid in relations)):
             raise ValueError('Every relation clause must have Relation ownership.')
         if len(set(self.relative_requirement_ids)) != len(self.relative_requirement_ids) or not set(self.relative_requirement_ids) <= set(ids) - set(relations):
             raise ValueError('Relative comparisons must reference unique product conditions.')

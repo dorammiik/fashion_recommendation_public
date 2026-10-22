@@ -1,6 +1,15 @@
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
+from __future__ import annotations
+
+from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
+
+
+# ---- interpretation_attributes ----
+
 """Search detail-key provenance shared by input preparation and publication checks."""
 
-
+@_preserve_function('detail_keys', 'fashion_recommendation_v2.preference.interpretation_attributes')
 def detail_keys(evidence):
     keys = set()
     for entry in evidence:
@@ -13,7 +22,7 @@ def detail_keys(evidence):
                 keys.add(value['key'])
     return sorted(keys)
 
-
+@_preserve_function('validate_detail_keys', 'fashion_recommendation_v2.preference.interpretation_attributes')
 def validate_detail_keys(interpretations, evidence):
     allowed = set(detail_keys(evidence))
     for interpretation in interpretations:

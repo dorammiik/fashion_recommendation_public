@@ -27,10 +27,10 @@ export function ProductCarousel({children}: {children: ReactNode}) {
   return <div className="product-carousel">
     <div className="carousel" ref={viewport} aria-label="추천 상품 목록" tabIndex={0}>{children}</div>
     <button type="button" className="carousel-arrow carousel-next" aria-label="다음 상품 보기" hidden={!edges.next} onClick={() => slide(1)}>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
     </button>
     <button type="button" className="carousel-arrow carousel-previous" aria-label="이전 상품 보기" hidden={!edges.previous} onClick={() => slide(-1)}>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
     </button>
   </div>;
 }

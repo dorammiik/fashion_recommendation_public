@@ -6,13 +6,13 @@
 
 | 구성 | 서비스 버전 | 역할 | 상세 문서 |
 | --- | --- | --- | --- |
-| Orchestrator | v10 | 요청 해석, 상태·실행·인계 검증 | [orchestrator.md](orchestrator.md) |
+| Orchestrator | v12 | 요청 해석, 상태·실행·인계 검증 | [orchestrator.md](orchestrator.md) |
 | Planner | v4 | 주어진 상태를 실행 계획으로 구성 | [planner.md](planner.md) |
-| Stylist | v6 | 미해결 표현을 검색 가능한 soft 조건으로 해석 | [stylist.md](stylist.md) |
-| Search | v56 | 검색 조건·계획, 조회, 상품 평가, 후보 풀 | [search.md](search.md) |
-| Relation | v8 | 기준과 후보의 similarity/compatibility 평가 | [relation.md](relation.md) |
-| Ranking | v15 | 추천 자격·점수·개인화·최종 선정 | [ranking.md](ranking.md) |
-| Summary | v11 | 확정 결과를 사용자 응답으로 설명 | [summary.md](summary.md) |
+| Stylist | v8 | 미해결 표현을 검색 가능한 soft 조건으로 해석 | [stylist.md](stylist.md) |
+| Search | v61 | 검색 조건·계획, 조회, 상품 평가, 후보 풀 | [search.md](search.md) |
+| Relation | v9 | 기준과 후보의 similarity/compatibility 평가 | [relation.md](relation.md) |
+| Ranking | v17 | 추천 자격·점수·개인화·최종 선정 | [ranking.md](ranking.md) |
+| Summary | v13 | 확정 결과를 사용자 응답으로 설명 | [summary.md](summary.md) |
 | Preference | v4 | 행동과 저장된 상품 근거를 취향 프로필로 해석 | [preference.md](preference.md) |
 
 문서의 버전은 서비스 실행 버전이다. 현재 출력에 사용되는 `personalization_v12`, `item_statuses_v7`, `score_breakdowns_v5` 같은 필드는 현재도 유효한 저장 계약 이름이다. 이 이름만 보고 실행 버전을 판단하지 않는다.
@@ -87,7 +87,7 @@ Similarity는 [personalization_policy.py](../src/fashion_recommendation_v2/perso
 
 Planner는 `gpt-6-luna`/low/4,096 출력 토큰, Stylist 해석·조회와 Relation·Ranking 취향 평가·Summary는 해당 서비스 정책의 `gpt-6-luna`를 사용한다. Search는 작업별 모델 라우팅을 적용하므로 [Search 문서](search.md)를 따른다. 서버의 공용 `--model` 기본값은 `gpt-5.6-sol`이며 Preference 처리 등에 전달된다. 단계별 명시 모델 설정이 우선하는 경로가 있으므로 `--model` 하나가 모든 호출 모델을 바꾸는 것으로 해석하지 않는다.
 
-후보 목표, 조회량, 모델 호출 수, 동시 호출 수, 호출별 timeout은 서로 다른 제한이다. Search의 420초는 전체 추천의 완료 제한이 아니다. 실행 비용·시간은 실제 조회 상품 수와 실패·교정 횟수에 따라 달라진다.
+후보 목표, 조회량, 모델 호출 수, 동시 호출 수, 호출별 timeout은 서로 다른 제한이다. 호출별 제한과 전체 추천 시간은 별개이며, Stylist 문구와 Search 최초 계획 생성은 현재 서비스에서 타임아웃을 해제한다. 실행 비용·시간은 실제 조회 상품 수와 실패·교정 횟수에 따라 달라진다.
 
 ## 로컬 실행과 합성 예제
 

@@ -1,7 +1,14 @@
-"""Request-local Summary references, derived exclusively from selected Ranking rows."""
-from fashion_recommendation_v2.module_compat import import_module as _role_module
-from copy import deepcopy
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
 
+from __future__ import annotations
+
+from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
+
+
+# ---- evidence_references ----
+
+"""Request-local Summary references, derived exclusively from selected Ranking rows."""
+from copy import deepcopy
 REFERENCE_INSTRUCTIONS = '''
 preference_evidence_refs에는 해당 상품의 allowed_preference_evidence_refs에 있는 짧은 키만
 사용한다. preference_support.evidence_refs도 동일한 요청별 키이며 근거 내용과 연결된다.
@@ -13,17 +20,15 @@ Summary의 인용 가능 근거 목록이 아니다. 그 출처의 실제 ID를 
 해당 상품의 allowed_preference_evidence_refs 밖의 근거를 취향 설명에 사용하지 않는다.
 '''
 
-
+@_preserve_function('reference_map', 'fashion_recommendation_v2.summary.evidence_references')
 def reference_map(source):
-    allowed = {row.item_id: sorted(set(row.preference_evidence_refs))
-               for row in source.final_ranking.ranked_items}
+    allowed = {row.item_id: sorted(set(row.preference_evidence_refs)) for row in source.final_ranking.ranked_items}
     ids = sorted({ref for refs in allowed.values() for ref in refs})
     mapping = {f'E{i:03d}': ref for i, ref in enumerate(ids, 1)}
     inverse = {ref: key for key, ref in mapping.items()}
-    return dict(key_to_id=mapping, allowed_by_item={
-        item: [inverse[ref] for ref in refs] for item, refs in allowed.items()})
+    return dict(key_to_id=mapping, allowed_by_item={item: [inverse[ref] for ref in refs] for item, refs in allowed.items()})
 
-
+@_preserve_function('project_references', 'fashion_recommendation_v2.summary.evidence_references')
 def project_references(request, mapping):
     projected = request.model_copy(deep=True)
     inverse = {ref: key for key, ref in mapping['key_to_id'].items()}
@@ -33,12 +38,12 @@ def project_references(request, mapping):
             support['evidence_refs'] = [inverse[ref] for ref in support['evidence_refs']]
     return projected
 
-
+@_preserve_function('resolve_references', 'fashion_recommendation_v2.summary.evidence_references')
 def resolve_references(payload, mapping):
     """Reject before resolving; no fuzzy match, ID fallback, or input mutation."""
     for row in payload['recommendations']:
         refs = row['preference_evidence_refs']
-        if any(ref not in mapping['key_to_id'] for ref in refs):
+        if any((ref not in mapping['key_to_id'] for ref in refs)):
             raise ValueError('Unknown Summary preference evidence key')
         if row['item_id'] not in mapping['allowed_by_item'] or not set(refs) <= set(mapping['allowed_by_item'][row['item_id']]):
             raise ValueError('Summary preference claims must cite actually used ranking evidence for this item')
@@ -47,7 +52,7 @@ def resolve_references(payload, mapping):
         row['preference_evidence_refs'] = [mapping['key_to_id'][key] for key in row['preference_evidence_refs']]
     return result
 
-
+@_preserve_function('validate_saved_result', 'fashion_recommendation_v2.summary.evidence_references')
 def validate_saved_result(record, source):
     """Recheck the saved raw-to-canonical link against authoritative Ranking input."""
     from fashion_recommendation_v2.schemas.summary import response_schema

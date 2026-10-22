@@ -1,18 +1,20 @@
-"""Role-consolidated implementation; service contracts and behavior are preserved."""
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
 from __future__ import annotations
+
 from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
 
+
 # ---- relation_execution_v7 ----
+
 """Code-owned candidate outcomes, distinct from an evaluated null score."""
 from typing import Literal
 from pydantic import Field
 from pydantic import model_validator
 from fashion_recommendation_v2.schemas.base import StrictBaseModel
 
-
 @_preserve_class('RelationItemExecutionV7', 'fashion_recommendation_v2.schemas.relation_execution_v7')
 class RelationItemExecutionV7(StrictBaseModel):
-    __qualname__ = 'RelationItemExecutionV7'
     status: Literal['success', 'fail', 'unevaluated']
     call_count: int = Field(ge=0, le=2)
     reason: str

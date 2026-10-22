@@ -1,12 +1,12 @@
 {
   "service_versions": {
-    "orchestrator": "v10",
+    "orchestrator": "v12",
     "planner": "v4",
-    "stylist": "v6",
-    "search": "v56",
-    "relation": "v8",
-    "ranking": "v15",
-    "summary": "v11",
+    "stylist": "v8",
+    "search": "v61",
+    "relation": "v9",
+    "ranking": "v17",
+    "summary": "v13",
     "preference": "v4"
   },
   "files": [
@@ -83,28 +83,64 @@
       "sha256": "c8b42663fdb027b1e715b99958a8e52321bb24d051d62f2cf18e645641a2cae1"
     },
     {
-      "path": "PUBLIC_REVIEW.md",
-      "reason": "public setup, documentation or dependency validation",
-      "bytes": 6771,
-      "sha256": "96078ed3b3c98a4b1c54e2066ba57c605f6ea654c18634dc60cdcc36e7d9ab64"
-    },
-    {
       "path": "README.md",
       "reason": "public setup, documentation or dependency validation",
-      "bytes": 10282,
-      "sha256": "c885451afb2974acf1e5a0624a64263559bebb848e3f921107e6ceb5871199dc"
+      "bytes": 18255,
+      "sha256": "07b9f0404423bb73ee2c89ad5f012d47c01203f8e276a7d29c08eaa0efd40f52"
+    },
+    {
+      "path": "assets/images/e2e-cost-by-version.png",
+      "reason": "public service documentation",
+      "bytes": 496045,
+      "sha256": "d4faaa33f098f7e9fba702a721f6f1d53c712913b3255ae252caf79e8b264417"
+    },
+    {
+      "path": "assets/images/e2e-time-by-version.png",
+      "reason": "public service documentation",
+      "bytes": 590966,
+      "sha256": "74823a1cf3d94442d5d2f8967cf6d167f375668f3c25d16820fd3b59163009fb"
+    },
+    {
+      "path": "assets/images/human-eval-by-model.png",
+      "reason": "public service documentation",
+      "bytes": 424087,
+      "sha256": "24af5a153c768e3dbda71fc2fcafd93fe32c497e375856e8979c6f92634a8b22"
+    },
+    {
+      "path": "assets/images/human-eval-overall.png",
+      "reason": "public service documentation",
+      "bytes": 115345,
+      "sha256": "c0ef717ee27b2db10708a3efd05fa595c6da8ce9e62bd0f1f393bf64e2b51f7c"
+    },
+    {
+      "path": "assets/images/ranking-weight-experiments.png",
+      "reason": "public service documentation",
+      "bytes": 6426212,
+      "sha256": "fe56435a7d19979e463c314d10776810e70838b49accdad0d3a211e33666371b"
+    },
+    {
+      "path": "assets/images/search-quality-comparison.png",
+      "reason": "public service documentation",
+      "bytes": 432449,
+      "sha256": "c23209afab7faad824727dd0beceb64fa9ad4470067b6ddaa339f8aa9c7cca87"
+    },
+    {
+      "path": "assets/images/search-time-comparison.png",
+      "reason": "public service documentation",
+      "bytes": 146458,
+      "sha256": "55821be60a6578e23256f93640f5b3542ba591de7c3bfe7a4c60883dec8abfb9"
     },
     {
       "path": "docs/architecture.md",
       "reason": "current service implementation documentation",
-      "bytes": 9555,
-      "sha256": "dd9149ffd2345c42a7d1194d4e34a67132bfaae3209bd667024935e584c06602"
+      "bytes": 9650,
+      "sha256": "14af8e1181ef01b8aac1ad125ebbd87e914d57c6c0bf1845554b0c154b0cc601"
     },
     {
       "path": "docs/orchestrator.md",
       "reason": "current service implementation documentation",
-      "bytes": 9334,
-      "sha256": "6c4743c6a0a045f587533a51a88330e9bf8022b2c2104201bb8caa7d17545d11"
+      "bytes": 9432,
+      "sha256": "8b044a933948621f491593a5e06c3fabca6fe2f8a7b9fe640a182e22f1dfd866"
     },
     {
       "path": "docs/planner.md",
@@ -121,32 +157,32 @@
     {
       "path": "docs/ranking.md",
       "reason": "current service implementation documentation",
-      "bytes": 11839,
-      "sha256": "5bd2e77162a1c6dc08b9e0f65101c68d28d6258348d3058df7ad7f04bf18dcda"
+      "bytes": 12553,
+      "sha256": "a33ac93c31ccf5ea9cb4ba21db23f5350ebfc07a19e8a29de8e4ef0bfba3eae4"
     },
     {
       "path": "docs/relation.md",
       "reason": "current service implementation documentation",
-      "bytes": 9730,
-      "sha256": "73b9bc9afbe464984591a94315e34ce4028fd7c0288a216de9ffec01b6885b62"
+      "bytes": 9739,
+      "sha256": "4930e7793eac246f63225bac017076e0c05e3e46b0b811ba66873bb810f89fca"
     },
     {
       "path": "docs/search.md",
       "reason": "current service implementation documentation",
-      "bytes": 12700,
-      "sha256": "0de63ff5a3745b09a1fc49ceaf3868dd0a7231ede6a4c4373bd4b0b1ebeba1cf"
+      "bytes": 13310,
+      "sha256": "67a336a014796ca5b73797acdf4c8c596434f0db0fb13a832c75e434605a530a"
     },
     {
       "path": "docs/stylist.md",
       "reason": "current service implementation documentation",
-      "bytes": 8891,
-      "sha256": "71f41abb5dc7d568a5c2d37294c3f26b9c7fe86845a8f5cf3dcd9682c3d96386"
+      "bytes": 9308,
+      "sha256": "1cb7aca7f0ecc4e782506c1f7ea4f7274fca59c2050a6eb329d392b018d0143c"
     },
     {
       "path": "docs/summary.md",
       "reason": "current service implementation documentation",
-      "bytes": 9560,
-      "sha256": "32786eb76ff2da6f06e06ed3261c1d4079733cf6e6f8bf988915dffff8f040f2"
+      "bytes": 9914,
+      "sha256": "797d43086a97d6266cc16c45b023decb0ce1f7dba7a95b28da5031502b050315"
     },
     {
       "path": "frontend/.env.example",
@@ -223,8 +259,8 @@
     {
       "path": "frontend/src/App.tsx",
       "reason": "current frontend",
-      "bytes": 17602,
-      "sha256": "85bd9e5138603d85c5f4c53e7f89e2ccb73a23e1ca53b0d5ab5b849a562b5b0d"
+      "bytes": 17483,
+      "sha256": "865f24cfa2d87237fea02e618b85a462795f40cc39bf2a870f0c2aa67aed9018"
     },
     {
       "path": "frontend/src/HomeExamples.tsx",
@@ -236,7 +272,7 @@
       "path": "frontend/src/ProductCarousel.tsx",
       "reason": "current frontend",
       "bytes": 2334,
-      "sha256": "9d16c90691a796f5b03fe32ed3d07380f6c0d01fa30e9e0769204a927c7731ad"
+      "sha256": "afbad6c150e8298ac5d2a77bc3f499cf764fbcdb36d6cee2e3ecf399ae94b7d6"
     },
     {
       "path": "frontend/src/api.ts",
@@ -277,14 +313,14 @@
     {
       "path": "frontend/src/style.css",
       "reason": "current frontend",
-      "bytes": 20859,
-      "sha256": "00cb45f899cc2ccd1ef4b7b11dfe09fd3f4b036bdc47078a678fcc4a415ebd61"
+      "bytes": 20832,
+      "sha256": "e87c0be9dc0ab7c0a461249a358330c17a8e9fc58c35d9fe96acd71ad3620445"
     },
     {
       "path": "frontend/src/types.ts",
       "reason": "current frontend",
-      "bytes": 2493,
-      "sha256": "3c972e0d40a4720690d5188133c9cf4e05bbf3e85b3b7ef8b57f66f389af0d0a"
+      "bytes": 2528,
+      "sha256": "5dd2f163ac56164fb418c2a9ce12ca3b7cad1111e778f8287391ff8f93991e45"
     },
     {
       "path": "frontend/tests/api.test.ts",
@@ -350,7 +386,7 @@
       "path": "requirements-preference.txt",
       "reason": "public setup, documentation or dependency validation",
       "bytes": 68,
-      "sha256": "183241a5ac6486d96ada024b2d87490f30a138052da914b5ed8856980fd00af8"
+      "sha256": "c73d21ec17aa4aafdf3117e6274b102ddfae3b3d80c7c4c265ae981bcd094d8b"
     },
     {
       "path": "scripts/init_preference_db.py",
@@ -367,926 +403,974 @@
     {
       "path": "src/fashion_recommendation_v2/__init__.py",
       "reason": "Search v56 dynamic contract",
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "bytes": 302,
+      "sha256": "cf32bd18050ae34aa1bdfa5203970b776d4b48af004bbc9928fae828ebc14dd0"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/__init__.py",
       "reason": "Preference v4 dynamic contract",
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "bytes": 302,
+      "sha256": "cf32bd18050ae34aa1bdfa5203970b776d4b48af004bbc9928fae828ebc14dd0"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/candidate_pool.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/search_runner.py",
-      "bytes": 20276,
-      "sha256": "45e1ae0d738a549603e4ab494d0229c941564f97f81f4ebec5e064546ec675e9"
+      "bytes": 16078,
+      "sha256": "8bbde7f656463d2aed9cd4162f99a5bfde0ea8c5dabc79ca50bbccf9311dc003"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/orchestrator_brain.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 14676,
-      "sha256": "9f5a2b5f3655c4e9fe6ac80f237bd6ceea23f9f1110bad2ad295c7a4bd530775"
+      "bytes": 15243,
+      "sha256": "184dd17103ec05f9ef008767b720cce7d740eb8bd72d72fbb92af674cb984d9e"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/orchestrator_contracts.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/orchestrator_runner.py",
-      "bytes": 11166,
-      "sha256": "f735d7dd384bd41f3ac94ed96bee21b2454047aa90e8a8244cedbfd765b606d5"
+      "bytes": 13999,
+      "sha256": "623586d239fbd628f03cac27247309b9beb2e1276ede1dde30dc07a0ce33c62f"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/orchestrator_preferences.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/ranking_preferences.py",
-      "bytes": 2139,
-      "sha256": "d5e1eac75ee74854ad5a4aef0d1ac676485f53f21f746e64270a555163067e33"
+      "bytes": 2532,
+      "sha256": "09d701c65fbca7abd7cee5cf2d335bea1db2016c776a5f744945c7f52c296013"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/orchestrator_runner.py",
       "reason": "imported by src/fashion_recommendation_v2/server/recommendation_factory.py",
-      "bytes": 37522,
-      "sha256": "be21a7f94b6984b9ad527ad59df5980e9d0f75fb113c9c14a3cea73933539568"
+      "bytes": 37723,
+      "sha256": "3e92a786d8a2ad4a467100b6f1670e0ec11afb3832963c7edc1f6d8112353d68"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/planner.py",
       "reason": "imported by src/fashion_recommendation_v2/server/recommendation_factory.py",
-      "bytes": 1178,
-      "sha256": "31ba44a55ac98aec95df9349aabfe08da34603939991d210aa118d630876a303"
+      "bytes": 1332,
+      "sha256": "9c557a5d382e658b50549ef6032ba5836045ab40a1a0ad85765f6dbb3ab5d7bd"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/preference.py",
       "reason": "imported by scripts/run_preference_server.py",
-      "bytes": 2579,
-      "sha256": "19c3e9e58d961c9276624c21f2ea8bde9e43da4c1e8e1b5387f5546b25c1c02b"
+      "bytes": 2940,
+      "sha256": "929e5a4c7111803ce93a6c49dd451bd6b30382048bf6175b2c6b7e1e229e2cf8"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/preference_brain.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/preference.py",
-      "bytes": 588,
-      "sha256": "723039bbbae42ebe01c5bfca72a2c0e7b29a0c56bcbde2d129b17819542a20e7"
+      "bytes": 873,
+      "sha256": "b89f9a072fd4c26f8e418059505deb03ac9dea73d0894dca3f35c9fb430798aa"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/preference_interpretation_runner.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 6628,
-      "sha256": "4aeb2e12ca059260da7917792252e75a5bedb9950f147149c24469713c15ba65"
+      "bytes": 6782,
+      "sha256": "8e5e3032f6ce27b0a7664089d446b4db373588b885f902a9903395845979266b"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/preference_runner.py",
       "reason": "imported by tests/test_preference_server.py",
-      "bytes": 16038,
-      "sha256": "1e58df6e8264af7401231fed66bfbe68561d646234ee1be407c6e7358124a269"
+      "bytes": 16907,
+      "sha256": "72cab042b81977e285f2ebd11059f81f13e964874c4120b2276ea54edb9d3629"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/preference_scoring.py",
       "reason": "imported by src/fashion_recommendation_v2/storage/preference.py",
-      "bytes": 8823,
-      "sha256": "cbf27b630d8eb91e294570ddde62254a7848edac6ad7433ba2f70880cfd7fcee"
+      "bytes": 9502,
+      "sha256": "30a58675cb73ddc057149329e80bcbfd9da7fb00097b1ced0a62795b1611f32b"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/ranking.py",
       "reason": "imported by src/fashion_recommendation_v2/server/recommendation_factory.py",
-      "bytes": 1014,
-      "sha256": "fd85e4dc74e46a01d5c5f0763575132d7056e3385610fa8f3d88cdaefc10d924"
+      "bytes": 1233,
+      "sha256": "5125c7d837a370d73ebe76ccc2e76f2a77336374eb7e88ea3103083e01a8d8e3"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/ranking_brain.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 3796,
-      "sha256": "837919e44c7667831571668b102d7006569c9e78ab9ebbd0066b6c3ea0d99341"
+      "bytes": 4502,
+      "sha256": "120d4bac3360d479be121b0c4a9348b9a92d695bb13389eeb7c02900eb10ef18"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/ranking_preferences.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/ranking.py",
-      "bytes": 13344,
-      "sha256": "0f367a87dafeb71ad22842e6535cf4b9200a7138b30fb0de84f02f9c81391dd5"
+      "bytes": 13971,
+      "sha256": "fdb103216deb64b7af8b39c533adb31d67d2668014b034eef469c5922a8ca7dd"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/ranking_runner.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/ranking_preferences.py",
-      "bytes": 43549,
-      "sha256": "8be42058dbe816f9cb222270ea01d14b5e588cea6b68cccfc89f3ebc8e20ed88"
+      "bytes": 42721,
+      "sha256": "a55c3190bc694f9988e180dadf213cddc9a93844ece1bc13ebbd607c4093421e"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/registry.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/orchestrator_runner.py",
-      "bytes": 1401,
-      "sha256": "e5a02f50f6d83f92feda4b746a0d8add8636b23815a719fa52ace8ecfaf3780b"
+      "bytes": 1243,
+      "sha256": "5580ff9d3b358c255f742b59573df60de5f089f8f46716030982db58f594f4cb"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/relation.py",
       "reason": "imported by src/fashion_recommendation_v2/server/recommendation_factory.py",
-      "bytes": 10819,
-      "sha256": "3d33eaf5e08a91a6656e79093a8529c97bf0bcf97c1872624ca57fef1bd02aa9"
+      "bytes": 10438,
+      "sha256": "9bc9725f578d3bce603a5c8e5d7f7a69f29e5ca00e155f195bbb1b785056b2e5"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/search_brain.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 124963,
-      "sha256": "041c6e89a0c601fdedc4b2b935733d069776ca616ec57b6b050b1be70ac770d2"
+      "bytes": 125481,
+      "sha256": "69232403fdd8b8bcd4e7b3968aeddf1b85c011d64737b8b30fac0e92a8162dfa"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/search_runner.py",
       "reason": "imported by src/fashion_recommendation_v2/server/recommendation_factory.py",
-      "bytes": 164683,
-      "sha256": "99bbf4139712ff6c3314547bf9086a4389a873bdbb71fc6b70cb421ed10746cd"
+      "bytes": 169279,
+      "sha256": "95d5f558544cb3324d4c45f98e0cc7331e334b25774f54f449db55e9f77f4769"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/search_visual_analysis.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 68624,
-      "sha256": "2eab847bfd2eb91a394a81fb4ee498d12862a1588d1cb4e84b6b0ad5f4cec847"
+      "bytes": 68708,
+      "sha256": "33caa7ed9540a3b74330b33dfa74740647182c888484eb05a77feb3792c89c2c"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/stylist_brain.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 13028,
-      "sha256": "ed652a655b537e4441db70e9578cabb984b715d6349e382e8c09ee330ef29973"
+      "bytes": 14748,
+      "sha256": "075f935fec6eb2bdd84cef45e67d4775888488a4af3a5db8743c31f6f22f56d2"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/stylist_runner.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/search_brain.py",
-      "bytes": 5849,
-      "sha256": "5c505bcf3d6180349cee663df2ce4fd661d62878eb77cb4464b37c2ea1431a92"
+      "bytes": 6086,
+      "sha256": "80ff304a9b33b2931b5727066403b94926bf29d30cba625a09c532047ef891c6"
     },
     {
       "path": "src/fashion_recommendation_v2/agents/summary.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 28994,
-      "sha256": "47fd697887b8bee7788e9a33bacbad0b6cbadb4fffc7438cfb23e02c035434b5"
+      "bytes": 30299,
+      "sha256": "f6eb9640b46265f94893605e29290ad066643fce645afae2524ebf429debd995"
     },
     {
       "path": "src/fashion_recommendation_v2/compatibility.py",
       "reason": "imported by src/fashion_recommendation_v2/stylist_personalization.py",
-      "bytes": 4497,
-      "sha256": "552a914e4bdf5a78a96923554ba5efa5acd87d8dc3935c88067b7c26ea30090b"
+      "bytes": 5464,
+      "sha256": "231eab8fa485be0a0cb4e81929836a55dffffed9ab2c3d424f4b65aaa38072c2"
     },
     {
       "path": "src/fashion_recommendation_v2/llm/__init__.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/ranking_runner.py",
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "bytes": 302,
+      "sha256": "cf32bd18050ae34aa1bdfa5203970b776d4b48af004bbc9928fae828ebc14dd0"
     },
     {
       "path": "src/fashion_recommendation_v2/llm/base.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/ranking_runner.py",
-      "bytes": 1239,
-      "sha256": "45215a99c37e337a8e98492b9cc76e2e6ee185cdda94b965975df0f21a4847eb"
+      "bytes": 1473,
+      "sha256": "5567170516315a3134935b8794a6c6a7395af1c061d3626b807efc968606be2e"
     },
     {
       "path": "src/fashion_recommendation_v2/llm/cost_tracking.py",
       "reason": "imported by src/fashion_recommendation_v2/relation/execution_v7.py",
-      "bytes": 10856,
-      "sha256": "5a247fc7065d18565bf6846f1156893e14e3a25963db1f76084fa8241734d7c8"
+      "bytes": 10970,
+      "sha256": "cc925edb654a1ed0f5f0ba49a584c35295b5fbd510980ce035d6e8b80947a1bf"
     },
     {
       "path": "src/fashion_recommendation_v2/llm/openai_adapter.py",
       "reason": "imported by tests/test_openai_stream_cleanup.py",
-      "bytes": 24115,
-      "sha256": "c335cdf091987152df63bb629d1014d3ff7911832508d0c265e34f35bde20725"
+      "bytes": 27218,
+      "sha256": "b1b494c82b819972cde5877f073f59f42b025ff0d4301ee9d43d15d2fe0fcc21"
     },
     {
       "path": "src/fashion_recommendation_v2/module_compat.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 292758,
-      "sha256": "8d05674603ae2f03435e1fc48289d40f7b9e094c444398a7f62796e3e7e56700"
+      "bytes": 437019,
+      "sha256": "cc6456a95fd97ac043e322a71d57123759e4e96d60fafee0b363b461589ead60"
     },
     {
       "path": "src/fashion_recommendation_v2/orchestrator_policy.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
-      "bytes": 3657,
-      "sha256": "13752ffeb6eefadb9fa924c265c4e6e368c7166fd50cc51d767ea13d26b20152"
+      "bytes": 4754,
+      "sha256": "3eef12770328d95aa017c601614be7eff2c51b69be3d5ecf5ce46e1fdd253515"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/orchestrator_quotes.py",
+      "reason": "current service source and offline validation",
+      "bytes": 1554,
+      "sha256": "2bfdb15e18b3c33b69851de481dd5bcdbc6cc3d5288af74763abcbeed94ef3d1"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/orchestrator_spans.py",
+      "reason": "current service source and offline validation",
+      "bytes": 4221,
+      "sha256": "22f8a5d6072f420a5c26fb764c4b73b8adaf3e70927ff8156a6eebacf6ff3ccc"
     },
     {
       "path": "src/fashion_recommendation_v2/orchestrator_validation.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
-      "bytes": 29147,
-      "sha256": "08731d0dba85d2741b80ff3b3f90f961840c68725df56ecffa62c7b0051d9645"
+      "bytes": 32390,
+      "sha256": "386038ff6aeae49c104ca197ddf45814e8256024634689a4e587bd69c6774425"
     },
     {
       "path": "src/fashion_recommendation_v2/personalization_policy.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
-      "bytes": 523,
-      "sha256": "034665363c4790c6ebf9812bc1d7d0395b4c31027de8072fb8c3afeb9be020f5"
+      "bytes": 1022,
+      "sha256": "965ae9c9ad10c918cb9e037c99c33dd648f5109b6a4864119b5a17bc91b8323b"
     },
     {
       "path": "src/fashion_recommendation_v2/planner/planner_contracts.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/planner.py",
-      "bytes": 1175,
-      "sha256": "0a72b3710814909b8d9d735a1600f52460dbcd68be5cd31fb422ba6b9697a4d5"
+      "bytes": 1637,
+      "sha256": "d09279035376e27626585d764383e95da0310c9d0586a0e46604f0a56ce52529"
     },
     {
       "path": "src/fashion_recommendation_v2/preference/contracts.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/preference_interpretation_runner.py",
-      "bytes": 2034,
-      "sha256": "329435dced244383cc4e418d1e75479e2218a24571deee682bf368b2e5dea7ae"
+      "bytes": 2192,
+      "sha256": "96e56ae93b55712653f6a051c123ffb992c9f03bfb78119aab02d597b7e05892"
     },
     {
       "path": "src/fashion_recommendation_v2/preference/interpretation_attributes.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/preference_interpretation_runner.py",
-      "bytes": 926,
-      "sha256": "46f9140ea6a2d3cd02d89016d0981d2eecd4d3eebccc4f4359407028a5aa47c4"
+      "bytes": 1455,
+      "sha256": "73dd629e9def90216ec35a04b71b39e0ac8791fd9e89f872d38bb34fee020bad"
     },
     {
       "path": "src/fashion_recommendation_v2/preference/interpretation_input.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/preference_interpretation_runner.py",
-      "bytes": 3805,
-      "sha256": "8bb0b4d22646e05cbc12a27e19cfa04b427d716263fe70d463207153e8372163"
+      "bytes": 4087,
+      "sha256": "85c37b07f622699f26726e819ff762244173bcaf350357986bdf8d8208155f93"
     },
     {
       "path": "src/fashion_recommendation_v2/preference/interpretation_references.py",
       "reason": "imported by src/fashion_recommendation_v2/preference/profile_lookup.py",
-      "bytes": 1379,
-      "sha256": "1fba136d58cbcb9f677cdbe0ac5ee8129087819376879cdeab1527140f5c4983"
+      "bytes": 1929,
+      "sha256": "0fcfec16742ae86a2de5cd4cf6887b1df2282e4473716e8d255476344843d466"
     },
     {
       "path": "src/fashion_recommendation_v2/preference/interpretation_sources.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/preference_interpretation_runner.py",
-      "bytes": 3116,
-      "sha256": "9a088c943a9e2e1ad4e318f098191785c39e73b6b158e090c09b5a7892ed4aca"
+      "bytes": 3412,
+      "sha256": "d6bd215dcb5b8a3dd57d360a770ea062a19cf1dba3ae5365042578e09028a65a"
     },
     {
       "path": "src/fashion_recommendation_v2/preference/observations.py",
       "reason": "imported by src/fashion_recommendation_v2/storage/preference.py",
-      "bytes": 2966,
-      "sha256": "1112cd8c4ddcf72b55a581932fe0a32ab8c4d176aede4a48e4d91d859f3e18dd"
+      "bytes": 3337,
+      "sha256": "d1509770269e5fa187f12e12833bc09e49538ec992d8a4da3d7e1609fc05836f"
     },
     {
       "path": "src/fashion_recommendation_v2/preference/profile_lookup.py",
       "reason": "imported by src/fashion_recommendation_v2/stylist_personalization.py",
-      "bytes": 3637,
-      "sha256": "251b90f726758480a0826d32f9ec48efa4513e06ee6b73c272db1fe382ad81b9"
+      "bytes": 4100,
+      "sha256": "3cd4e80d7a8736e58fe32d631b4dc28c7cb07f9b42fe18def843fcaf999d3f97"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/__init__.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 34,
-      "sha256": "a361932ace8a46839d2b24a627a9f2dfda412ee4c08ddac26656f4f2db206cda"
+      "bytes": 302,
+      "sha256": "cf32bd18050ae34aa1bdfa5203970b776d4b48af004bbc9928fae828ebc14dd0"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/_compat.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 75661,
-      "sha256": "daefbdce1bc09649ce4ab99754f82ea2021f9aaa8dfe731c1e2cb5007f31cd05"
+      "bytes": 148493,
+      "sha256": "29bcba353037373f132407fa628b5aa0e87fc26c11dec37751d522fe2f7d3274"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/conversation.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 4193,
-      "sha256": "fa65d0be740ca1053c2448897b5555654bd26371c03001c71fae5c86f599bb20"
+      "bytes": 4332,
+      "sha256": "ccf83acda6f80cc28eea60084b77ee8a8d264b72fdbdaf1a43f2425ac34f7379"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/orchestrator.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 158652,
-      "sha256": "ad796f948be269925b35efdb7bcf624e00f22a01dad5fba06e6708845c0d27fd"
+      "bytes": 54252,
+      "sha256": "003e4b4cb692547fd2b8d323a0ded7dd5423c958cf22e8c22035506d2357fc9e"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/planner.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 8881,
-      "sha256": "fa6cfa5e7955a1d67aeeb822841155e9618e4a837c6bdd449ddb98ca005744a9"
+      "bytes": 8682,
+      "sha256": "486eee8f3d5955597a25b5ed7d4a63854e65c98c292902d4021a164d2f7dfd0a"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/preference.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 12299,
-      "sha256": "b451c59153e20ebb4c0e31950a196a3490912425317517859a34874216a2f351"
+      "bytes": 12340,
+      "sha256": "aa7c856bee9f232d9202dd0a162aab6411075ae9a43c74f34e44c124f3b765ee"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/ranking.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 13599,
-      "sha256": "7bea9d4a849191b9c3560bf9b7d29a188a838f0452098c2d85bda6d676995f07"
+      "bytes": 17355,
+      "sha256": "e65afcfcfec8d30d879b5a0adb89f565afca5309e8fcc053d7e0a4411df2b950"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/relation.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 34355,
-      "sha256": "4eb998624508f8a01b5bbe84cde3c055cb75122ba2695a7da422ab9503b44610"
+      "bytes": 28161,
+      "sha256": "7d32edb9ced5389d7636f36fa2a42f65f8a7a33b8fda36f632ccb4e5fe629ab6"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/search/__init__.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 48,
-      "sha256": "2d2f7d5a03923cf81a2d181730b21e4eacaabde71f82c9ee63c847b7792cebe2"
+      "bytes": 389,
+      "sha256": "4e9c17bc0ef04d02cd333cc953dba4e831900d82426be5940dbffd38299264a8"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/search/_shared.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 2649,
-      "sha256": "c2717cb3bea45a9a5d2081a5f9245639d5127336d97b78a2afe643bad74641f2"
+      "bytes": 3083,
+      "sha256": "531aa82805e64b90195ce7923766a93f7a4ece50c2da56abd0601caa4868aad1"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/search/item_normalization.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 19322,
-      "sha256": "998357117c73e6c2644e453a7802f0d0b7821e3126ac6dea2413a496c2622e03"
+      "bytes": 20054,
+      "sha256": "21e4464bf52e35479460e88779160ac7fc809ef619bc69f162feae6a2746e018"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/search/planning.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 338389,
-      "sha256": "c14bd1b9d8d9c98f80dcdaca0c232fe6efe7c560bbcbaa0ce1a2708e4defcc58"
+      "bytes": 271091,
+      "sha256": "e73a056126780e4ac1e92ba8d7995de8698961259d75c863a687235a69011442"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/search/product_evaluation.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 40649,
-      "sha256": "41e21502dad64bfd91a1bd09e36049f32c8112b3d7adfd0529fabde51f025c0e"
+      "bytes": 28009,
+      "sha256": "9276fd1cc639efa2ad7dad958a802834e3373ad8ee82b3b2242e139b5040f72f"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/search/ranking_observation.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 79490,
-      "sha256": "18e662574a1cf1c426128a52fad1a3d977182ced0c2b307f7aef910c34bd854f"
+      "bytes": 34268,
+      "sha256": "abbd001146e4e26fe0f729f589f8d4b85063f065eb6498530a699d2ab2efc141"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/search/relation_observation.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 1389,
-      "sha256": "413994662e5a00c9e020fa5ef5a27747ca4ef068057bc0768f76f4c587688f47"
+      "bytes": 1425,
+      "sha256": "b23a0a511323fb186bca6217b7f0f0f8ed775b84f5540be051af7bf4c0b41f21"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/search/requirements.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 54827,
-      "sha256": "fbf992bb3fbf845e111866e3659bbce848c419c67926f358fe5d0d6f499cbbf2"
+      "bytes": 62110,
+      "sha256": "177e4a86392f3362c41184d2abec93f0971cfea75cd1a3fca7171d5acb34fc77"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/stylist.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 191165,
-      "sha256": "3493258e45c896ee245e4f2de866e23d9593dabbd1b81c34349ec9287f772d19"
+      "bytes": 67562,
+      "sha256": "911076a30a8f87d3ae0f9936e2eea85bb29694e827a98cd5cf3ff4e9d8a76587"
     },
     {
       "path": "src/fashion_recommendation_v2/prompts/summary.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 171087,
-      "sha256": "106cd55ec0687177b11922e4c8936ca5a5a53c5d384d13a37d1bb98af23a9350"
+      "bytes": 51555,
+      "sha256": "55001f82191df0792d82a0fc784bf009f65bc0d7da775a9d219712c4b3a27f3a"
     },
     {
       "path": "src/fashion_recommendation_v2/query_composition.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/search/requirements/search_requirements_v25.py",
-      "bytes": 5418,
-      "sha256": "de950da24749de916e024e0c1d501cf5cddeadba5915db51e09b77145b6f6ba9"
+      "bytes": 5841,
+      "sha256": "f75e0b868eeb3d743093ef43e11482bb3bb9af9cc9dbf79615cf3e8f77f94499"
     },
     {
       "path": "src/fashion_recommendation_v2/ranking/partial_evaluation.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 8529,
-      "sha256": "25e522a3ec1b8b78ca5d7eb49f63805a309b6e254a3ceff753b9efe2f80c5191"
+      "bytes": 8276,
+      "sha256": "f14d6546c127316f360d2d7adad3a54231f028f4eb70a22ccec1d58585c2d795"
     },
     {
       "path": "src/fashion_recommendation_v2/ranking/personalization.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 39730,
-      "sha256": "16257fde42ba434be113b9011c49c1532e603f56599c3e88946be32303eea93b"
+      "bytes": 45804,
+      "sha256": "81e96409ca73c69052102d2e0b8953144f38331bbbe9a26c6d90c54f3aee8e6d"
     },
     {
       "path": "src/fashion_recommendation_v2/ranking/ranking_contracts.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/ranking_preferences.py",
-      "bytes": 5214,
-      "sha256": "fccf09e94f380f5ead1d042d9a121fa430d4549524d32ccaebd6f7d3de31e7da"
+      "bytes": 6477,
+      "sha256": "c28c0c2a88138607ad1cd721fea7ae0a57c2876e1ec0569f5427118a6ce2e303"
     },
     {
       "path": "src/fashion_recommendation_v2/ranking/ranking_policy.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 794,
-      "sha256": "3b04a96db98e3f1a61c423f6e2ee38dfc94c0737827b75e62c4d9931fbaff454"
+      "bytes": 4238,
+      "sha256": "271cba251b057e1196c2d275d6a48c8ac1a6443b0ad3930852de70eae7a53044"
     },
     {
       "path": "src/fashion_recommendation_v2/ranking/ranking_scoring.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 14533,
-      "sha256": "11a2c280d3c82cf7000a4a7dc6cd1009bd77c4b1527906d6d0eef06b6c9e0ab3"
+      "bytes": 14677,
+      "sha256": "91575dc02ba7ed15d1076c46a81b0227733cfd0a7a1cad7183eefeaf9987b17a"
     },
     {
       "path": "src/fashion_recommendation_v2/relation/execution.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 4276,
-      "sha256": "01afcc87523b46cb13d0ea75f8c52446f2d47612e61c21a6b32d3ef355fed2ad"
+      "bytes": 4060,
+      "sha256": "2f4a6625fc0e3e0397cebbae39e72a973531e7118ff92feaeabc1a9ec651b037"
     },
     {
       "path": "src/fashion_recommendation_v2/relation/relation_contracts.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 4332,
-      "sha256": "5d39602d504d4bd36ccc88c9b15bb6b6bc3f23da4238309804115108af0e2aa5"
+      "bytes": 4883,
+      "sha256": "a9d993ef41e9258fba447ef2d3875dd48c4af4803261cbaa1df1bf643f9f55a3"
     },
     {
       "path": "src/fashion_recommendation_v2/relation/relation_evidence.py",
       "reason": "imported by src/fashion_recommendation_v2/relation/relation_evidence_v6.py",
-      "bytes": 54802,
-      "sha256": "a0572541e8d216f8ff74706f1d049c7044f198e8a14199631343b0ad2f873ae3"
+      "bytes": 57494,
+      "sha256": "e611f3a59cab6e4f971d8113484bb571abaa3a4fab513d81021c9224afe2c3de"
     },
     {
       "path": "src/fashion_recommendation_v2/relation/relation_scoring.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 9092,
-      "sha256": "9d7e91c3a11fe086b968abd6dbffbfd1817e59bc402dc7545ab2bf1168c346fc"
+      "bytes": 10900,
+      "sha256": "2c5f0aa6e523a34347ee73f7483b2a66738c41d91552a68b37f49a2c2fb8857a"
     },
     {
       "path": "src/fashion_recommendation_v2/relation/streaming.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 10059,
-      "sha256": "332d3d0914dacee6878d9c900150c04bb2307d987f8cd96f537bb7515f47023f"
+      "bytes": 9587,
+      "sha256": "93f13ec1a1bfa64ef4dd554b4070192ec5a5b522a6995ea910197f88f5658600"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/__init__.py",
       "reason": "Search v56 dynamic contract",
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "bytes": 302,
+      "sha256": "cf32bd18050ae34aa1bdfa5203970b776d4b48af004bbc9928fae828ebc14dd0"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/base.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/search/retrieval/search_retrieval_v26.py",
-      "bytes": 262,
-      "sha256": "e0c375ae82f776083b72d31dcd305fde3710372f0ecd39ca4ebf7409b695fc25"
+      "bytes": 534,
+      "sha256": "9b455419e4ae6a13428976111349a194b5d743ed0a81b28e4ef4a0193cec2464"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/common.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/planner.py",
-      "bytes": 1800,
-      "sha256": "dd7f7cb564c5d43350f54ec742fbde8d74f051bd7850ce6a2d8ca0abb65ce202"
+      "bytes": 1901,
+      "sha256": "0eb73db7ba9c3c68d2a756dd6b5c8aa195d41ca1cfef3bab264d93a0d7cf151e"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/condition_routing.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/search/requirements/search_requirements_legacy.py",
-      "bytes": 2866,
-      "sha256": "938b61fdbc417d83b887d87b697d2f15ba9ea547a0e2908f117fd4ea792ec971"
+      "bytes": 3566,
+      "sha256": "1aa657d2e6905ac3b442337c449e0e6e16a9d053bbdd51d4a5681d61bd0e3d81"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/conversation.py",
       "reason": "imported by src/fashion_recommendation_v2/storage/preference.py",
-      "bytes": 2456,
-      "sha256": "8949f8f9b2bcb5c160b780ff0b1f738ee82f427de0e3ce9dffcb69e84e80d376"
+      "bytes": 2946,
+      "sha256": "85f297067b228737b0466dfe7240e9130ef8d516d260d5c22a947bd79293e037"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/exposure_suitability.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/search/product_evaluation/search_product_evaluation_legacy.py",
-      "bytes": 671,
-      "sha256": "f5607fc7ca3b53998237f015c33496a2baa2c183bf7aaab7a23a8b3c0b3602b5"
+      "bytes": 1001,
+      "sha256": "c3c0116df50695d70e77dd63fbb2a5b326cec9032f2485798f03913b4ab7d4d0"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/orchestrator.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/conversation.py",
-      "bytes": 32595,
-      "sha256": "9cf0050fdfcc658a7082173a45b93187fd15e874e539866446837d7fd55620f2"
+      "bytes": 37269,
+      "sha256": "ff1727ebd6839a0b239667f1b4fc7d464105c40191664c97e8781356babcd484"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/planner.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/stylist.py",
-      "bytes": 2085,
-      "sha256": "9ef68f815b79bad2cbc84244c352b23a6a735ae41a391073060e2b32a924b009"
+      "bytes": 2585,
+      "sha256": "9bad414361431ba3c052ff73cc47cfad92e361cceee03bbfab3206c100c1baad"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/preference/__init__.py",
       "reason": "Preference v4 dynamic contract",
-      "bytes": 7571,
-      "sha256": "2c9ae6caa31693df4c3852bb9cdac2fbf6baa605dee3f672ad1e8fb3095b77d3"
+      "bytes": 8908,
+      "sha256": "2945e966e8a05bbbdcc09066a86dd8ac6ad72a1047d73d1e818c69ea31b3f08b"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/preference/interpretation/preference_interpretation.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 9327,
-      "sha256": "6b3188dfe71ca3cc1e66ef32d1b60f8df2dec0d9a0d899c90680591de6bb9334"
+      "bytes": 8690,
+      "sha256": "32888ebf636281c8658b2b1defeb54ac7d8ff24cdbab86fea937d641dc12c94f"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/preference_agent.py",
       "reason": "imported by src/fashion_recommendation_v2/storage/preference.py",
-      "bytes": 2331,
-      "sha256": "25e5017f6cb5c67a118c060c92a4540f48115fc3eff1379072c42b3ffcd37aee"
+      "bytes": 3369,
+      "sha256": "f98b5ee4965f62262093d6aa586f33f7124a580eb88be2243f3ed0239e32c179"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/preference_profile.py",
       "reason": "imported by src/fashion_recommendation_v2/server/preference_runtime.py",
-      "bytes": 5341,
-      "sha256": "4fd1492d064ab3ac8fb1ed73171ec8e8676377bc7dfcc05ee41e40de033e6f27"
+      "bytes": 6226,
+      "sha256": "93cc71e7289350108e125460436d21151a2c7e2297110e6a90b9b924a750a0af"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/preference_saved.py",
       "reason": "imported by src/fashion_recommendation_v2/storage/preference.py",
-      "bytes": 1791,
-      "sha256": "847b9a6214edbed6996ca9c1988df9dbb306064ab9465b4d996874cec2809903"
+      "bytes": 2201,
+      "sha256": "aad6f9a044dddb1d60c5c2a0b112dc21c57b27259b0634fa8473c48fc1fddeaf"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/price.py",
       "reason": "imported by src/fashion_recommendation_v2/tools/price_translate.py",
-      "bytes": 2451,
-      "sha256": "e60b42d5053ca5f8e14ee2206c165a26fe3828c99fcfd3e43b61013853e9a3d6"
+      "bytes": 2860,
+      "sha256": "805ff0e8a2ae65f3ec8640a57c6bda16919b85186dda4466c56fb62096f0d9bb"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/product_evidence.py",
       "reason": "imported by src/fashion_recommendation_v2/search/product_evaluation_v36.py",
-      "bytes": 5514,
-      "sha256": "49687725a6b2124b91b076a72c2cdcb49cf9140b458ef9232061015158c4df8f"
+      "bytes": 6566,
+      "sha256": "105903020e8db2957ab77c804539ea95ab85f5f9b60cdd916cf0cab5770d208b"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/query_composition.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/search/requirements/search_requirements_v25.py",
-      "bytes": 2028,
-      "sha256": "5455177d3a6df7710d89a6fe95be7464fc026215e1677dfd0c22e9cc211fd13b"
+      "bytes": 2441,
+      "sha256": "7ec56f21b65ccacf6f5d729860ad3343447eff5b227f88dbde3fd38192b9d3da"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/quick_start.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/conversation.py",
-      "bytes": 602,
-      "sha256": "7c2012314838b0cfe95e5fd0a14ace79a6ce22e7abd8336aafaf84d2022c984b"
+      "bytes": 912,
+      "sha256": "e7a28e6f6305b79495bba64ae4bbc21fd46eca416999bb35868a5c016d002098"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/ranking.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
-      "bytes": 77164,
-      "sha256": "f2aef59bbd82a5dffd3f729d994e2463eb3539a26fad668afbac55585f9ab7f8"
+      "bytes": 77014,
+      "sha256": "c908b24a2f3e5cf4f898533fd85515285243cb072d74f993985cb8200495cbd7"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/ranking_personalization/ranking_personalization.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 5306,
-      "sha256": "ac45be62e2b86e7d65672a77a3b2291ffb9fa15a5a7e2f13560d020654d46c56"
+      "bytes": 6823,
+      "sha256": "4264c9e987e5a159b4e8fab6de5a6930f3320d73e93d219fd8b7a539ea6dc0a2"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/relation.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
-      "bytes": 24454,
-      "sha256": "d6370230e85d64599e3f13238ad37379692ae3a9c7eeb0c727b631a6f5374210"
+      "bytes": 24843,
+      "sha256": "bbd9305eb7003c923adfd77f45511dc5fdafe08ba1e725ed961e3aa224724b54"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/relation_execution.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 1501,
-      "sha256": "42093653a238744336f57919667fb2c0ff823473816924cb5e92d1d65915f4b9"
+      "bytes": 1457,
+      "sha256": "ca913bd8508cfcac70bc2409ce798856a2e6b263ae89ed99dc5e7c4831fd06ae"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/relation_intent.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/stylist.py",
-      "bytes": 1039,
-      "sha256": "acb9e6b1b3611c3024951990385170ca55db6f1c4cc5fc58c7cf4012215c1b0e"
+      "bytes": 1354,
+      "sha256": "dda6289e5a37ea184bd08650dbee09c2274865e73a6572f12eaf359f0804f56a"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/relation_scoring.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/relation.py",
-      "bytes": 3690,
-      "sha256": "6d1b5a048f9e3c12b227bffa805fc354cd7249f2989e2716e3f6daca3d22de1e"
+      "bytes": 4512,
+      "sha256": "3d6192289acc3f5bfa7fbb9b58d146f515a53250bd27290339dc14845ee1e825"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/__init__.py",
       "reason": "Search v56 dynamic contract",
-      "bytes": 86,
-      "sha256": "8576f55a28e9e64ed8e65505aa9d1e66f46f2edb1dc5193e4f8a87838107f024"
+      "bytes": 389,
+      "sha256": "4e9c17bc0ef04d02cd333cc953dba4e831900d82426be5940dbffd38299264a8"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/_model_utils.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/search/retrieval/search_retrieval_v26.py",
-      "bytes": 1355,
-      "sha256": "414df104033264cf029a02f010db030afbe4c775252d15f538a9abde4cd1375b"
+      "bytes": 1899,
+      "sha256": "4331fdda8ddcdfbb78902eaf1548dfae1c85a3d6f0857db46f4137b3469c0b96"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/candidate_pool/__init__.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
-      "bytes": 39,
-      "sha256": "6070833959e88cf528eedd961351844ff047bb72691644a1b7326395c70fa106"
+      "bytes": 342,
+      "sha256": "1f00c2cb8bfbd13691e9e86ffec3ddbc3725340b84f5067ec87a8c0ec4f97ac6"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/candidate_pool/search_candidate_pool.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
-      "bytes": 20365,
-      "sha256": "9e69f941601b25896ad340bc7fa84a557fcc27c6d5180a843e796706335dbf2a"
+      "bytes": 20166,
+      "sha256": "5a358e7cf7c5e9dc53829911f4426c83c3973597655f21e546055a1549dede97"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/item_normalization/__init__.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/search/retrieval/search_retrieval_v26.py",
-      "bytes": 43,
-      "sha256": "66c8f7b5e7338f70f219d4daa2a5102d9e9feb96830a28cded368c41eb9356cc"
+      "bytes": 346,
+      "sha256": "dd200b6fa537c823923450678f52ed8a90068b98a4f859b136c04da6210bb847"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/item_normalization/search_item_normalization.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 6265,
-      "sha256": "c7cf49163ae7dbbaf059b582a96e1da54ce0ac98a0a98fac97129ccfd003afa8"
+      "bytes": 5557,
+      "sha256": "75dd83c60f59c21acd0446aecf86095a3ad08173d24f12a5de420463ff33eade"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/planning/__init__.py",
       "reason": "Search v56 dynamic contract",
-      "bytes": 33,
-      "sha256": "ed4bff37c030d7a1877feac6898696967df730d2eb62a31dfe9bd2eeca1ee95a"
+      "bytes": 336,
+      "sha256": "e9303f242067c2f7af176e2f0bacdf9bef5a73b6cdaf21c877a62baa12e616b1"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/planning/search_planning.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 58049,
-      "sha256": "b9e834f487fd6d2152cc80e81169debc04db5c70e8d5018a0903197fbe2e6ec8"
+      "bytes": 66641,
+      "sha256": "5437abd3bb9f72faeb8e04a6367025d77192deeb5f63963decf6d0f5941ac5b2"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/product_evaluation/__init__.py",
       "reason": "Search v56 dynamic contract",
-      "bytes": 43,
-      "sha256": "005f72702b7804faacf0e5448a1becd1b13a3e908946f4e927086dbf1e1028bd"
+      "bytes": 356,
+      "sha256": "c0ef7e95eb9d323ea695e0f8260816b9de190f687b77b03d96c8860e519d9cdf"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/product_evaluation/search_product_evaluation.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 77762,
-      "sha256": "13b94f4ca3d4c327f986fc65217f016118193635824376671906fb6343b3b821"
+      "bytes": 79952,
+      "sha256": "ae00b7f59c822cef93a5db7dbd910b8b438a02bb46a7c957b202b2f91fad1704"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/product_evaluation/search_product_evaluation_validation.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/ranking_runner.py",
-      "bytes": 1960,
-      "sha256": "5bb1501fc09f6df4e6e7193af8fd3e55c95797bbbb120d80ac932cbcfe2635ad"
+      "bytes": 2721,
+      "sha256": "f6da77dca21188c0fba9f02e5ab0d1e0c0d4a7442044a96a0fd843623546cea8"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/ranking_observation/__init__.py",
       "reason": "Search v56 dynamic contract",
-      "bytes": 44,
-      "sha256": "a6064fdde9f386d5a821ebbe51e715285c3cca66ef34085094d0930a0756ac68"
+      "bytes": 347,
+      "sha256": "cd46a511ff01f79850245c976571eff05f38feb0e1ee911e4ad48eb82ca0179d"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/ranking_observation/search_ranking_observation.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 13647,
-      "sha256": "7c6033980f5bcac950a38787bb3f12ff22c12d10ab56ed01bbbea3e363bc4080"
+      "bytes": 13013,
+      "sha256": "3926ea000a0802987a91330a04cc6baf48b42cf69da7cafe785394f823bd1154"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/relation_observation/__init__.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/search/product_evaluation/search_product_evaluation_legacy.py",
-      "bytes": 45,
-      "sha256": "8f54b946ef2f5df3a5750969b1e03001a0bff1af51229c53d1f2d185a5fa0e4b"
+      "bytes": 348,
+      "sha256": "bf06501b7a0a8528b83634141118c5ef5abc02e3cc9bffedf6fe5e072f51e10e"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/relation_observation/search_relation_observation.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 5623,
-      "sha256": "ee82eed5b6fa2f037e5845b9bc74addf45200336c603405a1f83e04d947a190b"
+      "bytes": 5366,
+      "sha256": "083a3c4e352ae95b06a764c24dad5bbf55a6df01187697db1f4dfc5e0301110d"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/requirements/__init__.py",
       "reason": "Search v56 dynamic contract",
-      "bytes": 37,
-      "sha256": "36394762c80dd9915dc6ec4b88cd2e62ff6c438047c4b846ec16be00726bd820"
+      "bytes": 340,
+      "sha256": "f46dde87ea55ed2bfa9d703f5aa0b139fbf10e04c469da36c978465aff38554d"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/requirements/search_requirements.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 63405,
-      "sha256": "b6e96f50ff34defdc7f606ec0ff72863f6849ea539cb9efd6d6ebdbea6b17d66"
+      "bytes": 80055,
+      "sha256": "edc14b7f7980cd024822de6d73ddf186985e71c965a775600cdcf120a6149d8b"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/requirements/search_requirements_context.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 12301,
-      "sha256": "96da0358ae342f8c12e373c2ccafdb5a6941f63f5f2c89752fdda77cfa8710d4"
+      "bytes": 11671,
+      "sha256": "83df24a06c489903733295f82a31f9db21875a718e17bcd9debb1d05b3186ba6"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/retrieval/__init__.py",
       "reason": "imported by src/fashion_recommendation_v2/tools/price_translate.py",
-      "bytes": 34,
-      "sha256": "9d11788f411eec2402e3bcf667587b87d7fca4eb1a57ea0a4701973e82e98215"
+      "bytes": 337,
+      "sha256": "8835475623efc0e3c8ed3cc6e2338faa1f8fc49a8d3710426dd4e2d9fa2b618f"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/search/retrieval/search_retrieval.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/search/retrieval/search_retrieval_v26.py",
-      "bytes": 4323,
-      "sha256": "36102f70221c168581713c54f25b91e1548bff4724e9f0901280fcd478f1a09c"
+      "bytes": 4094,
+      "sha256": "033c423764c12c839c44a43ccc13c6919759a5027746fd8c4e99b1624bda2f0a"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/stylist.py",
       "reason": "imported by src/fashion_recommendation_v2/search/evidence_projection.py",
-      "bytes": 27392,
-      "sha256": "118995e988d65653e74e526796b23eb9c6725850ccbffe8196da52c08950c10a"
+      "bytes": 30050,
+      "sha256": "310198d3ecf1fc803f3c8c2528daea48147334e37953891d86a672daa71b7a9d"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/stylist_condition_policy.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/condition_routing.py",
-      "bytes": 670,
-      "sha256": "a88db1ecf37830f70f4a00cf96a152200d23b3cd4da3f00b4153db2dce0b4b32"
+      "bytes": 1108,
+      "sha256": "668d0f8575fa804ad529f232c1c9e29ed94cbcc42c0795e34cf0387dee4b8772"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/summary.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
-      "bytes": 26692,
-      "sha256": "0fa67653022f165b76ebd5bac8746e6301fc07cb0c80831e482652cfc8dca51d"
+      "bytes": 29101,
+      "sha256": "653cf030c3785a3ec846978991c1f76de2b8eeff8e94b1074c68efacaf91b413"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/summary_response.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
-      "bytes": 1019,
-      "sha256": "549dce5b2298550db0695dc59bb8eae711c13b9fa9c0aa823804fea324d04b95"
+      "bytes": 1640,
+      "sha256": "e50158ef57ce6195b3c824e18952537b0389103bbb329ea314bb19c5a9c1f775"
     },
     {
       "path": "src/fashion_recommendation_v2/schemas/visual_confirmation.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 10683,
-      "sha256": "2868b9a655a33727abf80466f6c0bafceb952dac201a26e2ecef71ac7acd51fd"
+      "bytes": 10313,
+      "sha256": "1bf382acd540e623e55c2d6373359000c3b26047c6752cc4995b7cb2bcd6be18"
     },
     {
       "path": "src/fashion_recommendation_v2/search/__init__.py",
       "reason": "Search v56 dynamic helper",
-      "bytes": 81,
-      "sha256": "b718952b0e02959c5cfe6ddf106a27af4dabc218190c512d468f260f56469ea5"
+      "bytes": 384,
+      "sha256": "83454509d509816eb562eb57dbbf44292103d96d0268c8e6afc389eccfe83d67"
     },
     {
       "path": "src/fashion_recommendation_v2/search/audience_policy.py",
       "reason": "imported by src/fashion_recommendation_v2/search/product_evaluation_v36.py",
-      "bytes": 10588,
-      "sha256": "15b15e7926faf340583139d5bc0a3e8d69875aceff914531f948b10082f9809d"
+      "bytes": 11244,
+      "sha256": "4d1c58748d3eee97e00f1649f0b6aefd391094ceedb0fd09d49046f74bb71b4f"
     },
     {
       "path": "src/fashion_recommendation_v2/search/candidate_records.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/search_runner.py",
-      "bytes": 23400,
-      "sha256": "410dfccd06068a2764977489a98608845247427044ac9154d18d9d4894a33761"
+      "bytes": 22635,
+      "sha256": "9966e393fd047ba7a4195ddb14e1a812336603936db99e99f5dd99436cd1de5b"
     },
     {
       "path": "src/fashion_recommendation_v2/search/condition_semantics.py",
       "reason": "imported by src/fashion_recommendation_v2/search/evidence_projection.py",
-      "bytes": 9024,
-      "sha256": "5efda0eb3f29ab7194dbeeab7c09c7f6775b7f152f20226251215ce5894965ee"
+      "bytes": 9732,
+      "sha256": "fef1503b6f3d9cc6bdfd6d6b232f91fd1c02e310ad1693dae5e88e0bcfbfb4cb"
     },
     {
       "path": "src/fashion_recommendation_v2/search/contracts.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 21785,
-      "sha256": "6de76d6ae4a841142cc6061e12f68e66afa0f5643173c2eadab83b3b4da20b4f"
+      "bytes": 23930,
+      "sha256": "a45924f6205756aeec61c47dbce572fa69fb2c155a3ee87b69ac1bab0bcf81a5"
     },
     {
       "path": "src/fashion_recommendation_v2/search/evaluation_execution.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 8987,
-      "sha256": "c5e980cbcd9645531b8fcad244762787875770608e6057ff843c6946e64caf08"
+      "bytes": 9049,
+      "sha256": "3a38972cdafe7dd75288dd28adb213226f22b1ee093443b807632dc14e60ac2c"
     },
     {
       "path": "src/fashion_recommendation_v2/search/evidence_projection.py",
       "reason": "imported by src/fashion_recommendation_v2/preference/observations.py",
-      "bytes": 5233,
-      "sha256": "c4529b8a0b435b4f4e30b553d296d2d297ec5a14352603a819e54b3bf3c174e2"
+      "bytes": 6035,
+      "sha256": "e46746b08557975b2581f95724d8f322515046b327e5d584111efc3d5827bfa6"
     },
     {
       "path": "src/fashion_recommendation_v2/search/execution.py",
       "reason": "role-based prompt consolidation / import wiring",
-      "bytes": 18813,
-      "sha256": "92e103bc353a2781914799684fa88605c303dcfd63045347b972a9ba640be697"
+      "bytes": 20293,
+      "sha256": "8bc307da13ea49cdcee3fff98d928f4d01ffd0fadba9ca4a46b48c4af2899370"
     },
     {
       "path": "src/fashion_recommendation_v2/search/item_normalization.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 20352,
-      "sha256": "b52a0eb1491a5e2929c2a31239fc3d6335ca63f2d6690147d834dc3ad3dc5fb8"
+      "bytes": 17240,
+      "sha256": "3c959030f5798d97711dd2a53ffbb9c7086f1e96c11a9bd0cdddcc233a96b372"
     },
     {
       "path": "src/fashion_recommendation_v2/search/observation_review.py",
       "reason": "imported by src/fashion_recommendation_v2/search/product_evaluation_v36.py",
-      "bytes": 4503,
-      "sha256": "c2d33bf706f2e6b72b1debd35a5df8ad3a3f4b8c9ec21fda73ea7b809467d42f"
+      "bytes": 4700,
+      "sha256": "baaf8aac571de84e0571a61dc38854a2d3cd8ecd8cb3233283c53d30b15fb101"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/photo_admission.py",
+      "reason": "current service source and offline validation",
+      "bytes": 1022,
+      "sha256": "fdbe0e4c062cef463c68628c94b74f5d8b58608dffbdf92ad8f464faca83f697"
     },
     {
       "path": "src/fashion_recommendation_v2/search/planning.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 18660,
-      "sha256": "91f2d1ad467fdfe6b3e8ba6b7df878a791296ffa3fc7d381ddbbd5038a77eff0"
+      "bytes": 24585,
+      "sha256": "510bcee8b8b1c8837678d8ff4dc46f8005eab5d519115f051d3baf85fac7c8a6"
     },
     {
       "path": "src/fashion_recommendation_v2/search/planning_feedback.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 7583,
-      "sha256": "fbfc15ed0642fe6f9e3a001e8030dccc4bc1c598199f271c52fd471ea05093d6"
+      "bytes": 7852,
+      "sha256": "19eba5be93263fd174067363a9391005a5cfdd8e1bb7185f27e4a08f70242a54"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/planning_policy.py",
+      "reason": "current service source and offline validation",
+      "bytes": 2025,
+      "sha256": "c51b1fc2963be8856a888a1e7881352c4c8f29c792507f85900c8c0bd055a91f"
     },
     {
       "path": "src/fashion_recommendation_v2/search/planning_rules.py",
       "reason": "imported by src/fashion_recommendation_v2/search/product_evaluation_v36.py",
-      "bytes": 21810,
-      "sha256": "22a2a0c34ed239f57618632259867414d5d407ef4feb5836dafa8d0670023aa3"
+      "bytes": 23923,
+      "sha256": "c9fa97216c7b21b2a43fd9f6e3d59f3abcd916e0873c2327a59dea54f6cc0c9e"
     },
     {
       "path": "src/fashion_recommendation_v2/search/policy.py",
       "reason": "imported by src/fashion_recommendation_v2/search/planning_rules.py",
-      "bytes": 11890,
-      "sha256": "ec945432adf662d88eaf3e215b8c9eb52d3074aac4397e4b9cd5a8c5fe462592"
+      "bytes": 13866,
+      "sha256": "29fcc57abd305c6285d752b1e0701acbf2d1d635c844e7ea6af84f0e1b097385"
     },
     {
       "path": "src/fashion_recommendation_v2/search/presentation_semantics.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 6140,
-      "sha256": "cd4ff2b93457725bdb2be505875ea2c77448f3a931044e86cf1786a0c052ddc4"
+      "bytes": 9665,
+      "sha256": "9c6bc34ebd9c54b1205c2ad633f51dd1cb0a838d13081df79804feb4c2cf89ab"
     },
     {
       "path": "src/fashion_recommendation_v2/search/product_evaluation.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 45523,
-      "sha256": "18a4dabe6c1c364adbfa0088475279c44713f6feb0a25a77cc0d93d49acdf7a1"
+      "bytes": 47904,
+      "sha256": "92919c170190a66221165534c34ffff990361afb182ed88fb28508b8525c79ae"
     },
     {
       "path": "src/fashion_recommendation_v2/search/product_identity.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 1593,
-      "sha256": "62e6cce9f35ef70a84b179697b47e4fe5ceaccf6aa4690c7b3314ff24b50a03d"
+      "bytes": 1595,
+      "sha256": "dafedf05538d805a77d10cd88b533ade07d6f43686f88283530240e9a17b9aeb"
     },
     {
       "path": "src/fashion_recommendation_v2/search/product_semantics.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 12417,
-      "sha256": "019cee6f76e406250b4b5c99b3a9e5c4a17fb75cf235db9d932c7e5f9ea6d762"
+      "bytes": 29424,
+      "sha256": "cd776e09c8c9e4ae117e260dda520c2de1b11262b40ade910c73d89179df5244"
     },
     {
       "path": "src/fashion_recommendation_v2/search/product_sources.py",
       "reason": "imported by src/fashion_recommendation_v2/search/evidence_projection.py",
-      "bytes": 792,
-      "sha256": "6745ad9902329823b86ef8eda2abe18c239a2269adb09ec6b7a81f3e7337a043"
+      "bytes": 1284,
+      "sha256": "23427bbd1a07ecfa411afa8dec7bbe8d08abf93c3e2f76631092771638af75ea"
     },
     {
       "path": "src/fashion_recommendation_v2/search/product_validation.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/ranking_preferences.py",
-      "bytes": 21956,
-      "sha256": "b03a5fe8b904271b5973c86a671a585909c3cfee84b0451aca69d229cc00ac74"
+      "bytes": 21662,
+      "sha256": "774a499144e20284dc87d0e25a002e87a928a6482a45782122b6625e660f8c74"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/reference_fragments.py",
+      "reason": "current service source and offline validation",
+      "bytes": 3005,
+      "sha256": "b102b5a1e6c3d1c206977876c95b9f9dae95ab2df01b85861ff8bf7f4a0d9588"
     },
     {
       "path": "src/fashion_recommendation_v2/search/reference_roles.py",
       "reason": "imported by src/fashion_recommendation_v2/search/requirements_v31.py",
-      "bytes": 1799,
-      "sha256": "72451d38da364f8a48d03f01232a7c8ec8fa3150835c7c585f377baf22cbf4c6"
+      "bytes": 2125,
+      "sha256": "6972068a84419952ed512a3f08b669415af232838d10af3344a99a0721834fb1"
     },
     {
       "path": "src/fashion_recommendation_v2/search/requirement_sources.py",
       "reason": "imported by src/fashion_recommendation_v2/search/requirements_v31.py",
-      "bytes": 27837,
-      "sha256": "ac3db1e01e5e760233f484129ac6e6f02f19e0d6c045ee3059b98f5017fa746b"
+      "bytes": 27336,
+      "sha256": "4444949bb58775916fcd02bdcdde252b1ec3c2bb0512f47a12ab650cbec3d2f9"
     },
     {
       "path": "src/fashion_recommendation_v2/search/requirements.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 86766,
-      "sha256": "eb946453186218aff659d21a598a926036a989cca03ff411556a218f18712abd"
+      "bytes": 97428,
+      "sha256": "c1f5543fe20a017f7c26a2312fa17ad287366d9819e7946f4165f57c6fc1d46a"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/requirements_policy.py",
+      "reason": "current service source and offline validation",
+      "bytes": 7605,
+      "sha256": "79d39b93b0a9b7d67626c7413d130a269d35e3a51252e395ff0ffacfb5db5cf5"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/requirements_semantics.py",
+      "reason": "current service source and offline validation",
+      "bytes": 22698,
+      "sha256": "700b1d88bb5a724b26e6edf47563b133206dc49830c8b4d993f0c3aa13a43ba7"
     },
     {
       "path": "src/fashion_recommendation_v2/search/semantic_validation.py",
       "reason": "imported by src/fashion_recommendation_v2/search/requirements_v31.py",
-      "bytes": 6027,
-      "sha256": "be650565fd071064dc33ae8a7c9d5d50625c05f2a063df2761f3fe07178be0a5"
+      "bytes": 6976,
+      "sha256": "a740e63755525277be226b0f577129fe9610f763ca73c9f6b70c1d6a542f8cb0"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/search/stylist_comparison_targets.py",
+      "reason": "current service source and offline validation",
+      "bytes": 1575,
+      "sha256": "6bd4bad9cc4bd4f75cc260b72b81362f4669bbcc782bde81c9baaa24d7304459"
     },
     {
       "path": "src/fashion_recommendation_v2/search/stylist_policy.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 7247,
-      "sha256": "3433985bc01b3afb48b212706236310a4abed976b9d7369b491e41ed8cd17444"
+      "bytes": 7184,
+      "sha256": "e8e1dfe86c6fc3c4687c63656b8062d9fef32099db47cfa3e4505069a1b1410a"
     },
     {
       "path": "src/fashion_recommendation_v2/server/__init__.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/preference_interpretation_runner.py",
-      "bytes": 71,
-      "sha256": "55014600222fe9da20662a3dec80d5855b573e7eefbb58e77968cd08f000012c"
+      "bytes": 374,
+      "sha256": "a419e869a5d126785e1bfef4c46a5ed10be8d6ac6cbbbdd4c014c37328be076f"
     },
     {
       "path": "src/fashion_recommendation_v2/server/preference_http.py",
       "reason": "imported by tests/test_preference_server.py",
-      "bytes": 11122,
-      "sha256": "776b723efe471066d35c51a664b40a4b9be061dfcd78b2d2f43e7857a5487ab8"
+      "bytes": 11395,
+      "sha256": "918ef78cbbc3dd9c315a9f01fba31be00513c200970c784d5703402413338fa5"
     },
     {
       "path": "src/fashion_recommendation_v2/server/preference_runtime.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/preference_interpretation_runner.py",
-      "bytes": 9134,
-      "sha256": "1d1db4b4d2f3ddae639f586d8f59dfdf5f42c8cf3848e9c2a160692ccde05153"
+      "bytes": 9389,
+      "sha256": "d36e4b31de6a3ccc12c1fe40f693d4b4ff06d149778aaa80e6eb9701e669d8a3"
     },
     {
       "path": "src/fashion_recommendation_v2/server/preference_service.py",
       "reason": "imported by tests/test_preference_server.py",
-      "bytes": 6657,
-      "sha256": "2c293c94af0071157adf12f9657b160bb01106b4ce0e808a3d5cc82870eb1112"
+      "bytes": 7003,
+      "sha256": "2b878402de36879062bf15fd57a433973187f13b50ef76a6bbde2959dd2478a4"
     },
     {
       "path": "src/fashion_recommendation_v2/server/quick_start.py",
       "reason": "imported by src/fashion_recommendation_v2/server/preference_http.py",
-      "bytes": 4121,
-      "sha256": "bbb642cdf9aebd0686903b512602d777ced563683d2acc0fed0fa339efa123f7"
+      "bytes": 4588,
+      "sha256": "b9dd671f6869acb516bf37d6a5c7514ce386f5370d35e06022b2d8ecc39ef702"
     },
     {
       "path": "src/fashion_recommendation_v2/server/recommendation_factory.py",
       "reason": "imported by scripts/run_preference_server.py",
-      "bytes": 4658,
-      "sha256": "7f7f0e21da58c3ef2d02ac4fafba0137894688c62f466199d4190eeec22a75ba"
+      "bytes": 4997,
+      "sha256": "1db2dd646773fcc6f615f2add38eedb462730609611238fe671337410ed88ef2"
     },
     {
       "path": "src/fashion_recommendation_v2/server/recommendation_runtime.py",
       "reason": "imported by scripts/run_preference_server.py",
-      "bytes": 8597,
-      "sha256": "30d5c6be43e009b79a4c98403b81c156e9a753f3975427ba4c7e02649097c430"
+      "bytes": 8724,
+      "sha256": "46bdb896e1d1f5c0b41d31ee805310490730b34c609bbbf31416d1b2bd566f23"
     },
     {
       "path": "src/fashion_recommendation_v2/server/recommendation_service.py",
       "reason": "imported by src/fashion_recommendation_v2/server/recommendation_factory.py",
-      "bytes": 13636,
-      "sha256": "4eb4a9d9903eb70ab276c6fb4653a274f92d07f40883fb8cbd0c4138e3a80c26"
+      "bytes": 13498,
+      "sha256": "4b1c31fd39d90787e1d85541c5131db802e50628be55c78e2b3dba78a3a3faac"
     },
     {
       "path": "src/fashion_recommendation_v2/storage/__init__.py",
       "reason": "imported by src/fashion_recommendation_v2/server/preference_runtime.py",
-      "bytes": 400,
-      "sha256": "dcd2085bb75d0bc2018711d134fc66640f5c0a9aa929a6868c261549f7cc7e9e"
+      "bytes": 619,
+      "sha256": "211a88e344a0cbf102ac195cf0a98399978280b879827855a53715f7077b4200"
     },
     {
       "path": "src/fashion_recommendation_v2/storage/preference.py",
       "reason": "imported by src/fashion_recommendation_v2/storage/__init__.py",
-      "bytes": 46286,
-      "sha256": "ccea77a0afe097d22bc3e725fa492e34c8e6792d6dc222a4cbfa0800c4bb8d85"
+      "bytes": 45274,
+      "sha256": "d8bf1f9608f221b02af12bb9c99cd809169eb3b156a6bad62a0910a7fc9d1a28"
     },
     {
       "path": "src/fashion_recommendation_v2/storage/preference.sql",
@@ -1303,86 +1387,122 @@
     {
       "path": "src/fashion_recommendation_v2/stylist_context.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/orchestrator.py",
-      "bytes": 2505,
-      "sha256": "284b0f30d9c788be51c56e1a9be71008f9d7595219f3ab076dc6150730cd66e0"
+      "bytes": 7994,
+      "sha256": "b62dd3a7775bfb0404c7b8e2ecf4be252f96c8bf83f5cb79e4a1c5c9a8f6aa7c"
     },
     {
       "path": "src/fashion_recommendation_v2/stylist_personalization.py",
       "reason": "imported by src/fashion_recommendation_v2/search/stylist_policy_v47.py",
-      "bytes": 11118,
-      "sha256": "9fe178d144f60c859dbbb4ee43bdee593940084cd43027a232e038482df0f907"
+      "bytes": 12384,
+      "sha256": "fb031eefe886df6d0773883be1835f47ce58dfbd8fff11f97ace37b73217e730"
+    },
+    {
+      "path": "src/fashion_recommendation_v2/summary/display_price.py",
+      "reason": "current service source and offline validation",
+      "bytes": 2998,
+      "sha256": "4333b9848ea845e1c0b212b81d055de0e5ae7ab791f6d8d71d5399a76470a7f7"
     },
     {
       "path": "src/fashion_recommendation_v2/summary/evidence_references.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/summary.py",
-      "bytes": 3836,
-      "sha256": "716690b8c9fda3f559ac606b3483f9848a5576df7d816bdeadc5f60eac5e167f"
+      "bytes": 4435,
+      "sha256": "7f91a34f8e0fd26fd1ff9681439b475fdff2a72268fcd0b25c65b0aa439c5b0a"
     },
     {
       "path": "src/fashion_recommendation_v2/summary/personalization_v9.py",
       "reason": "imported by src/fashion_recommendation_v2/agents/summary.py",
-      "bytes": 1066,
-      "sha256": "e1fb23201421e0178dcba24f71b2e35e46ddfc3c5d8d21fca9143bfcff4fef75"
+      "bytes": 1385,
+      "sha256": "3437c7c8fd26441a26f51537b32de98770eedd20d8b2f208e68c6524b6551544"
     },
     {
       "path": "src/fashion_recommendation_v2/summary/summary_policy.py",
       "reason": "imported by src/fashion_recommendation_v2/server/recommendation_factory.py",
-      "bytes": 1463,
-      "sha256": "5c6b8a4641c50ca10506e6b904d5fd3b5564edc0ac2e82a6c088a2c60fcdfb06"
+      "bytes": 2329,
+      "sha256": "b624fb413c555fdee5fd3455a7c2d54758de8e4bf923eb85f759e1412ba0617c"
     },
     {
       "path": "src/fashion_recommendation_v2/tools/__init__.py",
       "reason": "imported by src/fashion_recommendation_v2/search/product_evaluation_v36.py",
-      "bytes": 55,
-      "sha256": "68d34e6e11b4b7de21d0f868abff12468fec348b293e1b88396f05aa5fa2f50e"
+      "bytes": 359,
+      "sha256": "fd3fe8923e6aae7ee601e795cb886593b27e779b8f1fc560068715b14f9aaa4d"
     },
     {
       "path": "src/fashion_recommendation_v2/tools/age_scope.py",
       "reason": "imported by src/fashion_recommendation_v2/search/product_evaluation_v36.py",
-      "bytes": 2125,
-      "sha256": "f2783f0b848b8296f136a08768195d34298a46f775188aa5d454556e12d8b8e7"
+      "bytes": 2591,
+      "sha256": "8940ceaa842ce28cc39a85df8088496feb3a18db3e468a825d3dd1e278ab186e"
     },
     {
       "path": "src/fashion_recommendation_v2/tools/ebay_client.py",
       "reason": "imported by tests/test_ebay_client.py",
-      "bytes": 15218,
-      "sha256": "a55a12231e3c8e36c9b1bbc18ea27a1c6887513d45a98e2f2a57cf1defe9260b"
+      "bytes": 11370,
+      "sha256": "b993b971dcf0b9484dd85c56468bcde9d535d206258cfff3aa616921466ebc91"
     },
     {
       "path": "src/fashion_recommendation_v2/tools/ebay_search.py",
       "reason": "imported by tests/test_price_fx.py",
-      "bytes": 21158,
-      "sha256": "d98b5e74dbcc4f92867190f8cce94c2407470e242062d589b27207a5962d65f1"
+      "bytes": 18425,
+      "sha256": "41379961f4d1f77e823e069c465636610c88cbcffca3f54d2f2536439fa91863"
     },
     {
       "path": "src/fashion_recommendation_v2/tools/price_client.py",
       "reason": "imported by src/fashion_recommendation_v2/tools/price_translate.py",
-      "bytes": 4375,
-      "sha256": "d92bc6d6959d2944ee5cb5fcaf45b4cb5b3b3852b423adaf0fca8a98430e4067"
+      "bytes": 4462,
+      "sha256": "e995bc98407ed1f2256a80f7e46b230e01290925d09b2a0fc20b39972b999e45"
     },
     {
       "path": "src/fashion_recommendation_v2/tools/price_translate.py",
       "reason": "imported by src/fashion_recommendation_v2/search/product_evaluation_v36.py",
-      "bytes": 6475,
-      "sha256": "21765197d240a3744a7f51e1642d19a4d8e42befe74d3ad8daef25e2745c6f20"
+      "bytes": 6470,
+      "sha256": "a1d8ec64a1d623d43c505ba43daa5bddbc03baf3d15627c9ae584de385e06cd6"
     },
     {
       "path": "src/fashion_recommendation_v2/tools/ranking_judgments.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 8084,
-      "sha256": "4534fe2eeb63209c5779a576e2ef137c7dcede122c25d123cdd9e79c7d200699"
+      "bytes": 7953,
+      "sha256": "4cfceb15457c04ee607519d74855b7b7e0ca91a4da065bf61e7c87e340c2da2f"
     },
     {
       "path": "src/fashion_recommendation_v2/tools/ranking_observations.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 2729,
-      "sha256": "df593ec7870eb87ace4f97559fd4f0910d12d33a4964f55cc654ee63247d47bd"
+      "bytes": 2643,
+      "sha256": "0f1f1736591ffeaba3fdeb0d0216c16e2f82f09b94418c06c7c06346bcd7ce97"
     },
     {
       "path": "src/fashion_recommendation_v2/validation_reuse.py",
       "reason": "imported by src/fashion_recommendation_v2/schemas/summary_v6.py",
-      "bytes": 10191,
-      "sha256": "575c9913f13e105e971e704ed67212de11eaa324b994d080c263eb134cd11518"
+      "bytes": 11351,
+      "sha256": "68d1c4e7eb50d90672833a2bba7629e15c0d14a3534f4efeaf0ac2965b13fc3d"
+    },
+    {
+      "path": "tests/current_behavior_capture.py",
+      "reason": "current service source and offline validation",
+      "bytes": 4417,
+      "sha256": "b4c50dacca7de706cadc10192992a2ebf9ea80eb7e43ccb145139a42041e162d"
+    },
+    {
+      "path": "tests/current_prompt_capture.py",
+      "reason": "current service source and offline validation",
+      "bytes": 5836,
+      "sha256": "9baadac26d49fb7d12e83861be2bd1b925b8b4e038f59acd1c9d3c3901bcca3b"
+    },
+    {
+      "path": "tests/fixtures/current_behavior_expected.json.gz",
+      "reason": "current service source and offline validation",
+      "bytes": 12155,
+      "sha256": "76e33d73c087590765f7bfb9c4ac1e76310d008837593235b2f27957ae0f15f9"
+    },
+    {
+      "path": "tests/fixtures/current_contract_fingerprints.json",
+      "reason": "current service source and offline validation",
+      "bytes": 448224,
+      "sha256": "57c17a4f358edd5075e81b9e8d8602e6613f5e7c4930efea907df340a8714602"
+    },
+    {
+      "path": "tests/fixtures/current_dynamic_fingerprints.json",
+      "reason": "current service source and offline validation",
+      "bytes": 2777,
+      "sha256": "fd6244620dc91ec74182710b1adabe8fc436095a4ec6354cfca29ab0edf979c5"
     },
     {
       "path": "tests/fixtures/prompt_fingerprints.json",
@@ -1421,6 +1541,18 @@
       "sha256": "2f76804f3e5b6b086f4e59c57c157a92f61d1d21387e1c22486990c54eca6251"
     },
     {
+      "path": "tests/test_current_contracts.py",
+      "reason": "current service source and offline validation",
+      "bytes": 835,
+      "sha256": "b06bdc82306f3459ed6340d19d30bf9346af60841657cb2c1c6581224f4a1039"
+    },
+    {
+      "path": "tests/test_current_outputs.py",
+      "reason": "current service source and offline validation",
+      "bytes": 1624,
+      "sha256": "abfdb8293dbd01aac424ae4da928d367c0e82454466d40dc4777a1d85c2fc9d5"
+    },
+    {
       "path": "tests/test_ebay_client.py",
       "reason": "test helper for tests/test_price_fx.py",
       "bytes": 9136,
@@ -1453,20 +1585,20 @@
     {
       "path": "tests/test_prompt_equivalence.py",
       "reason": "public prompt consolidation or equivalence verification",
-      "bytes": 2177,
-      "sha256": "e1b125ddc651041da385b66e56ea728b69786c41e626975866caf48bccc76a75"
+      "bytes": 2401,
+      "sha256": "ee7d6fdb0a12b3288b90def3b5dbaf1b2f7cda3dbc101f4587ac2d54e4a77183"
     },
     {
       "path": "tests/test_role_consolidation.py",
       "reason": "service role consolidation and offline regression validation",
-      "bytes": 2877,
-      "sha256": "03c0a4b9d5b4ef86bf1a56e30099281e70e8397688e06420de607c96d2c00ff0"
+      "bytes": 2931,
+      "sha256": "b26e813ce32e4ed7ff611be0709e73f81ebfb8d3babe982d8579ed82f5e24268"
     },
     {
       "path": "tests/test_service_release.py",
       "reason": "public setup, documentation or dependency validation",
-      "bytes": 2543,
-      "sha256": "e57cf4b8121757615819d0ce237c5e85dbaf8eaa632971f845d58bd01656a48e"
+      "bytes": 2872,
+      "sha256": "fd9c8fcc1cf0422d35be02d95e29956e9f691b3b1eb5a4fefbbafc8948281ae6"
     },
     {
       "path": "tests/test_summary_schema.py",

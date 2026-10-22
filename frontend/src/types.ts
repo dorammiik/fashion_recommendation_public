@@ -1,7 +1,7 @@
 export type Status = 'queued' | 'classifying' | 'running' | 'awaiting_confirmation' | 'completed' | 'blocked' | 'failed' | 'interrupted';
 export type Reaction = 'like' | 'dislike';
 export type Kind = 'followup' | 'new';
-export interface Item { rank: number; item_id: string; title: string; price?: {value: number; currency: string} | null; image_url: string | null; item_web_url: string | null; recommendation_reason: string; key_features: string[] }
+export interface Item { display_price_krw?: number | null; rank: number; item_id: string; title: string; price?: {value: number; currency: string} | null; image_url: string | null; item_web_url: string | null; recommendation_reason: string; key_features: string[] }
 export interface Response { intro: string; recommendations?: Item[]; remarks?: string; next_recommendation?: string[]; outro?: string; feedback_notice?: string | null; status?: 'blocked'; reasons?: {state_id?: string; reason: string}[]; response_id?: string }
 export interface Run { final_ranking?: RankingSelection; request_id: string; session_id: string | null; status: Status; question: string | null; response: Response | null; item_snapshots: {item_id: string; rank: number; item_snapshot_id: string}[]; error_type: string | null; progress: {stage?: string; status?: string; completed_searches?: number; completed_batches?: number; total_batches?: number}; updated_at: string | null; resumable: boolean; recovery_reason: string | null }
 export type QuickStartID = 'complex' | 'similar' | 'profile_a' | 'profile_b';

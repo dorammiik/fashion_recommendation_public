@@ -1,8 +1,12 @@
-"""Role-consolidated implementation; service contracts and behavior are preserved."""
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
 from __future__ import annotations
+
 from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
 
+
 # ---- presentation_semantics_v45 ----
+
 """v45 Q rubric shared by product generation and conditional text review."""
 PRESENTATION_CRITERIA_V45 = """Judge the garment's visible presentation, including wrinkles, shape and lighting.
 Being fully in frame, recognizable and having a distinguishable color is NOT
@@ -84,4 +88,51 @@ extent and visible effect; do not invent lighting damage from a desired grade.
 Representative example (lighting): a pale coat with its main panels washed out by
 severe overexposure so color cannot be discerned is unmet. A brightly photographed
 coat with clear color and tonal detail is not downgraded solely for bright lighting.
+"""
+
+
+# ---- presentation_semantics_v57 ----
+
+"""v57 presentation rubric shared by generation and conditional text review."""
+PRESENTATION_CRITERIA_V57_presentation_semantics_v57 = """
+PHOTO OBSERVATIONS (v57): evaluate the actual target garment independently from the
+wearer's body crop. Head/feet/other garments outside the frame do not make the target
+partial. Conversely, a visible person does not mean the target garment is full.
+Full means the target's relevant complete outline is visible; partial means an actual
+target portion is cropped/hidden; uncertain visibility stays unknown. Background removal
+is not cropping. Do not infer full/partial from thum_quality or vice versa.
+An isolated, spread-out single garment cutout on white/solid background, with no visible
+wearer, mannequin or hanger, is product_only + flat_lay + solid. Do not invent an unseen
+support. Visible hanger/mannequin/person takes its appropriate observed classification.
+Count distinct actual background regions/colors, including wall-floor seams, borders
+and visible background objects; ignore the target garment's colors. Natural gradients
+and cast shadows on a single surface do not automatically add background colors.
+Solid=1, two_color=.4, three_color=.25, multicolor=.1 in v57 scoring; scores are code-owned.
+For person, background, support and thum_quality are excluded from Q and the remaining
+weights are normalized; product_focus is still evaluated. Keep factual background
+observations where visible, not a fabricated solid to compensate for exclusion.
+
+THUM_QUALITY (product_only): judge wrinkles, shape presentation and lighting independently
+from visibility/focus, condition, value or relevance. Full visibility or plain background
+does not compensate for a real presentation defect; poor focus alone does not imply a
+presentation defect. Use only the supplied image, never listing labels to restore color.
+met: clear natural shape/color, with no substantial presentation defect. Normal drape,
+regular design pleats, elastic-waist gathers, intentional asymmetric/angular silhouette
+and gentle design folds are not defects, and need not be downgraded to mostly_met.
+mostly_met: minor localized, fixable creases or slight local lighting variation leaving
+the garment's overall shape, spread and color readily legible.
+partial: material, non-local presentation problems. Examples: conspicuous creasing across
+much of the garment; broad deep overlapping/turned-in panels that substantially collapse
+spread/volume; support-induced bunching, pulling or sagging hiding the intended lower
+outline; substantial regional glare/shadow obscuring texture/color although overall
+appearance remains assessable. Distinguish actual collapse from natural flowing drape,
+intentional asymmetry or design folds. A hanger alone is no defect. An irregular edge
+alone is no defect. Do not invent collapse because the design is flowing/asymmetric.
+unmet: severe widespread creasing/distortion or lighting/color loss substantially
+prevents understanding the appearance. Severe washed-out main panels, deep shadows or
+color casts that prevent reading the main garment color remain unmet even with a neat
+outline. Bright lighting, pale color or a white background alone is not a defect.
+unknown: insufficient visual evidence to assess presentation; name what is unavailable.
+Evidence must state the observed location, extent and effect on shape/color readability.
+Do not invent a defect to match a desired grade, or call substantial broad collapse minor.
 """

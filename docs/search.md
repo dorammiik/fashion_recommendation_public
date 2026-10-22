@@ -1,6 +1,10 @@
 # Search — 조건 구조화, 상품 조회와 후보 평가
 
-현재 서비스: **v56**. [전체 구조](architecture.md) · [Relation](relation.md) · [Ranking](ranking.md)
+현재 서비스: **v61**. [전체 구조](architecture.md) · [Relation](relation.md) · [Ranking](ranking.md)
+
+## 현재 계획 방식
+
+v60부터 최대 4개 검색어·필터를 한 호출에서 생성하고 이미 만든 계획으로 검색한다. v61은 각 계획의 독립 의미 검증을 최대 4개 병렬로 처리한다. 결과·감사 기록은 원래 순서로 합치며 계획 간 중복·전체 조건 검사는 유지한다. 검색어 생성 자체를 4회 병렬 호출하는 구조는 아니다.
 
 ## 1. 역할과 책임
 
@@ -20,7 +24,7 @@
 | [tools/ebay_search.py](../src/fashion_recommendation_v2/tools/ebay_search.py), [ebay_client.py](../src/fashion_recommendation_v2/tools/ebay_client.py) | 검색·상세 조회, 인증·HTTP 처리 |
 | [schemas/search/](../src/fashion_recommendation_v2/schemas/search/), [prompts/search/](../src/fashion_recommendation_v2/prompts/search/) | 단계별 입력·출력과 프롬프트 |
 
-서비스 팩토리의 `LazySearch.run`이 클라이언트와 실행기를 요청별로 구성한다. 통합 파일 내의 함수 이름에 계약 식별자가 남아 있어도 서비스 선택은 `search_policy_version='v56'`이다.
+서비스 팩토리의 `LazySearch.run`이 클라이언트와 실행기를 요청별로 구성한다. 통합 파일 내의 함수 이름에 계약 식별자가 남아 있어도 서비스 선택은 `search_policy_version='v61'`이다.
 
 ## 3. 입력과 출력
 
@@ -46,7 +50,7 @@
 ```mermaid
 flowchart TD
   I[투영된 요청·해석·기준 근거] --> R[요구사항 구조화·출처 검증·분류]
-  R --> P[최초 계획·카테고리·필터·조건 사용 검증]
+  R --> P[최대 4개 계획 일괄 생성·의미 검증 최대 4개 병렬]
   P --> Q[최대 2개 검색어 병렬 조회]
   Q --> D[상세 조회·중복 판정]
   D --> E[상품별 이미지·메타데이터 평가]
@@ -54,8 +58,8 @@ flowchart TD
   V --> C[정상 후보 확정·Relation 콜백]
   C --> T{목표·조건 사용 충족?}
   T -->|예| O[최종 CandidateSet]
-  T -->|아니오| B{남은 검색 예산·전략?}
-  B -->|있음| N[부족·미사용 조건 기반 계획]
+  T -->|아니오| B{남은 사전 계획·검색 예산?}
+  B -->|있음| N[다음 사전 계획 사용]
   N --> Q
   B -->|없음| O
 ```
@@ -84,7 +88,7 @@ LLM은 조건의 의미·검색어·카테고리 선택과 이미지·판매 정
 
 ## 7. 프롬프트 구성
 
-[requirements.py](../src/fashion_recommendation_v2/prompts/search/requirements.py)는 요청·Stylist·reference의 출처와 구조화·분류 계약을, [planning.py](../src/fashion_recommendation_v2/prompts/search/planning.py)는 검색 키워드와 최초·후속 계획을 담당한다. [product_evaluation.py](../src/fashion_recommendation_v2/prompts/search/product_evaluation.py)는 상품별 근거·관찰·판정을, [ranking_observation.py](../src/fashion_recommendation_v2/prompts/search/ranking_observation.py)는 썸네일 등 후속 관찰을 정의한다.
+[requirements.py](../src/fashion_recommendation_v2/prompts/search/requirements.py)는 요청·Stylist·reference의 출처와 구조화·분류 계약을, [planning.py](../src/fashion_recommendation_v2/prompts/search/planning.py)는 검색 키워드와 사전 계획을 담당한다. v61은 검색 결과 진단으로 후속 검색어를 생성하지 않는다. [product_evaluation.py](../src/fashion_recommendation_v2/prompts/search/product_evaluation.py)는 상품별 근거·관찰·판정을, [ranking_observation.py](../src/fashion_recommendation_v2/prompts/search/ranking_observation.py)는 썸네일 등 후속 관찰을 정의한다.
 
 교정 가능한 단계에는 원래 입력과 오류 진단을 전달한다. 원응답, 검증 결과, 코드 파생 필드는 분리한다. 프롬프트 파일이 역할별 하나라는 사실이 Search 전체가 한 번의 LLM 호출이라는 뜻은 아니다.
 
@@ -99,11 +103,11 @@ LLM은 조건의 의미·검색어·카테고리 선택과 이미지·판매 정
 | 동시 검색 | 최대 2개 쿼리 |
 | 상세 조회 | 서비스 도구의 worker 5개 |
 | 상품 LLM 평가 | 상품당 1개, 최대 40개 병렬 |
-| 일반 Search LLM 호출 | 호출별 최대 420초. 더 짧은 작업 제한 우선 |
-| 이미지 평가 | 180초, 최대 출력 24,000토큰, 스트리밍 |
+| 일반 Search LLM 호출 | 공통 상한 420초와 작업별 제한을 적용하되, 최초 계획 생성은 타임아웃 해제 |
+| 이미지 평가 | 현재 상품 평가 작업 SearchVisualSlotsV57_1은 80초; 과거 작업의 180초 설정과 구분 |
 | 이미지 재제출 복구 | 현재 정책 0회. 텍스트 계획·검증의 교정과 구분 |
 
-`target_reached()`는 최소 성공 검색, 목표 후보 수, 미사용 요구사항 해소를 함께 확인한다. 현재 정책에서 성별 구성은 후보 부족 시 검색 방향을 돕는 요소이며 목표 도달 뒤 성별 비율만 맞추려고 추가 검색하지 않는다. 예산 소진이나 실행 가능한 추가 전략 부재도 종료 원인이다.
+`target_reached()`는 최소 성공 검색, 목표 후보 수, 미사용 요구사항 해소를 함께 확인한다. 현재 정책에서 성별 구성은 후보 부족 시 검색 방향을 돕는 요소이며 목표 도달 뒤 성별 비율만 맞추려고 추가 검색하지 않는다. 예산 소진이나 사용 가능한 사전 계획 부재도 종료 원인이다.
 
 따라서 검색 3회 × 최대 20개이면 조회 슬롯 60개를 사용할 수 있다. 중복·조회 오류·평가 제외를 거친 후보는 더 적고, 최종 추천은 Ranking이 정한다. 카테고리·상세 조회와 LLM 호출은 검색어 시도 4회와 별도이므로 4번 검색이 총 API 호출 4회를 뜻하지 않는다.
 
@@ -113,7 +117,7 @@ LLM은 조건의 의미·검색어·카테고리 선택과 이미지·판매 정
 
 요구사항 준비 실패는 검색 시작 전 오류다. 개별 상세 조회·이미지·평가 실패는 해당 상품의 기록에 남기며 다른 정상 상품을 보존한다. 정상 검색 0건과 모든 조회 시도의 실패를 구분한다.
 
-추가 전략 생성·변환 실패 시 이미 확보한 후보를 반환할 수 있다. 후보가 없고 실행 가능한 전략도 없으면 Orchestrator의 `SearchPlanUnavailable`, 전부 조회 실패라면 `SearchUnavailable` 경로로 종료될 수 있다. 실패 상품을 후보 수 충족을 위해 다시 편입하지 않는다. 호출 timeout은 로컬 요청 취소·정리를 수행하지만 외부 서비스의 과금 중단까지 보장하지 않는다.
+사전 계획을 모두 소진하거나 일부 검색이 실패한 경우 이미 확보한 후보를 반환할 수 있다. 후보가 없고 실행 가능한 전략도 없으면 Orchestrator의 `SearchPlanUnavailable`, 전부 조회 실패라면 `SearchUnavailable` 경로로 종료될 수 있다. 실패 상품을 후보 수 충족을 위해 다시 편입하지 않는다. 호출 timeout은 로컬 요청 취소·정리를 수행하지만 외부 서비스의 과금 중단까지 보장하지 않는다.
 
 ## 10. 실행 예제와 테스트
 

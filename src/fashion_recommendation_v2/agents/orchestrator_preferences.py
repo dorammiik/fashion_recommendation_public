@@ -1,15 +1,20 @@
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
+from __future__ import annotations
+
+from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
+
+
+# ---- orchestrator_preferences ----
+
 """Validate LLM-selected applicability, then select a detached request view."""
-from fashion_recommendation_v2.module_compat import import_module as _role_module
 from fashion_recommendation_v2.schemas.preference_profile import PreferenceGroup
 
-
+@_preserve_function('has_evidence', 'fashion_recommendation_v2.agents.orchestrator_preferences')
 def has_evidence(feature):
-    return bool(feature.evidence_refs) and any(
-        window.positive_mass + window.negative_mass > 0
-        for window in (feature.short_term, feature.long_term)
-    )
+    return bool(feature.evidence_refs) and any((window.positive_mass + window.negative_mass > 0 for window in (feature.short_term, feature.long_term)))
 
-
+@_preserve_function('select_profile', 'fashion_recommendation_v2.agents.orchestrator_preferences')
 def select_profile(profile, assessment):
     if profile is None:
         if assessment.preference_attributes or assessment.use_title_keywords or assessment.preference_category:
@@ -28,12 +33,11 @@ def select_profile(profile, assessment):
         selected = selected or [f for f in global_group.features if f.attribute == attribute]
         if not selected:
             raise ValueError('Selected preference has no evidence')
-        features.extend(f.model_copy(deep=True) for f in selected if has_evidence(f))
+        features.extend((f.model_copy(deep=True) for f in selected if has_evidence(f)))
     keywords = []
     if assessment.use_title_keywords:
-        keywords = [k.model_copy(deep=True) for k in (local.title_keywords or global_group.title_keywords)
-                    if k.equivalent_attribute is None and has_evidence(k)]
-    if not features and not keywords:
+        keywords = [k.model_copy(deep=True) for k in local.title_keywords or global_group.title_keywords if k.equivalent_attribute is None and has_evidence(k)]
+    if not features and (not keywords):
         return None
     view = profile.model_copy(deep=True)
     # Flatten selected category/global attributes, so consumers never count both.

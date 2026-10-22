@@ -1,5 +1,13 @@
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
+from __future__ import annotations
+
+from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
+
+
+# ---- conversation ----
+
 """Durable request classification and confirmation, separate from recommendation execution."""
-from fashion_recommendation_v2.module_compat import import_module as _role_module
 from typing import Literal
 from pydantic import Field
 from pydantic import model_validator
@@ -8,7 +16,7 @@ from fashion_recommendation_v2.schemas.quick_start import QuickStartSnapshot
 from fashion_recommendation_v2.schemas.base import StrictBaseModel
 from fashion_recommendation_v2.schemas.orchestrator import OrchestratorState
 
-
+@_preserve_class('ConversationDecision', 'fashion_recommendation_v2.schemas.conversation')
 class ConversationDecision(StrictBaseModel):
     kind: Literal['new', 'followup', 'ambiguous']
     reason: str = Field(min_length=1)
@@ -23,7 +31,7 @@ class ConversationDecision(StrictBaseModel):
             raise ValueError('Resolved request needs an effective query')
         return self
 
-
+@_preserve_class('ConversationInput', 'fashion_recommendation_v2.schemas.conversation')
 class ConversationInput(StrictBaseModel):
     user_query: str = Field(min_length=1)
     previous_query: str | None = None
@@ -31,7 +39,7 @@ class ConversationInput(StrictBaseModel):
     confirmed_kind: Literal['new', 'followup'] | None = None
     validation_feedback: list[str] = Field(default_factory=list)
 
-
+@_preserve_class('ConversationRecord', 'fashion_recommendation_v2.schemas.conversation')
 class ConversationRecord(StrictBaseModel):
     quick_start: QuickStartID | None = None
     quick_start_snapshot: QuickStartSnapshot | None = None

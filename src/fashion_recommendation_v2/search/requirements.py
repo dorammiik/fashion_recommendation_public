@@ -1,13 +1,16 @@
-"""Role-consolidated implementation; service contracts and behavior are preserved."""
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
 from __future__ import annotations
+
 from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
 
+
 # ---- requirements_v26 ----
+
 """Code-owned assembly and validation for the v26 two-stage requirement contract."""
 from copy import deepcopy as deepcopy_v26
 import json
 from uuid import uuid4
-
 from fashion_recommendation_v2.schemas.search.requirements.search_requirements import StylistConditionV26
 from fashion_recommendation_v2.schemas.search.requirements.search_requirements import GenderDiversityPolicy_legacy as GenderDiversityPolicy
 from fashion_recommendation_v2.schemas.search.requirements.search_requirements import RequirementsExtractionV8_legacy as RequirementsExtractionV8
@@ -22,31 +25,11 @@ from fashion_recommendation_v2.search.requirement_sources import _at
 from fashion_recommendation_v2.search.planning_rules import core_attributes as core_attributes_v26
 from fashion_recommendation_v2.search.audience_policy import dress_skirt_diversity_exempt
 
-
 @_preserve_function('source_contract', 'fashion_recommendation_v2.search.requirements_v26')
 def source_contract_v26(source):
     """Reuse the authority for existing input paths; expose only model-owned v26 fields."""
     rules = source_rules_v26(source)
-    return dict(revision='field-sources-v26', documents=source_documents(source), fields={
-        'conditions[source=user].source_text': list(rules['user'].paths),
-        'conditions[source=user,attribute=gender].source_text': list(rules['user_gender'].paths),
-        'conditions[source=reference].source_text': list(rules['reference'].paths),
-        'relation_conditions[].source_text': list(rules['relation'].paths),
-        'audience_interpretation.source_text': list(rules['audience'].paths),
-        'code_attached_stylist': list(rules['stylist'].paths)},
-        operations={'user_and_audience': 'exact_contiguous_quote_in_all_listed_documents',
-                    'reference': 'exact_contiguous_quote_in_any_known_attribute_value',
-                    'stylist': 'code copies attribute/value/source_text and OR types exactly; '
-                        'Stylist v2 preference-only entries preserve null source_text and their frozen interpretation/evidence provenance; '
-                        'never fabricate a user quote; optional search_text renders those same soft target alternatives; '
-                        'never extract additional user/anchor conditions from it',
-                    'relation': rules['relation'].operation,
-                    'composition': 'effective_query combines source segments; only retained actual user words '
-                        'can be source=user. Anchor observations stay contextual, not target conditions. '
-                        'Code attaches structured Stylist conditions as target/soft; do not extract sentence copies.'},
-        provenance_only=['original_user_query', 'original_stylist_resolution'],
-        diversity='No model-authored diversity evidence. Code derives it from preserved conditions/context.')
-
+    return dict(revision='field-sources-v26', documents=source_documents(source), fields={'conditions[source=user].source_text': list(rules['user'].paths), 'conditions[source=user,attribute=gender].source_text': list(rules['user_gender'].paths), 'conditions[source=reference].source_text': list(rules['reference'].paths), 'relation_conditions[].source_text': list(rules['relation'].paths), 'audience_interpretation.source_text': list(rules['audience'].paths), 'code_attached_stylist': list(rules['stylist'].paths)}, operations={'user_and_audience': 'exact_contiguous_quote_in_all_listed_documents', 'reference': 'exact_contiguous_quote_in_any_known_attribute_value', 'stylist': 'code copies attribute/value/source_text and OR types exactly; Stylist v2 preference-only entries preserve null source_text and their frozen interpretation/evidence provenance; never fabricate a user quote; optional search_text renders those same soft target alternatives; never extract additional user/anchor conditions from it', 'relation': rules['relation'].operation, 'composition': 'effective_query combines source segments; only retained actual user words can be source=user. Anchor observations stay contextual, not target conditions. Code attaches structured Stylist conditions as target/soft; do not extract sentence copies.'}, provenance_only=['original_user_query', 'original_stylist_resolution'], diversity='No model-authored diversity evidence. Code derives it from preserved conditions/context.')
 
 @_preserve_function('structure_and_sources', 'fashion_recommendation_v2.search.requirements_v26')
 def structure_and_sources_v26(source, structure, *, observe_semantics=False, observe_reference_roles=False):
@@ -54,10 +37,11 @@ def structure_and_sources_v26(source, structure, *, observe_semantics=False, obs
     from fashion_recommendation_v2.query_composition import validate_composed_conditions
     validate_composed_conditions(source, structure.conditions)
     contract = source_contract_v26(source)
-    documents, fields = contract['documents'], contract['fields']
+    documents, fields = (contract['documents'], contract['fields'])
     errors = []
     source_errors = []
-    reference_forbidden = {'price'} if getattr(source, 'requirements_source_version', None) in {'v47', 'v48', 'v49', 'v50', 'v51', 'v52', 'v53', 'v54', 'v55', 'v56'} else {'price', 'product_type'}
+    reference_forbidden = {'price'} if getattr(source, 'requirements_source_version', None) in {'v47', 'v48', 'v49', 'v50', 'v51', 'v52', 'v53', 'v54', 'v55', 'v56', 'v57', 'v59', 'v60', 'v61'} else {'price', 'product_type'}
+
     def check_quote(field, quote, paths):
         for path in paths:
             value = _at(documents, path)
@@ -74,13 +58,11 @@ def structure_and_sources_v26(source, structure, *, observe_semantics=False, obs
         if c.requirement_id == CONTEXT_REQUIREMENT_ID or c.requirement_id.startswith('stylist_'):
             errors.append(dict(field=prefix, code='code_owned_id'))
         if c.source == 'reference':
-            facts = (_at(documents, fields['conditions[source=reference].source_text'][0])
-                     if documents.get('similarity_reference') else {})
-            if (not c.source_text.strip() or not any(c.source_text in v for vs in facts.values() for v in vs)
-                    or c.role != 'target' or c.polarity != 'positive' or c.attribute in reference_forbidden):
+            facts = _at(documents, fields['conditions[source=reference].source_text'][0]) if documents.get('similarity_reference') else {}
+            if not c.source_text.strip() or not any((c.source_text in v for vs in facts.values() for v in vs)) or c.role != 'target' or (c.polarity != 'positive') or (c.attribute in reference_forbidden):
                 error = dict(field=prefix, code='invalid_reference_condition')
                 errors.append(error)
-                if (c.role == 'target' or observe_reference_roles) and c.polarity == 'positive' and c.attribute not in reference_forbidden:
+                if (c.role == 'target' or observe_reference_roles) and c.polarity == 'positive' and (c.attribute not in reference_forbidden):
                     source_errors.append(error)
         else:
             key = 'conditions[source=user,attribute=gender].source_text' if c.attribute == 'gender' else 'conditions[source=user].source_text'
@@ -89,10 +71,9 @@ def structure_and_sources_v26(source, structure, *, observe_semantics=False, obs
             errors.append(dict(field=prefix, code='avoid_requires_negative'))
         if c.attribute == 'product_type' and c.polarity != 'positive':
             errors.append(dict(field=prefix, code='product_type_requires_positive_use_avoid_for_dislikes'))
-    if sum(c.attribute == 'price' and c.role == 'target' for c in conditions) > 1:
+    if sum((c.attribute == 'price' and c.role == 'target' for c in conditions)) > 1:
         errors.append(dict(field='conditions', code='combine_price_bounds'))
-    check_quote('audience_interpretation.source_text', structure.audience_interpretation.source_text,
-        fields['audience_interpretation.source_text'])
+    check_quote('audience_interpretation.source_text', structure.audience_interpretation.source_text, fields['audience_interpretation.source_text'])
     if errors:
         if observe_semantics:
             from fashion_recommendation_v2.search.semantic_validation import semantic_failure
@@ -105,48 +86,41 @@ def structure_and_sources_v26(source, structure, *, observe_semantics=False, obs
         raise ValueError(json.dumps({'stage': 'structure_validation', 'errors': errors}, ensure_ascii=False))
     # Stylist is not model output: attach its original values without normalization.
     seen = set()
-    stylist_entries = (_at(documents, fields['code_attached_stylist'][0])
-                       if documents.get('stylist_resolution') else [])
+    stylist_entries = _at(documents, fields['code_attached_stylist'][0]) if documents.get('stylist_resolution') else []
     for entry in stylist_entries:
         original = {k: deepcopy_v26(entry[k]) for k in ('attribute', 'value', 'source_text')}
         from fashion_recommendation_v2.stylist_personalization import condition_provenance
-        if getattr(source.stylist_resolution, 'contract_version', None) in {'stylist-v2', 'stylist-v3', 'stylist-v4', 'stylist-v5', 'stylist-v6'}:
+        if getattr(source.stylist_resolution, 'contract_version', None) in {'stylist-v2', 'stylist-v3', 'stylist-v4', 'stylist-v5', 'stylist-v6', 'stylist-v7', 'stylist-v8'}:
             from fashion_recommendation_v2.schemas.stylist import StylistInterpretationV2_v2 as StylistInterpretationV2
             from fashion_recommendation_v2.schemas.stylist import StylistInterpretationV3_v3 as StylistInterpretationV3
-            row_schema = StylistInterpretationV3 if source.stylist_resolution.contract_version in {'stylist-v3', 'stylist-v4', 'stylist-v5', 'stylist-v6'} else StylistInterpretationV2
-            original['stylist_provenance'] = condition_provenance(source.stylist_resolution,
-                row_schema.model_validate(entry))
+            row_schema = StylistInterpretationV3 if source.stylist_resolution.contract_version in {'stylist-v3', 'stylist-v4', 'stylist-v5', 'stylist-v6', 'stylist-v7', 'stylist-v8'} else StylistInterpretationV2
+            original['stylist_provenance'] = condition_provenance(source.stylist_resolution, row_schema.model_validate(entry))
         identity = json.dumps(original, ensure_ascii=False, sort_keys=True)
         if identity in seen:
-            continue  # Preserve original input; match existing exact-copy deduplication policy.
+            continue
         seen.add(identity)
-        conditions.append(StylistConditionV26(requirement_id=f'stylist_{len(seen):03d}',
-            source='stylist', role='target', polarity='positive', **deepcopy_v26(original)))
-    if not any(c.role == 'target' for c in conditions):
+        conditions.append(StylistConditionV26(requirement_id=f'stylist_{len(seen):03d}', source='stylist', role='target', polarity='positive', **deepcopy_v26(original)))
+    if not any((c.role == 'target' for c in conditions)):
         raise ValueError('No target conditions remain after structuring.')
     return conditions
-
 
 @_preserve_function('dimension', 'fashion_recommendation_v2.search.requirements_v26')
 def dimension_v26(condition):
     return (condition.attribute, condition.value.key if condition.attribute == 'detail' else None)
 
-
 @_preserve_function('bind_applications', 'fashion_recommendation_v2.search.requirements_v26')
-def bind_applications_v26(source, structure, conditions, applications, *, dimension_key=None, user_avoid_kind='soft',
-                      scope_rules=None, stylist_conflicts=None):
+def bind_applications_v26(source, structure, conditions, applications, *, dimension_key=None, user_avoid_kind='soft', scope_rules=None, stylist_conflicts=None):
     """Join ID-only labels. Keep every condition value and quote byte-for-byte."""
     before = [c.model_dump(mode='json') for c in conditions]
     dimension_key = dimension_v26 if dimension_key is None else dimension_key
     labels = {}
-    for group, entries, user in [('user_applications', applications.user_applications, True),
-                                  ('preserved_applications', applications.preserved_applications, False)]:
+    for group, entries, user in [('user_applications', applications.user_applications, True), ('preserved_applications', applications.preserved_applications, False)]:
         expected = {c.requirement_id for c in conditions if c.role == 'target' and (c.source == 'user') == user}
         ids = [a.requirement_id for a in entries]
         if len(ids) != len(set(ids)) or set(ids) != expected:
             raise ValueError(f'{group}: IDs must cover exactly the original target conditions once; no omissions, duplicates or new IDs.')
         labels.update({a.requirement_id: a for a in entries})
-    rows, suppressed = [], []
+    rows, suppressed = ([], [])
     for c in conditions:
         if c.role == 'anchor':
             suppressed.append(dict(requirement_id=c.requirement_id, reason='anchor_context_not_target_constraint'))
@@ -157,56 +131,45 @@ def bind_applications_v26(source, structure, conditions, applications, *, dimens
         # Invalid classification terminates. Do not silently rewrite labels or original meaning.
         if c.polarity == 'unrestricted' and (kind, scope) != ('soft', 'item'):
             raise ValueError(f'{c.requirement_id}: unrestricted conditions require soft/item.')
-        if not (scope_rules or {}).get('independent_product_type_source_kind', False) and c.attribute == 'product_type' and (kind, scope) != ('hard', 'search') and not (
-                scope_rules is not None and kind == 'soft' and scope == 'search'):
+        if not (scope_rules or {}).get('independent_product_type_source_kind', False) and c.attribute == 'product_type' and ((kind, scope) != ('hard', 'search')) and (not (scope_rules is not None and kind == 'soft' and (scope == 'search'))):
             raise ValueError(f'{c.requirement_id}: target product_type requires hard/search.')
         if c.attribute == 'price' and (kind, scope) != ('hard', 'item'):
             raise ValueError(f'{c.requirement_id}: price requires hard/item.')
-        if c.attribute == 'gender' and c.source == 'user' and c.polarity == 'positive' and (kind, scope) != ('hard', 'search'):
+        if c.attribute == 'gender' and c.source == 'user' and (c.polarity == 'positive') and ((kind, scope) != ('hard', 'search')):
             raise ValueError(f'{c.requirement_id}: explicit product audience requires hard/search.')
         avoid_kind = user_avoid_kind if c.source == 'user' else 'soft'
         if c.attribute == 'avoid_product_type' and (kind, scope) != (avoid_kind, 'item'):
             raise ValueError(f'{c.requirement_id}: product dislikes require {avoid_kind}/item.')
-        if c.polarity == 'negative' and scope != 'item':
+        if c.polarity == 'negative' and scope != 'item' and (c.requirement_id not in (scope_rules or {}).get('condition_scopes', {})):
             raise ValueError(f'{c.requirement_id}: negative conditions must remain item-only.')
-        expected_scope = ('search' if c.attribute in (scope_rules['hard_search_attributes']
-                          if scope_rules else core_attributes_v26('v26')) else 'item')
+        expected_scope = 'search' if c.attribute in (scope_rules['hard_search_attributes'] if scope_rules else core_attributes_v26('v26')) else 'item'
         if scope_rules and c.polarity in {'negative', 'unrestricted'}:
             expected_scope = scope_rules['negative_scope']
+        expected_scope = (scope_rules or {}).get('condition_scopes', {}).get(c.requirement_id, expected_scope)
         if kind == 'hard' and scope != expected_scope:
             raise ValueError(f'{c.requirement_id}: hard condition has the wrong scope.')
         original = c.model_dump(mode='json', include={'requirement_id', 'attribute', 'value', 'source', 'source_text'})
         if getattr(c, 'stylist_provenance', None) is not None:
             original['stylist_provenance'] = c.stylist_provenance.model_dump(mode='json')
-        rows.append({**deepcopy_v26(original), 'kind': kind, 'evaluation_scope': scope,
-                     'unrestricted': c.polarity == 'unrestricted'})
+        rows.append({**deepcopy_v26(original), 'kind': kind, 'evaluation_scope': scope, 'unrestricted': c.polarity == 'unrestricted'})
     by_id = {c.requirement_id: c for c in conditions}
     users = [r for r in rows if r['source'] == 'user']
     retained = []
     for row in rows:
         c = by_id[row['requirement_id']]
-        overrides = [u for u in users if dimension_key(by_id[u['requirement_id']]) == dimension_key(c)
-            and ((row['source'] == 'stylist' and u['kind'] == 'hard' and
-                  (stylist_conflicts is None or (c.requirement_id, u['requirement_id']) in stylist_conflicts))
-                 or (row['source'] == 'reference' and u['value'] != row['value']))]
+        overrides = [u for u in users if dimension_key(by_id[u['requirement_id']]) == dimension_key(c) and (row['source'] == 'stylist' and u['kind'] == 'hard' and (stylist_conflicts is None or (c.requirement_id, u['requirement_id']) in stylist_conflicts) or (row['source'] == 'reference' and u['value'] != row['value']))]
         if overrides:
-            suppressed.append(dict(requirement_id=c.requirement_id, reason='explicit_user_precedence',
-                overridden_by=[u['requirement_id'] for u in overrides]))
+            suppressed.append(dict(requirement_id=c.requirement_id, reason='explicit_user_precedence', overridden_by=[u['requirement_id'] for u in overrides]))
         else:
             retained.append(row)
-    inventory = [ProductTypeAlternative(requirement_id=r['requirement_id'], value=v, source_text=r['source_text'])
-        for r in retained if r['attribute'] == 'product_type'
-        for v in (r['value'] if isinstance(r['value'], list) else [r['value']])]
-    types = list(dict.fromkeys(a.value for a in inventory))
+    inventory = [ProductTypeAlternative(requirement_id=r['requirement_id'], value=v, source_text=r['source_text']) for r in retained if r['attribute'] == 'product_type' for v in (r['value'] if isinstance(r['value'], list) else [r['value']])]
+    types = list(dict.fromkeys((a.value for a in inventory)))
     explicit = [r for r in retained if r['source'] == 'user' and r['attribute'] == 'gender']
     dress_or_skirt = dress_skirt_diversity_exempt(types)
     exemption = 'explicit_user_gender' if explicit else 'dress_or_skirt_product_type' if dress_or_skirt else None
     quotes = ([r['source_text'] for r in explicit] if explicit else [a.source_text for a in inventory]) or [source.user_query]
-    policy = GenderDiversityPolicy(required=exemption is None, exemption=exemption,
-        interpreted_product_types=types, source_texts=list(dict.fromkeys(quotes)),
-        reason='Code-derived from preserved explicit audience and positive target product alternatives.')
-    output = RequirementsExtractionV8(requirements=retained, product_type_alternatives=inventory,
-        gender_diversity_policy=policy)
+    policy = GenderDiversityPolicy(required=exemption is None, exemption=exemption, interpreted_product_types=types, source_texts=list(dict.fromkeys(quotes)), reason='Code-derived from preserved explicit audience and positive target product alternatives.')
+    output = RequirementsExtractionV8(requirements=retained, product_type_alternatives=inventory, gender_diversity_policy=policy)
     interpretation = AudienceInterpretationV1_v26.model_validate(structure.audience_interpretation.model_dump())
     decision = decide_audience(source.audience_context_v1, output, interpretation)
     resolved = apply_audience_decision(output, decision, requirements_id='requirements_' + uuid4().hex)
@@ -215,28 +178,27 @@ def bind_applications_v26(source, structure, conditions, applications, *, dimens
     assert_preserved(conditions, resolved)
     if before != [c.model_dump(mode='json') for c in conditions]:
         raise ValueError('Condition inventory mutated during application binding.')
-    return resolved, dict(suppressed_conditions=suppressed,
-        application_reasons={key: value.reason for key, value in labels.items()})
-
+    return (resolved, dict(suppressed_conditions=suppressed, application_reasons={key: value.reason for key, value in labels.items()}))
 
 @_preserve_function('assert_preserved', 'fashion_recommendation_v2.search.requirements_v26')
 def assert_preserved(conditions, resolved):
     by_id = {c.requirement_id: c.model_dump(mode='json') for c in conditions}
     for r in resolved.requirements:
         if r.source == 'context':
-            continue  # Code-owned audience is a separately derived condition.
+            # Code-owned audience is a separately derived condition.
+            # Preserve original input; match existing exact-copy deduplication policy.
+            continue
         raw = r.model_dump(mode='json')
-        if r.requirement_id not in by_id or any(raw[k] != by_id[r.requirement_id][k]
-                for k in ('attribute', 'value', 'source', 'source_text')):
+        if r.requirement_id not in by_id or any((raw[k] != by_id[r.requirement_id][k] for k in ('attribute', 'value', 'source', 'source_text'))):
             raise ValueError(f'Original condition changed: {r.requirement_id}')
 
 
 # ---- requirements_v30 ----
+
 """Executable projections for recoverable requirement errors, without LLM repair."""
 from copy import deepcopy as deepcopy_v30
 from types import SimpleNamespace
 from typing import get_args
-
 from fashion_recommendation_v2.schemas.price import PriceConstraint
 from fashion_recommendation_v2.schemas.stylist import StylistDetailValue_base as StylistDetailValue
 from fashion_recommendation_v2.schemas.search.requirements.search_requirements import AttributeV30
@@ -261,56 +223,40 @@ from fashion_recommendation_v2.search.condition_semantics import ATTRIBUTE_ALIAS
 from fashion_recommendation_v2.search.condition_semantics import provenance_dimension_v30
 from fashion_recommendation_v2.search.planning_rules import core_attributes
 from fashion_recommendation_v2.search.semantic_validation import semantic_failure as semantic_failure_v30
-
 # These are semantic identities, not fuzzy string substitutions. Native lists
 # remain lists (OR); an object's values list remains a list in a native projection.
 NATIVE_ATTRIBUTES = frozenset(get_args(AttributeV30)) - {'detail', 'price', 'category'}
 ATTRIBUTE_ALIASES = dict(ATTRIBUTE_ALIASES_V30)
-
 
 @_preserve_function('source_contract', 'fashion_recommendation_v2.search.requirements_v30')
 def source_contract_v30(source):
     contract = original_source_contract(source)
     contract['revision'] = 'field-sources-v30'
     contract['recovery'] = dict(raw_response='immutable', **recovery_contract_v30())
-    contract['audience_metadata_sources'] = ['audience_context_v1.reference', 'similarity_reference.attributes.gender',
-                                           'similarity_reference.attributes.detail.gender']
+    contract['audience_metadata_sources'] = ['audience_context_v1.reference', 'similarity_reference.attributes.gender', 'similarity_reference.attributes.detail.gender']
     return contract
-
 
 @_preserve_function('execution_source', 'fashion_recommendation_v2.search.requirements_v30')
 def execution_source(source):
     """Code-derived context only; the fixed model input and original stay intact."""
     return source.model_copy(update={'audience_context_v1': audience_context_v30(source)}, deep=True)
 
-
 @_preserve_function('semantic_key', 'fashion_recommendation_v2.search.requirements_v30')
 def semantic_key(attribute, value=None):
     return provenance_dimension_v30(attribute, value)
-
 
 @_preserve_function('dimension', 'fashion_recommendation_v2.search.requirements_v30')
 def dimension(condition):
     return semantic_key(condition.attribute, condition.value)
 
-
 @_preserve_function('application_rules', 'fashion_recommendation_v2.search.requirements_v30')
 def application_rules_v30():
-    return dict(hard_search_attributes=sorted(core_attributes('v30')),
-        other_hard_scope='item', negative_scope='item', unrestricted=['soft', 'item'],
-        target_product_type=['hard', 'search'], price=['hard', 'item'],
-        positive_explicit_gender=['hard', 'search'], avoid_product_type=['soft', 'item'],
-        preserved_kind='soft', scope_recovery='code corrects scope; never changes kind',
-        aliases=ATTRIBUTE_ALIASES, native_attributes=sorted(NATIVE_ATTRIBUTES),
-        source_recovery_terms=RECOVERY_TERMS_V30)
-
+    return dict(hard_search_attributes=sorted(core_attributes('v30')), other_hard_scope='item', negative_scope='item', unrestricted=['soft', 'item'], target_product_type=['hard', 'search'], price=['hard', 'item'], positive_explicit_gender=['hard', 'search'], avoid_product_type=['soft', 'item'], preserved_kind='soft', scope_recovery='code corrects scope; never changes kind', aliases=ATTRIBUTE_ALIASES, native_attributes=sorted(NATIVE_ATTRIBUTES), source_recovery_terms=RECOVERY_TERMS_V30)
 
 @_preserve_function('note', 'fashion_recommendation_v2.search.requirements_v30')
 def note(notes, code, rid, before, after, *, paths=()):
     if before != after:
-        notes.append(dict(code=code, requirement_id=rid, original=deepcopy_v30(before),
-                          derived=deepcopy_v30(after), source_paths=list(paths)))
-
+        notes.append(dict(code=code, requirement_id=rid, original=deepcopy_v30(before), derived=deepcopy_v30(after), source_paths=list(paths)))
 
 @_preserve_function('project_condition', 'fashion_recommendation_v2.search.requirements_v30')
 def project_condition(condition, notes):
@@ -327,9 +273,8 @@ def project_condition(condition, notes):
         key = ATTRIBUTE_ALIASES.get(value.key, value.key)
         attribute = ATTRIBUTE_ALIASES.get(c.attribute, c.attribute)
         if c.attribute != 'detail' and key != attribute:
-            semantic_failure_v30('attribute_meaning', f'{c.requirement_id}: attribute and detail key have conflicting meanings.',
-                             condition=raw)
-            return c  # B preserves the proposal; no guessed correction of its meaning.
+            semantic_failure_v30('attribute_meaning', f'{c.requirement_id}: attribute and detail key have conflicting meanings.', condition=raw)
+            return c
         if key == 'price':
             raise ValueError(f'{c.requirement_id}: price requires its original structured currency and bounds.')
         if key in NATIVE_ATTRIBUTES and (c.attribute != 'detail' or value.key in ATTRIBUTE_ALIASES):
@@ -345,20 +290,20 @@ def project_condition(condition, notes):
     if isinstance(c.value, list) and (not c.value or len(set(c.value)) != len(c.value)):
         raise ValueError(f'{c.requirement_id}: OR alternatives must be nonempty and unique.')
     note(notes, 'registered_attribute_projection', c.requirement_id, raw, c.model_dump(mode='json'))
+    # B preserves the proposal; no guessed correction of its meaning.
     return c
-
 
 @_preserve_function('prepare_structure', 'fashion_recommendation_v2.search.requirements_v30')
 def prepare_structure_v30(source, structure, *, observe_reference_roles=False):
     from fashion_recommendation_v2.query_composition import validate_composed_conditions
     validate_composed_conditions(source, structure.conditions)
-    notes, projected, suppressed = [], [], []
+    notes, projected, suppressed = ([], [], [])
     originals = [c.model_dump(mode='json') for c in structure.conditions]
     try:
         ids = [c.requirement_id for c in structure.conditions]
         if len(set(ids)) != len(ids):
             raise ValueError('duplicate_condition_id: validate original IDs before any source recovery.')
-        if any(rid == 'context_audience_v1' or rid.startswith('stylist_') for rid in ids):
+        if any((rid == 'context_audience_v1' or rid.startswith('stylist_') for rid in ids)):
             raise ValueError('code_owned_id: model conditions cannot reuse reserved IDs.')
         shaped = []
         for original in structure.conditions:
@@ -373,9 +318,9 @@ def prepare_structure_v30(source, structure, *, observe_reference_roles=False):
         references = [c for c in shaped if c.source == 'reference']
         for c in references:
             validate_reference_binding_v30(source, c)
+
         def suppress(c, code, retained_ids, paths):
-            row = dict(requirement_id=c.requirement_id, reason=code,
-                retained_condition_ids=retained_ids, source_paths=paths)
+            row = dict(requirement_id=c.requirement_id, reason=code, retained_condition_ids=retained_ids, source_paths=paths)
             suppressed.append(row)
             note(notes, code, c.requirement_id, c.model_dump(mode='json'), row, paths=paths)
         for c in shaped:
@@ -384,18 +329,16 @@ def prepare_structure_v30(source, structure, *, observe_reference_roles=False):
                 # Attach the original once through structure_and_sources, not
                 # through the model's copy. Bind its generated ID below.
                 suppress(c, 'resolved_stylist_duplicate', [], ['stylist_resolution.interpretations'])
-                suppressed[-1]['stylist_original'] = stylist.model_dump(mode='json', include={'attribute','value','source_text'})
+                suppressed[-1]['stylist_original'] = stylist.model_dump(mode='json', include={'attribute', 'value', 'source_text'})
                 continue
             facts = projected_reference_binding_v30(source, c)
             if facts:
-                fact_values = list(dict.fromkeys(f['value'] for f in facts))
-                covered = [r for r in references if dimension(r) == dimension(c)
-                    and set(condition_values_v30(r)) <= set(fact_values)]
+                fact_values = list(dict.fromkeys((f['value'] for f in facts)))
                 # A preserved OR row may cover a split projected detail. Keep
                 # that row whole; never split or rewrite its OR structure.
-                covered += [r for r in references if dimension(r) == dimension(c)
-                    and set(fact_values) <= set(condition_values_v30(r)) and r not in covered]
-                paths = list(dict.fromkeys(f['path'] for f in facts))
+                covered = [r for r in references if dimension(r) == dimension(c) and set(condition_values_v30(r)) <= set(fact_values)]
+                covered += [r for r in references if dimension(r) == dimension(c) and set(fact_values) <= set(condition_values_v30(r)) and (r not in covered)]
+                paths = list(dict.fromkeys((f['path'] for f in facts)))
                 if set(fact_values) <= {v for r in covered for v in condition_values_v30(r)}:
                     suppress(c, 'inherited_reference_duplicate', [r.requirement_id for r in covered], paths)
                     continue
@@ -409,16 +352,12 @@ def prepare_structure_v30(source, structure, *, observe_reference_roles=False):
                     value = fact_values[0]
                 derived = c.model_copy(update={'source': 'reference', 'source_text': fact_values[0], 'value': value})
                 validate_reference_binding_v30(source, derived)
-                note(notes, 'verified_reference_source', c.requirement_id, c.model_dump(mode='json'),
-                     derived.model_dump(mode='json'), paths=paths)
+                note(notes, 'verified_reference_source', c.requirement_id, c.model_dump(mode='json'), derived.model_dump(mode='json'), paths=paths)
                 c = derived
             if c.source == 'reference' and c.attribute == 'product_type':
-                matches = [r for r in shaped if r.source == 'user' and r.role == 'target'
-                    and r.attribute == 'product_type' and r.polarity == 'positive'
-                    and set(condition_values_v30(c)) <= set(condition_values_v30(r))]
-                if matches and c.role == 'target' and c.polarity == 'positive':
-                    suppress(c, 'reference_target_type_duplicate', [r.requirement_id for r in matches],
-                        [f['path'] for f in validate_reference_binding_v30(source, c)])
+                matches = [r for r in shaped if r.source == 'user' and r.role == 'target' and (r.attribute == 'product_type') and (r.polarity == 'positive') and (set(condition_values_v30(c)) <= set(condition_values_v30(r)))]
+                if matches and c.role == 'target' and (c.polarity == 'positive'):
+                    suppress(c, 'reference_target_type_duplicate', [r.requirement_id for r in matches], [f['path'] for f in validate_reference_binding_v30(source, c)])
                     continue
             if accepted_product_alternative_v30(source, c):
                 note(notes, 'accepted_product_alternative', c.requirement_id, c.polarity, 'positive', paths=('user_query',))
@@ -426,25 +365,20 @@ def prepare_structure_v30(source, structure, *, observe_reference_roles=False):
             quote, paths = recover_condition_quote_v30(source, c)
             note(notes, 'verified_source_projection', c.requirement_id, c.source_text, quote, paths=paths)
             projected.append(c.model_copy(update={'source_text': quote}))
-        targets = [c for c in projected if c.source == 'user' and c.attribute == 'product_type'
-                   and c.role == 'target' and c.polarity == 'positive']
+        targets = [c for c in projected if c.source == 'user' and c.attribute == 'product_type' and (c.role == 'target') and (c.polarity == 'positive')]
         span = product_alternative_span_v30(source, targets)
         if span:
             # Existing planning/evaluation treats a single value list as OR.
             # Separate hard product rows would incorrectly mean dress AND set.
-            values = list(dict.fromkeys(v for c in targets for v in condition_values_v30(c)))
+            values = list(dict.fromkeys((v for c in targets for v in condition_values_v30(c))))
             merged = targets[0].model_copy(update={'value': values, 'source_text': span})
-            note(notes, 'accepted_target_or_group', merged.requirement_id,
-                 [c.model_dump(mode='json') for c in targets], merged.model_dump(mode='json'), paths=('user_query',))
+            note(notes, 'accepted_target_or_group', merged.requirement_id, [c.model_dump(mode='json') for c in targets], merged.model_dump(mode='json'), paths=('user_query',))
             for c in targets[1:]:
                 suppress(c, 'accepted_target_or_member', [merged.requirement_id], ['user_query'])
-            projected = [merged if c.requirement_id == merged.requirement_id else c
-                         for c in projected if c not in targets[1:]]
+            projected = [merged if c.requirement_id == merged.requirement_id else c for c in projected if c not in targets[1:]]
         unique = []
         for c in projected:
-            explicit = [r for r in projected if c.source == 'reference' and r.source == 'user'
-                        and r.role == 'target' and r.polarity == 'positive' and dimension(r) == dimension(c)
-                        and condition_values_v30(r) == condition_values_v30(c)]
+            explicit = [r for r in projected if c.source == 'reference' and r.source == 'user' and (r.role == 'target') and (r.polarity == 'positive') and (dimension(r) == dimension(c)) and (condition_values_v30(r) == condition_values_v30(c))]
             if explicit:
                 suppress(c, 'explicit_reference_duplicate', [r.requirement_id for r in explicit], ['user_query'])
             else:
@@ -453,25 +387,19 @@ def prepare_structure_v30(source, structure, *, observe_reference_roles=False):
         audience = AudienceInterpretationV1.model_validate(derive_audience_v30(source, projected))
         execution_context = audience_context_v30(source)
         category_context = hasattr(execution_context, 'anchor_category')
-        note(notes, 'category_anchor_audience_context' if category_context else 'verified_anchor_metadata',
-             None, source.audience_context_v1.model_dump(mode='json'),
-             execution_context.model_dump(mode='json'),
-             paths=('relation_intent.anchor_category',) if category_context else ('similarity_reference',))
-        note(notes, 'code_audience_policy', None,
-             structure.audience_interpretation.model_dump(mode='json', exclude={'reason'}),
-             audience.model_dump(mode='json', exclude={'reason'}), paths=('audience_context_v1', 'user_query') + (('relation_intent.anchor_category',) if category_context else ()))
+        note(notes, 'category_anchor_audience_context' if category_context else 'verified_anchor_metadata', None, source.audience_context_v1.model_dump(mode='json'), execution_context.model_dump(mode='json'), paths=('relation_intent.anchor_category',) if category_context else ('similarity_reference',))
+        note(notes, 'code_audience_policy', None, structure.audience_interpretation.model_dump(mode='json', exclude={'reason'}), audience.model_dump(mode='json', exclude={'reason'}), paths=('audience_context_v1', 'user_query') + (('relation_intent.anchor_category',) if category_context else ()))
         effective_structure = SimpleNamespace(conditions=projected, audience_interpretation=audience)
-        conditions = structure_and_sources(source, effective_structure, observe_semantics=True,
-                                            observe_reference_roles=observe_reference_roles)
+        conditions = structure_and_sources(source, effective_structure, observe_semantics=True, observe_reference_roles=observe_reference_roles)
         for row in suppressed:
             if 'stylist_original' in row:
-                row['retained_condition_ids'] = [c.requirement_id for c in conditions if c.source == 'stylist'
-                    and c.model_dump(mode='json', include={'attribute','value','source_text'}) == row['stylist_original']]
+                row['retained_condition_ids'] = [c.requirement_id for c in conditions if c.source == 'stylist' and c.model_dump(mode='json', include={'attribute', 'value', 'source_text'}) == row['stylist_original']]
         # Follow duplicate aliases to actual retained IDs (a reference copy can
         # itself be covered by an explicit user condition). Cycles/dangling
         # references must never make a condition silently disappear.
         kept_ids = {c.requirement_id for c in conditions}
         aliases = {row['requirement_id']: row['retained_condition_ids'] for row in suppressed}
+
         def retained(rid, seen):
             if rid in kept_ids:
                 return [rid]
@@ -483,21 +411,15 @@ def prepare_structure_v30(source, structure, *, observe_reference_roles=False):
             for recovery in notes:
                 if recovery['requirement_id'] == row['requirement_id'] and recovery['code'] == row['reason']:
                     recovery['derived'] = deepcopy_v30(row)
-        return effective_structure, conditions, dict(recoveries=notes,
-            original_conditions=originals, suppressed_conditions=suppressed,
-            conditions=[c.model_dump(mode='json') for c in conditions],
-            audience_context=execution_context.model_dump(mode='json'),
-            audience_interpretation=audience.model_dump(mode='json'))
+        return (effective_structure, conditions, dict(recoveries=notes, original_conditions=originals, suppressed_conditions=suppressed, conditions=[c.model_dump(mode='json') for c in conditions], audience_context=execution_context.model_dump(mode='json'), audience_interpretation=audience.model_dump(mode='json')))
     except Exception as exc:
-        exc.code_derived = dict(recoveries=notes, original_conditions=originals,
-            conditions=[c.model_dump(mode='json') for c in projected], suppressed_conditions=suppressed)
+        exc.code_derived = dict(recoveries=notes, original_conditions=originals, conditions=[c.model_dump(mode='json') for c in projected], suppressed_conditions=suppressed)
         raise
-
 
 @_preserve_function('finalize_conditions', 'fashion_recommendation_v2.search.requirements_v30')
 def finalize_conditions_v30(source, structure, conditions, applications, *, rules=None, stylist_conflicts=None):
-    # Only application labels are projected here; stage-one condition objects
     # (including raw Stylist OR values and quotes) are never rewritten.
+    # Only application labels are projected here; stage-one condition objects
     before = [c.model_dump(mode='json') for c in conditions]
     labels = applications.model_dump(mode='json')
     by_id = {c.requirement_id: c for c in conditions}
@@ -521,39 +443,33 @@ def finalize_conditions_v30(source, structure, conditions, applications, *, rule
                 scope = 'search' if c.attribute in rules['hard_search_attributes'] else rules['other_hard_scope']
             elif c.source in {'user', 'stylist'} and dimension(c) in rules.get('soft_search_attributes', ()):
                 scope = 'search'
+            scope = rules.get('condition_scopes', {}).get(c.requirement_id, scope)
             note(notes, 'code_application_scope', c.requirement_id, row['evaluation_scope'], scope)
             row['evaluation_scope'] = scope
     try:
         # A soft re-interpretation of the exact same Stylist source clause must
-        # not replace its original OR values. Keep hard explicit overrides; do
         # not confuse overlapping words or a separate user clause with a copy.
-        duplicate_ids, duplicates = set(), []
+        # not replace its original OR values. Keep hard explicit overrides; do
+        duplicate_ids, duplicates = (set(), [])
         for row in labels['user_applications']:
             c = by_id[row['requirement_id']]
-            matches = [s for s in conditions if s.source == 'stylist' and dimension(s) == dimension(c)
-                       and s.source_text == c.source_text]
-            if row['kind'] == 'soft' and c.polarity == 'positive' and len(matches) == 1:
+            matches = [s for s in conditions if s.source == 'stylist' and dimension(s) == dimension(c) and (s.source_text == c.source_text)]
+            if row['kind'] == 'soft' and c.polarity == 'positive' and (len(matches) == 1):
                 duplicate_ids.add(c.requirement_id)
-                recovery = dict(requirement_id=c.requirement_id, reason='soft_stylist_reinterpretation',
-                    retained_condition_ids=[matches[0].requirement_id], source_paths=['stylist_resolution.interpretations'])
+                recovery = dict(requirement_id=c.requirement_id, reason='soft_stylist_reinterpretation', retained_condition_ids=[matches[0].requirement_id], source_paths=['stylist_resolution.interpretations'])
                 duplicates.append(recovery)
-                note(notes, recovery['reason'], c.requirement_id, c.model_dump(mode='json'), recovery,
-                     paths=recovery['source_paths'])
+                note(notes, recovery['reason'], c.requirement_id, c.model_dump(mode='json'), recovery, paths=recovery['source_paths'])
         effective_conditions = [c for c in conditions if c.requirement_id not in duplicate_ids]
         labels['user_applications'] = [r for r in labels['user_applications'] if r['requirement_id'] not in duplicate_ids]
         derived_labels = RequirementsClassificationV26.model_validate(labels)
-        resolved, details = bind_applications(execution_source(source), structure, effective_conditions, derived_labels,
-            dimension_key=dimension, user_avoid_kind=rules['avoid_product_type'][0],
-            **(dict(scope_rules=rules, stylist_conflicts=stylist_conflicts) if 'soft_search_attributes' in rules else {}))
+        resolved, details = bind_applications(execution_source(source), structure, effective_conditions, derived_labels, dimension_key=dimension, user_avoid_kind=rules['avoid_product_type'][0], **dict(scope_rules=rules, stylist_conflicts=stylist_conflicts) if 'soft_search_attributes' in rules else {})
         details['suppressed_conditions'].extend(duplicates)
         if before != [c.model_dump(mode='json') for c in conditions]:
             raise ValueError('Original inventory mutated while binding v30 applications.')
-        return resolved, dict(**details, recoveries=notes,
-            applications=labels, resolved_requirements=resolved.model_dump(mode='json'))
+        return (resolved, dict(**details, recoveries=notes, applications=labels, resolved_requirements=resolved.model_dump(mode='json')))
     except Exception as exc:
         exc.code_derived = dict(recoveries=notes, applications=labels)
         raise
-
 
 @_preserve_function('requirements_semantics', 'fashion_recommendation_v2.search.requirements_v30')
 def requirements_semantics_v30():
@@ -601,6 +517,7 @@ No audit, regenerated extraction, marketplace query or filter generation here.
 
 
 # ---- requirements_v31 ----
+
 """Verified execution-only role projection; raw model and source facts stay intact."""
 from copy import deepcopy as deepcopy_v31
 prepare_v30 = prepare_structure_v30
@@ -609,7 +526,6 @@ from fashion_recommendation_v2.search.reference_roles import target_role_evidenc
 from fashion_recommendation_v2.search.semantic_validation import semantic_failure
 from fashion_recommendation_v2.search.semantic_validation import observed
 from fashion_recommendation_v2.search.semantic_validation import experiment_records
-
 
 @_preserve_function('prepare_structure', 'fashion_recommendation_v2.search.requirements_v31')
 @observed('requirements')
@@ -621,19 +537,12 @@ def prepare_structure_v31(source, structure, *, version='v31'):
             continue
         before = condition.model_dump(mode='json')
         facts = target_role_evidence(source, condition)
-        diagnostic = dict(requirement_id=condition.requirement_id, actual_role='anchor',
-            expected_role='target', source='reference', original_condition=before,
-            source_paths=[f['path'] for f in facts],
-            instruction='Preserve attribute/value/source/source_text/OR; change only role when similarity binding is proven.')
+        diagnostic = dict(requirement_id=condition.requirement_id, actual_role='anchor', expected_role='target', source='reference', original_condition=before, source_paths=[f['path'] for f in facts], instruction='Preserve attribute/value/source/source_text/OR; change only role when similarity binding is proven.')
         if facts:
             condition.role = 'target'
-            recoveries.append(dict(code='verified_reference_target_role', **diagnostic,
-                                   derived_condition=condition.model_dump(mode='json')))
+            recoveries.append(dict(code='verified_reference_target_role', **diagnostic, derived_condition=condition.model_dump(mode='json')))
         else:
-            semantic_failure('source_meaning',
-                f'{condition.requirement_id}: reference/anchor is unresolved. Similarity target role requires matching '
-                'attribute, every value and quote in supplied similarity_reference. No automatic promotion; '
-                'condition remains context-only and must not be silently treated as a searched preference.', **diagnostic)
+            semantic_failure('source_meaning', f'{condition.requirement_id}: reference/anchor is unresolved. Similarity target role requires matching attribute, every value and quote in supplied similarity_reference. No automatic promotion; condition remains context-only and must not be silently treated as a searched preference.', **diagnostic)
     try:
         effective, conditions, derived = prepare_v30(source, projected, observe_reference_roles=True)
     except Exception as exc:
@@ -643,8 +552,7 @@ def prepare_structure_v31(source, structure, *, version='v31'):
         raise
     derived['original_conditions'] = [c.model_dump(mode='json') for c in structure.conditions]
     derived['recoveries'] = recoveries + derived['recoveries']
-    return effective, conditions, deepcopy_v31(derived)
-
+    return (effective, conditions, deepcopy_v31(derived))
 
 @_preserve_function('validate_consumed_sources', 'fashion_recommendation_v2.search.requirements_v31')
 @observed('consumer_sources')
@@ -657,23 +565,20 @@ def validate_consumed_sources(source, requirements, *, version='v31'):
 
 
 # ---- requirements_v35 ----
+
 """v35 target garment semantics; source projection and scope recovery stay frozen."""
 previous_rules_v35 = application_rules_v30
 bind_conditions = finalize_conditions_v30
 source_contract_v35 = source_contract_v30
 prepare_structure_v35 = prepare_structure_v31
 
-
 @_preserve_function('application_rules', 'fashion_recommendation_v2.search.requirements_v35')
 def application_rules_v35():
-    return {**previous_rules_v35(), 'avoid_product_type': ['hard', 'item'],
-            'target_product_details': 'explicit user garment identity/shape/construction/length: hard; use scope rules'}
-
+    return {**previous_rules_v35(), 'avoid_product_type': ['hard', 'item'], 'target_product_details': 'explicit user garment identity/shape/construction/length: hard; use scope rules'}
 
 @_preserve_function('finalize_conditions', 'fashion_recommendation_v2.search.requirements_v35')
 def finalize_conditions_v35(source, structure, conditions, applications):
     return bind_conditions(source, structure, conditions, applications, rules=application_rules_v35())
-
 
 @_preserve_function('requirements_semantics', 'fashion_recommendation_v2.search.requirements_v35')
 def requirements_semantics():
@@ -726,6 +631,7 @@ No audit, regenerated extraction, marketplace query or filter generation here.
 
 
 # ---- requirements_v37 ----
+
 """v37 condition routing; product facts and raw responses remain unchanged."""
 from copy import deepcopy
 prepare_products = prepare_structure_v31
@@ -734,8 +640,6 @@ from fashion_recommendation_v2.schemas.search.requirements.search_requirements i
 from fashion_recommendation_v2.schemas.condition_routing import ConditionRoutingV37
 from fashion_recommendation_v2.schemas.condition_routing import ConditionAssignment
 from fashion_recommendation_v2.schemas.condition_routing import product_condition_owner
-
-
 SEMANTICS_v37 = """
 Structure product conditions and relationship clauses in separate inventories.
 Product conditions preserve source/role/polarity, exact quote, attribute/value/OR
@@ -790,7 +694,6 @@ Relation still compares full similarity including length. No facet is excluded.
 No extra audit, correction, search, image or ownership call is introduced here.
 """
 
-
 @_preserve_function('prepare_structure', 'fashion_recommendation_v2.search.requirements_v37')
 def prepare_structure_v37(source, output):
     relations = deepcopy(output.relation_conditions)
@@ -805,8 +708,7 @@ def prepare_structure_v37(source, output):
         from fashion_recommendation_v2.search.requirement_sources import source_documents
         from fashion_recommendation_v2.search.requirement_sources import _at
         rule = source_rules(source)['relation']
-        if row.intent != expected or not row.source_text.strip() or any(
-                row.source_text not in _at(source_documents(source), path) for path in rule.paths):
+        if row.intent != expected or not row.source_text.strip() or any((row.source_text not in _at(source_documents(source), path) for path in rule.paths)):
             raise ValueError('Relation clause must preserve confirmed intent and quote searchable user_query.')
     structure, conditions, derived = prepare_products(source, output)
     structure.relation_conditions = relations
@@ -816,8 +718,7 @@ def prepare_structure_v37(source, output):
         raise ValueError('Relative comparison requires a confirmed anchor intent.')
     structure.relative_requirement_ids = list(output.relative_requirement_ids)
     derived['relation_conditions'] = [r.model_dump(mode='json') for r in relations]
-    return structure, conditions, derived
-
+    return (structure, conditions, derived)
 
 @_preserve_function('finalize_conditions', 'fashion_recommendation_v2.search.requirements_v37')
 def finalize_conditions_v37(source, structure, conditions, output, *, product_binder=None):
@@ -828,24 +729,15 @@ def finalize_conditions_v37(source, structure, conditions, output, *, product_bi
     for condition in conditions:
         if condition.role == 'target' and owners[condition.requirement_id] != product_condition_owner(condition.source):
             raise ValueError(f'{condition.requirement_id}: ownership contradicts authoritative condition source.')
-    if any(owners[r.requirement_id] != 'relation' for r in structure.relation_conditions):
+    # Audience conditions are code-generated eligibility requirements, not reference preferences.
+    if any((owners[r.requirement_id] != 'relation' for r in structure.relation_conditions)):
         raise ValueError('Relationship clauses must be assigned to Relation.')
     products = RequirementsClassificationV30.model_validate(output.model_dump(exclude={'assignments'}))
     result, derived = (product_binder or bind_products_v37)(source, structure, conditions, products)
-    # Audience conditions are code-generated eligibility requirements, not reference preferences.
-    routing = ConditionRoutingV37(relation_conditions=structure.relation_conditions,
-        relative_requirement_ids=structure.relative_requirement_ids,
-        anchor_comparison=(dict(item_id=source.similarity_reference.item_id,
-            source='similarity_reference.attributes', attributes=deepcopy(source.similarity_reference.attributes))
-            if source.similarity_reference and source.relation_intent and
-               source.similarity_reference.item_id == source.relation_intent.anchor_item_id else {}),
-        assignments=[ConditionAssignment(requirement_id=r.requirement_id,
-            owner=owners.get(r.requirement_id, 'ranking')) for r in result.requirements] +
-            [ConditionAssignment(requirement_id=r.requirement_id, owner='relation') for r in structure.relation_conditions])
+    routing = ConditionRoutingV37(relation_conditions=structure.relation_conditions, relative_requirement_ids=structure.relative_requirement_ids, anchor_comparison=dict(item_id=source.similarity_reference.item_id, source='similarity_reference.attributes', attributes=deepcopy(source.similarity_reference.attributes)) if source.similarity_reference and source.relation_intent and (source.similarity_reference.item_id == source.relation_intent.anchor_item_id) else {}, assignments=[ConditionAssignment(requirement_id=r.requirement_id, owner=owners.get(r.requirement_id, 'ranking')) for r in result.requirements] + [ConditionAssignment(requirement_id=r.requirement_id, owner='relation') for r in structure.relation_conditions])
     result.condition_routing_v37 = routing
     derived['condition_routing_v37'] = routing.model_dump(mode='json')
-    return result, derived
-
+    return (result, derived)
 
 @_preserve_function('ranking_condition_ids', 'fashion_recommendation_v2.search.requirements_v37')
 def ranking_condition_ids(requirements):
@@ -858,10 +750,10 @@ def ranking_condition_ids(requirements):
 
 
 # ---- requirements_v40 ----
+
 """v40 role semantics; reuse unchanged provenance and routing mechanics."""
 prepare_structure_v40 = prepare_structure_v37
 finalize_conditions_v40 = finalize_conditions_v37
-
 SEMANTICS_v40 = """
 Structure product conditions and relationship clauses in separate inventories.
 Product conditions preserve source/role/polarity, exact quote, attribute/value/OR
@@ -927,28 +819,25 @@ Relation still compares full similarity including length. No facet is excluded.
 No extra audit, correction, search, image or ownership call is introduced here.
 """
 
-
 @_preserve_function('application_rules', 'fashion_recommendation_v2.search.requirements_v40')
 def application_rules_v40():
-    from fashion_recommendation_v2.search.requirements import application_rules_v35 as previous
-    return {**previous(), 'target_product_details':
-        'explicit user garment identity/construction/length: hard; fit degree/feel: soft unless explicitly non-negotiable; polarity independent',
-        'explicit_user_color_default': 'hard',
-        'fit_degree_default': 'soft; explicit non-negotiable fit is hard'}
+    previous = application_rules_v35
+    return {**previous(), 'target_product_details': 'explicit user garment identity/construction/length: hard; fit degree/feel: soft unless explicitly non-negotiable; polarity independent', 'explicit_user_color_default': 'hard', 'fit_degree_default': 'soft; explicit non-negotiable fit is hard'}
 
 
 # ---- requirements_v45 ----
+
 """v45 preserves classification, provenance and routing; clarifies product identity."""
 PREVIOUS_SEMANTICS = SEMANTICS_v40
 application_rules_v45 = application_rules_v40
 prepare_structure_v45 = prepare_structure_v40
 finalize_conditions_v45 = finalize_conditions_v40
 from fashion_recommendation_v2.search.product_identity import PRODUCT_IDENTITY_RULES as PRODUCT_IDENTITY_RULES_v45
-
 SEMANTICS_v45 = PREVIOUS_SEMANTICS + '\n' + PRODUCT_IDENTITY_RULES_v45
 
 
 # ---- requirements_v46 ----
+
 """v46 target-only compatibility and source-preserving requirements assembly."""
 application_rules_v46 = application_rules_v45
 previous_structure = prepare_structure_v37
@@ -956,7 +845,6 @@ previous_finalize_v46 = finalize_conditions_v37
 from fashion_recommendation_v2.search.requirement_sources import compatibility
 from fashion_recommendation_v2.search.requirement_sources import validate_source_meaning
 from fashion_recommendation_v2.search.requirement_sources import source_rules
-
 
 @_preserve_function('prepare_structure', 'fashion_recommendation_v2.search.requirements_v46')
 def prepare_structure_v46(source, output):
@@ -971,15 +859,12 @@ def prepare_structure_v46(source, output):
     except ValueError as exc:
         exc.code_derived = derived
         raise
-    return structure, conditions, derived
-
+    return (structure, conditions, derived)
 
 @_preserve_function('finalize_conditions', 'fashion_recommendation_v2.search.requirements_v46')
 def finalize_conditions_v46(source, structure, conditions, output):
     validate_source_meaning(source, conditions, quote_rules=source_rules(source))
     return previous_finalize_v46(source, structure, conditions, output)
-
-
 SEMANTICS_v46 = """
 Structure product conditions and relationship clauses in separate inventories.
 Product conditions preserve source/role/polarity, exact quote, attribute/value/OR
@@ -1053,12 +938,12 @@ Missing anchor length cannot prove it met. Search enforces the hard condition;
 Relation still compares full similarity including length. No facet is excluded.
 No extra audit, correction, search, image or ownership call is introduced here.
 """
-
 from fashion_recommendation_v2.search.product_identity import PRODUCT_IDENTITY_RULES as PRODUCT_IDENTITY_RULES_v46
 SEMANTICS_v46 += "\n" + PRODUCT_IDENTITY_RULES_v46
 
 
 # ---- requirements_v47 ----
+
 """v47 binding: preserve compatible Stylist refinements and searchable preferences."""
 from functools import partial
 prepare_structure_v47 = prepare_structure_v46
@@ -1071,15 +956,9 @@ from fashion_recommendation_v2.search.stylist_policy import validate_comparisons
 from fashion_recommendation_v2.search.stylist_policy import validate_resolved_stylist
 from fashion_recommendation_v2.search.stylist_policy import validate_scopes
 
-
 @_preserve_function('application_rules', 'fashion_recommendation_v2.search.requirements_v47')
 def application_rules_v47():
-    return {**previous_rules_v47(), 'hard_search_attributes': sorted(SEARCH_ATTRIBUTES),
-            'soft_search_attributes': sorted(SEARCH_ATTRIBUTES),
-            'target_product_type': 'determine source from evidence and kind from meaning; reference and Stylist stay soft',
-            'independent_product_type_source_kind': True,
-            'stylist_precedence': 'only actual conflict, not same dimension; retain compatible refinements'}
-
+    return {**previous_rules_v47(), 'hard_search_attributes': sorted(SEARCH_ATTRIBUTES), 'soft_search_attributes': sorted(SEARCH_ATTRIBUTES), 'target_product_type': 'determine source from evidence and kind from meaning; reference and Stylist stay soft', 'independent_product_type_source_kind': True, 'stylist_precedence': 'only actual conflict, not same dimension; retain compatible refinements'}
 
 @_preserve_function('finalize_conditions', 'fashion_recommendation_v2.search.requirements_v47')
 def finalize_conditions_v47(source, structure, conditions, output, *, rules=None, search_attributes=SEARCH_ATTRIBUTES):
@@ -1090,22 +969,16 @@ def finalize_conditions_v47(source, structure, conditions, output, *, rules=None
     # The original response is never changed. This is a typed code projection into
     # the unchanged product/routing binder, with an explicit new precedence policy.
     from fashion_recommendation_v2.schemas.search.requirements.search_requirements import classification_schema_v37 as classification_schema
-    projected = classification_schema(conditions, relation_conditions=structure.relation_conditions).model_validate(
-        output.model_dump(exclude={'stylist_user_comparisons'}))
-    result, derived = bind_routing(source, structure, conditions, projected,
-        product_binder=partial(bind_products, rules=application_rules_v47() if rules is None else rules, stylist_conflicts=conflicts))
+    projected = classification_schema(conditions, relation_conditions=structure.relation_conditions).model_validate(output.model_dump(exclude={'stylist_user_comparisons'}))
+    result, derived = bind_routing(source, structure, conditions, projected, product_binder=partial(bind_products, rules=application_rules_v47() if rules is None else rules, stylist_conflicts=conflicts))
     from fashion_recommendation_v2.schemas.stylist_condition_policy import StylistPolicyV47
     by_id = {c.requirement_id: c.polarity for c in conditions}
-    result.condition_routing_v37.stylist_policy_v47 = StylistPolicyV47(
-        comparisons=[r.model_copy(deep=True) for r in output.stylist_user_comparisons],
-        polarities={r.requirement_id: by_id.get(r.requirement_id, 'positive') for r in result.requirements})
+    result.condition_routing_v37.stylist_policy_v47 = StylistPolicyV47(comparisons=[r.model_copy(deep=True) for r in output.stylist_user_comparisons], polarities={r.requirement_id: by_id.get(r.requirement_id, 'positive') for r in result.requirements})
     validate_resolved_stylist(source, result)
     validate_scopes(result, search_attributes=search_attributes)
     derived['condition_routing_v37'] = result.condition_routing_v37.model_dump(mode='json')
     derived['resolved_requirements'] = result.model_dump(mode='json')
-    return result, derived
-
-
+    return (result, derived)
 # Standalone semantic contract: no runtime rewriting of historical prompts.
 SEMANTICS = """
 Structure product conditions and relationship clauses in separate inventories.
@@ -1183,13 +1056,13 @@ Missing anchor length cannot prove it met. Search enforces the hard condition;
 Relation still compares full similarity including length. No facet is excluded.
 No extra audit, correction, search, image or ownership call is introduced here.
 """
-
 from fashion_recommendation_v2.search.product_identity import PRODUCT_IDENTITY_RULES
 from fashion_recommendation_v2.search.stylist_policy import SEMANTICS as STYLIST_SEMANTICS
 SEMANTICS += "\n" + PRODUCT_IDENTITY_RULES + "\n" + STYLIST_SEMANTICS
 
 
 # ---- requirements_v48 ----
+
 """v48 shares v47 assembly; audience selection is versioned in audience_policy."""
 prepare_structure_v48 = prepare_structure_v47
 finalize_conditions_v48 = finalize_conditions_v47
@@ -1197,57 +1070,51 @@ application_rules_v48 = application_rules_v47
 
 
 # ---- requirements_v49 ----
+
 """v49 keeps v48 provenance, audience, classification and immutable projections."""
 previous_finalize = finalize_conditions_v48
 application_rules_v49 = application_rules_v48
 previous_prepare_v49 = prepare_structure_v48
 from fashion_recommendation_v2.schemas.search.requirements.search_requirements import check_detail_shapes
 
-
 @_preserve_function('prepare_structure', 'fashion_recommendation_v2.search.requirements_v49')
 def prepare_structure_v49(source, structure):
     check_detail_shapes(structure.model_dump(mode='json'))
     return previous_prepare_v49(source, structure)
 
-
 @_preserve_function('finalize_conditions', 'fashion_recommendation_v2.search.requirements_v49')
 def finalize_conditions_v49(*args, **kwargs):
     from fashion_recommendation_v2.schemas.search.requirements.search_requirements import ResolvedRequirementsV49
     result, derived = previous_finalize(*args, **kwargs)
-    return ResolvedRequirementsV49.model_validate(result.model_dump()), derived
+    return (ResolvedRequirementsV49.model_validate(result.model_dump()), derived)
 
 
 # ---- requirements_v50 ----
+
 """v50 search scopes; reuse the existing immutable source and routing binder."""
 prepare_structure_v50 = prepare_structure_v49
 previous_rules = application_rules_v47
 bind = finalize_conditions_v47
 from fashion_recommendation_v2.search.stylist_policy import SEARCH_ATTRIBUTES_V50
 
-
-
 @_preserve_function('application_rules', 'fashion_recommendation_v2.search.requirements_v50')
 def application_rules_v50():
-    return {**previous_rules(), 'hard_search_attributes': sorted(SEARCH_ATTRIBUTES_V50),
-            'soft_search_attributes': sorted(SEARCH_ATTRIBUTES_V50)}
-
+    return {**previous_rules(), 'hard_search_attributes': sorted(SEARCH_ATTRIBUTES_V50), 'soft_search_attributes': sorted(SEARCH_ATTRIBUTES_V50)}
 
 @_preserve_function('finalize_conditions', 'fashion_recommendation_v2.search.requirements_v50')
 def finalize_conditions_v50(source, structure, conditions, output):
     from fashion_recommendation_v2.schemas.search.requirements.search_requirements import ResolvedRequirementsV49
-    result, derived = bind(source, structure, conditions, output, rules=application_rules_v50(),
-                           search_attributes=SEARCH_ATTRIBUTES_V50)
-    return ResolvedRequirementsV49.model_validate(result.model_dump()), derived
+    result, derived = bind(source, structure, conditions, output, rules=application_rules_v50(), search_attributes=SEARCH_ATTRIBUTES_V50)
+    return (ResolvedRequirementsV49.model_validate(result.model_dump()), derived)
 
 
 # ---- requirements_v54 ----
+
 """v54 reference selection guidance and nonblocking omission diagnostics."""
 application_rules = application_rules_v50
 finalize_conditions = finalize_conditions_v50
 previous_prepare = prepare_structure_v50
 previous_sources = source_contract_v35
-
-
 REFERENCE_SELECTION = """
 Similarity: similarity_reference.attributes에 근거가 있는 특징 중 유사한 상품을
 찾는 데 유용한 특징을 선별해 source=reference, role=target 조건으로 구성한다.
@@ -1262,16 +1129,11 @@ reference 미사용 사유가 없거나 불충분해도 경고만 기록하며 �
 존재하지 않는 앵커 특징을 인용하는 것은 여전히 근거 검증 오류다.
 """
 
-
 @_preserve_function('source_contract', 'fashion_recommendation_v2.search.requirements_v54')
 def source_contract(source):
     contract = previous_sources(source)
-    contract['operations']['composition'] = (
-        'effective_query combines source segments; only retained actual user words '
-        'can be source=user. Code attaches structured Stylist conditions as target/soft; '
-        'do not extract sentence copies. ' + REFERENCE_SELECTION)
+    contract['operations']['composition'] = 'effective_query combines source segments; only retained actual user words can be source=user. Code attaches structured Stylist conditions as target/soft; do not extract sentence copies. ' + REFERENCE_SELECTION
     return contract
-
 
 @_preserve_function('prepare_structure', 'fashion_recommendation_v2.search.requirements_v54')
 def prepare_structure(source, output):
@@ -1279,12 +1141,153 @@ def prepare_structure(source, output):
     reference = source.similarity_reference
     intent = source.relation_intent
     if reference is not None and (intent is None or intent.relation_type == 'similarity'):
-        if not any(c.source == 'reference' and c.role == 'target' for c in conditions):
+        if not any((c.source == 'reference' and c.role == 'target' for c in conditions)):
             # Never judge prose adequacy with another model call or hide the raw response.
             reason = output.reference_nonuse_reason
-            derived.setdefault('warnings', []).append(dict(
-                code='reference_conditions_missing', reason=reason,
-                reason_status='provided_unassessed' if reason and reason.strip() else 'missing',
-                message='No reference target conditions selected; omission reason is advisory.',
-                action='record_only'))
-    return structure, conditions, derived
+            derived.setdefault('warnings', []).append(dict(code='reference_conditions_missing', reason=reason, reason_status='provided_unassessed' if reason and reason.strip() else 'missing', message='No reference target conditions selected; omission reason is advisory.', action='record_only'))
+    return (structure, conditions, derived)
+
+
+# ---- requirements_v57 ----
+
+"""v57 scoped classification with historical immutable routing/binding retained."""
+from functools import partial as partial_requirements_v57
+previous_prepare_requirements_v57 = prepare_structure
+previous_sources_requirements_v57 = source_contract
+REFERENCE_SELECTION_requirements_v57 = REFERENCE_SELECTION
+previous_rules_requirements_v57 = application_rules_v50
+bind_products_requirements_v57 = finalize_conditions_v30
+bind_routing_requirements_v57 = finalize_conditions_v37
+from fashion_recommendation_v2.search.requirements_policy import scope_for_requirements_policy_v57 as scope_for_requirements_v57
+from fashion_recommendation_v2.search.requirements_policy import expected_kind_requirements_policy_v57 as expected_kind_requirements_v57
+from fashion_recommendation_v2.search.requirements_policy import validate_resolved_requirements_policy_v57 as validate_resolved_requirements_v57
+from fashion_recommendation_v2.search.stylist_policy import expected_pairs as expected_pairs_requirements_v57
+from fashion_recommendation_v2.search.stylist_policy import validate_comparisons as validate_comparisons_requirements_v57
+from fashion_recommendation_v2.search.stylist_policy import validate_resolved_stylist as validate_resolved_stylist_requirements_v57
+
+@_preserve_function('application_rules', 'fashion_recommendation_v2.search.requirements_v57')
+def application_rules_requirements_v57():
+    return {**previous_rules_requirements_v57(), 'scope_policy': 'v57 semantic scope exceptions take precedence over the fixed-list fallback', 'scope_exceptions': {'detail.length / detail.skirt_length': 'search, including negative length; retain per-item enforcement', 'reference bodice fit': 'item', 'reference skirt silhouette': 'search', 'small floral with broad floral': 'item', 'not-too-tight fit': 'item'}}
+
+@_preserve_function('prepare_structure', 'fashion_recommendation_v2.search.requirements_v57')
+def prepare_structure_requirements_v57(source, output):
+    structure, conditions, derived = previous_prepare_requirements_v57(source, output)
+    decisions = output.decomposition_decisions
+    derived['decomposition_decisions'] = None if decisions is None else [r.model_dump(mode='json', exclude_unset=True) for r in decisions]
+    explained = {r.requirement_id for r in decisions or [] if r.reason and r.reason.strip()}
+    missing = [c.requirement_id for c in output.conditions if c.requirement_id not in explained]
+    if missing or decisions is None:
+        derived.setdefault('warnings', []).append(dict(code='decomposition_reasons_missing', requirement_ids=missing, message='Missing or blank decomposition explanations; product conditions remain unchanged.', action='record_only'))
+    return (structure, conditions, derived)
+
+@_preserve_function('finalize_conditions', 'fashion_recommendation_v2.search.requirements_v57')
+def finalize_conditions_requirements_v57(source, structure, conditions, output):
+    labels = {r.requirement_id: r for r in [*output.user_applications, *output.preserved_applications]}
+    for c in conditions:
+        if c.role != 'target':
+            continue
+        row = labels[c.requirement_id]
+        kind = getattr(row, 'kind', 'soft')
+        expected = expected_kind_requirements_v57(c, conditions)
+        if expected and kind != expected:
+            raise ValueError(f'{c.requirement_id}: v57 requires {expected}, not {kind}.')
+        if not row.reason.strip():
+            raise ValueError('Classification reason is required.')
+    hard_ids = {r.requirement_id for r in output.user_applications if r.kind == 'hard'}
+    conflicts = validate_comparisons_requirements_v57(output.stylist_user_comparisons, expected_pairs_requirements_v57([c for c in conditions if c.source == 'stylist' and c.role == 'target'], [c for c in conditions if c.source == 'user' and c.requirement_id in hard_ids]))
+    rules = application_rules_requirements_v57()
+    rules['condition_scopes'] = {}
+    for c in conditions:
+        if c.role != 'target':
+            continue
+        label = labels[c.requirement_id]
+        scope = scope_for_requirements_v57(c, getattr(label, 'kind', 'soft'), c.polarity, conditions)
+        if scope:
+            rules['condition_scopes'][c.requirement_id] = scope
+    from fashion_recommendation_v2.schemas.search.requirements.search_requirements import classification_schema_v37 as classification_schema
+    projected = classification_schema(conditions, relation_conditions=structure.relation_conditions).model_validate(output.model_dump(exclude={'stylist_user_comparisons'}))
+    result, derived = bind_routing_requirements_v57(source, structure, conditions, projected, product_binder=partial_requirements_v57(bind_products_requirements_v57, rules=rules, stylist_conflicts=conflicts))
+    from fashion_recommendation_v2.schemas.stylist_condition_policy import StylistPolicyV47
+    by_id = {c.requirement_id: c.polarity for c in conditions}
+    result.condition_routing_v37.stylist_policy_v47 = StylistPolicyV47(comparisons=[r.model_copy(deep=True) for r in output.stylist_user_comparisons], polarities={r.requirement_id: by_id.get(r.requirement_id, 'positive') for r in result.requirements})
+    validate_resolved_stylist_requirements_v57(source, result)
+    validate_resolved_requirements_v57(result)
+    from fashion_recommendation_v2.schemas.search.requirements.search_requirements import ResolvedRequirementsV49
+    result = ResolvedRequirementsV49.model_validate(result.model_dump())
+    derived['condition_routing_v37'] = result.condition_routing_v37.model_dump(mode='json')
+    derived['resolved_requirements'] = result.model_dump(mode='json')
+    return (result, derived)
+
+@_preserve_function('source_contract', 'fashion_recommendation_v2.search.requirements_v57')
+def source_contract_requirements_v57(source):
+    contract = previous_sources_requirements_v57(source)
+    from fashion_recommendation_v2.search.reference_fragments import FRAGMENT_GUIDANCE_reference_fragments_v57 as FRAGMENT_GUIDANCE
+    contract['operations']['reference_decomposition_v57'] = FRAGMENT_GUIDANCE
+    contract['operations']['extraction_ownership_v57'] = {'scope_path': 'requirement_extraction_scope', 'direct_user': 'Only direct_user units authorize new source=user product conditions.', 'stylist_resolved': 'Citations only; use unchanged stylist_resolution.interpretations, attached by code as soft.', 'omitted_unresolved': 'Excluded from product extraction, search and evaluation; original fields are audit only.', 'context_only': 'Context only; not a new product requirement.', 'provenance_only': ['original_user_query', 'original_stylist_resolution', 'requirement_extraction_scope.source_text'], 'legacy_input': 'If scope is absent, use existing source rules but do not re-extract the resolved Stylist source phrases.', 'enforcement': 'Prompt guidance only; no new rejection, filtering or correction trigger.'}
+    scope = getattr(source, 'requirement_extraction_scope', None)
+    if getattr(scope, 'coordinate_source', None) == 'orchestrator_quotes':
+        contract['operations']['extraction_ownership_v57']['quote_contract'] = 'This scope supplies source_text quotes and unit_id/state_id ownership, not offsets. Use role and direct_user_text; never infer positions or delete matching substrings. Repeated occurrences in the original request do not change the supplied ownership.'
+    return contract
+
+
+# ---- requirements_v58 ----
+
+"""v58 independent kind classification with preserved scope/routing contracts."""
+from functools import partial as partial_requirements_v58
+prepare_structure_requirements_v58 = prepare_structure_requirements_v57
+previous_sources_requirements_v58 = source_contract_requirements_v57
+application_rules_requirements_v58 = application_rules_requirements_v57
+REFERENCE_SELECTION_requirements_v58 = REFERENCE_SELECTION_requirements_v57
+bind_products_requirements_v58 = finalize_conditions_v30
+bind_routing_requirements_v58 = finalize_conditions_v37
+from fashion_recommendation_v2.search.requirements_policy import scope_for_requirements_policy_v58 as scope_for_requirements_v58
+from fashion_recommendation_v2.search.requirements_policy import expected_kind_requirements_policy_v58 as expected_kind_requirements_v58
+from fashion_recommendation_v2.search.requirements_policy import validate_resolved_requirements_policy_v58 as validate_resolved_requirements_v58
+from fashion_recommendation_v2.search.stylist_comparison_targets import comparison_context_stylist_comparison_targets_v58 as comparison_context_requirements_v58
+from fashion_recommendation_v2.search.stylist_comparison_targets import required_pairs_stylist_comparison_targets_v58 as required_pairs_requirements_v58
+from fashion_recommendation_v2.search.stylist_policy import validate_comparisons as validate_comparisons_requirements_v58
+from fashion_recommendation_v2.search.stylist_policy import validate_resolved_stylist as validate_resolved_stylist_requirements_v58
+
+@_preserve_function('source_contract', 'fashion_recommendation_v2.search.requirements_v58')
+def source_contract_requirements_v58(source):
+    contract = previous_sources_requirements_v58(source)
+    contract['operations']['extraction_ownership_v57']['provenance_only'] = ['original_user_query', 'requirement_extraction_scope.source_text']
+    return contract
+
+@_preserve_function('finalize_conditions', 'fashion_recommendation_v2.search.requirements_v58')
+def finalize_conditions_requirements_v58(source, structure, conditions, output):
+    labels = {r.requirement_id: r for r in [*output.user_applications, *output.preserved_applications]}
+    for c in conditions:
+        if c.role != 'target':
+            continue
+        row = labels[c.requirement_id]
+        kind = getattr(row, 'kind', 'soft')
+        expected = expected_kind_requirements_v58(c, conditions)
+        if expected and kind != expected:
+            raise ValueError(f'{c.requirement_id}: v58 requires {expected}, not {kind}.')
+        if not row.reason.strip():
+            raise ValueError('Classification reason is required.')
+    conflicts = validate_comparisons_requirements_v58(output.stylist_user_comparisons, required_pairs_requirements_v58(conditions, output.user_applications))
+    rules = application_rules_requirements_v58()
+    rules['condition_scopes'] = {}
+    for c in conditions:
+        if c.role != 'target':
+            continue
+        label = labels[c.requirement_id]
+        scope = scope_for_requirements_v58(c, getattr(label, 'kind', 'soft'), c.polarity, conditions)
+        if scope:
+            rules['condition_scopes'][c.requirement_id] = scope
+    from fashion_recommendation_v2.schemas.search.requirements.search_requirements import classification_schema_v37 as classification_schema
+    projected = classification_schema(conditions, relation_conditions=structure.relation_conditions).model_validate(output.model_dump(exclude={'stylist_user_comparisons'}))
+    result, derived = bind_routing_requirements_v58(source, structure, conditions, projected, product_binder=partial_requirements_v58(bind_products_requirements_v58, rules=rules, stylist_conflicts=conflicts))
+    from fashion_recommendation_v2.schemas.stylist_condition_policy import StylistPolicyV47
+    by_id = {c.requirement_id: c.polarity for c in conditions}
+    result.condition_routing_v37.stylist_policy_v47 = StylistPolicyV47(comparisons=[r.model_copy(deep=True) for r in output.stylist_user_comparisons], polarities={r.requirement_id: by_id.get(r.requirement_id, 'positive') for r in result.requirements})
+    validate_resolved_stylist_requirements_v58(source, result)
+    validate_resolved_requirements_v58(result)
+    from fashion_recommendation_v2.schemas.search.requirements.search_requirements import ResolvedRequirementsV49
+    result = ResolvedRequirementsV49.model_validate(result.model_dump())
+    derived['condition_routing_v37'] = result.condition_routing_v37.model_dump(mode='json')
+    derived['resolved_requirements'] = result.model_dump(mode='json')
+    derived['comparison_targets_v58'] = comparison_context_requirements_v58(conditions)
+    return (result, derived)

@@ -1,6 +1,18 @@
 # Ranking — 추천 자격, 점수와 최종 선정
 
-현재 서비스: **v15** (`ranking_eval_v15`). [전체 구조](architecture.md) · [Relation](relation.md) · [Summary](summary.md)
+현재 서비스: **v17** (`ranking_eval_v17`). [전체 구조](architecture.md) · [Relation](relation.md) · [Summary](summary.md)
+
+## v17의 선택 가중치
+
+아래 대상 경로는 v17의 선택 가중치를 적용한다. 뒤의 기본식은 상속된 나머지 경로의 설명이며 이 세 경로에서는 아래 값이 우선한다.
+
+| 경로 | R | Q | T | P | Relation |
+| --- | --- | --- | --- | --- | --- |
+| Cold, 관계 없음, R 활성 (A9) | 0.40 | 0.50 | 0.10 | 0 | 0 |
+| Warm, 관계 없음, 유효 P (B11) | 0.34375 | 0.13750 | 0.06875 | 0.45 | 0 |
+| Cold, 순수 유사성, R 비활성 (C12) | 0 | 0 | 0.05 | 0 | 0.95 |
+
+P가 없거나 다른 관계인 경로는 상속 정책을 따른다. 개인화 평가는 v16 응답 계약을 사용하며 모델이 `used_attributes`·`used_detail_keys`를 중복 작성하지 않는다.
 
 ## 1. 역할과 책임
 

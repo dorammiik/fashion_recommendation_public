@@ -1,8 +1,12 @@
-"""Role-consolidated implementation; service contracts and behavior are preserved."""
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
 from __future__ import annotations
+
 from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
 
+
 # ---- product_identity_v45 ----
+
 """Shared product identity semantics for request interpretation and evaluation."""
 PRODUCT_IDENTITY_RULES = """
 Preserve the user's original product-type distinction: Korean 셔츠 and 티셔츠 are

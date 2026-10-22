@@ -1,6 +1,6 @@
 # Relation — 기준 상품과 후보의 관계 평가
 
-현재 서비스: **v8**. [전체 구조](architecture.md) · [Search](search.md) · [Ranking](ranking.md)
+현재 서비스: **v9**. [전체 구조](architecture.md) · [Search](search.md) · [Ranking](ranking.md)
 
 ## 1. 역할과 책임
 
@@ -23,7 +23,7 @@
 
 ## 3. 입력과 출력
 
-입력 `RelationAgentInput`은 `candidate_set`, 확정 `intent`, 필요한 `anchor_item`과 `anchor_search_analysis`, `evaluation_version='v8'`를 연결한다. 번호 참조는 서버에서 실제 상품으로 복원한 뒤 전달한다.
+입력 `RelationAgentInput`은 `candidate_set`, 확정 `intent`, 필요한 `anchor_item`과 `anchor_search_analysis`, `evaluation_version='v9'`를 연결한다. 번호 참조는 서버에서 실제 상품으로 복원한 뒤 전달한다.
 
 | 출력 필드 | 의미 |
 | --- | --- |
@@ -74,7 +74,7 @@ LLM이 관계의 의미, facet 판정·점수와 인용·이유를 작성한다.
 
 ## 7. 프롬프트 구성
 
-[Relation 프롬프트](../src/fashion_recommendation_v2/prompts/relation.py)의 현재 연결 상수는 `RELATION_PROMPT_V6`다. 이는 현재 서비스 v8이 사용하는 공통 평가 계약 이름이다. 관계 유형, 기준·후보의 출처별 근거, rubric, 코드 정책을 입력에 연결한다.
+[Relation 프롬프트](../src/fashion_recommendation_v2/prompts/relation.py)의 현재 연결은 `get_relation_contract('v9')`로 선택한다. 통합 파일에는 과거 계약 상수도 함께 보존된다. 관계 유형, 기준·후보의 출처별 근거, rubric, 코드 정책을 입력에 연결한다.
 
 교정에서는 동일 근거와 이전 응답의 검증 오류를 제공한다. 근거 부족·충돌을 숨기거나 인용 경로를 자동 보정하지 않는다. 원응답, `code_validation`, 파생 점수·상태를 별도로 저장한다.
 
@@ -125,7 +125,7 @@ LLM이 관계의 의미, facet 판정·점수와 인용·이유를 작성한다.
 PYTHONPATH=src python -m pytest -q tests/test_role_consolidation.py::test_synthetic_service_outputs_match_before_consolidation
 ```
 
-[합성 동작 검사](../tests/test_role_consolidation.py)와 [모의 응답 실행기](../tests/role_behavior_capture.py)는 Relation v8 성공·교정·재실패 출력과 호출 수를 비교한다. 네트워크를 차단하므로 모델의 실제 관계 판단 품질·API 지연은 검사하지 않는다.
+[현재 합성 동작 검사](../tests/test_current_outputs.py)와 [모의 응답 실행기](../tests/current_behavior_capture.py)는 Relation v9 성공·교정·재실패 출력과 호출 수를 비교한다. 네트워크를 차단하므로 모델의 실제 관계 판단 품질·API 지연은 검사하지 않는다.
 
 ## 11. 설계 이유와 한계
 

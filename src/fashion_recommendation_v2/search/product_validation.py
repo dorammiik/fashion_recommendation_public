@@ -1,50 +1,46 @@
-"""Role-consolidated implementation; service contracts and behavior are preserved."""
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
 from __future__ import annotations
+
 from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
 
+
 # ---- product_validation ----
+
 """Shared definitions moved unchanged from their former owner."""
-
-
-
 from fashion_recommendation_v2.schemas.search.product_evaluation.search_product_evaluation_validation import EvaluationBatchInput
 from fashion_recommendation_v2.schemas.search.product_evaluation.search_product_evaluation_validation import EvaluationBatchOutput
+
 @_preserve_class('InvalidEvaluation', 'fashion_recommendation_v2.search.product_validation')
 class InvalidEvaluation(ValueError):
-    __qualname__ = 'InvalidEvaluation'
-    def __init__(self, message: str, code: str = 'invalid_response', *, requirement_id=None, fields=None):
+
+    def __init__(self, message: str, code: str='invalid_response', *, requirement_id=None, fields=None):
         self.code = code
         self.requirement_id = requirement_id
         self.fields = fields or []
         super().__init__(message)
-
-
 from fashion_recommendation_v2.search.product_sources import evidence_fields
 from fashion_recommendation_v2.search.product_sources import present_field as present_field_base
-
-
 
 @_preserve_function('validate_observations', 'fashion_recommendation_v2.search.product_validation')
 def validate_observations(observations, item):
     for obs in observations:
         if obs.attribute == 'size':
             raise ValueError('Size excluded from preference scoring')
-        if any(not present_field_base(item, f, None) for f in obs.evidence_fields):
+        if any((not present_field_base(item, f, None) for f in obs.evidence_fields)):
             raise ValueError('Preference observation cites absent metadata')
-        if any(e.image_url != item.image_url for e in obs.image_evidence):
+        if any((e.image_url != item.image_url for e in obs.image_evidence)):
             raise ValueError('Preference observation cites another item image')
-        if not ((obs.evidence_fields and any(t.strip() for t in obs.evidence)) or obs.image_evidence):
+        if not (obs.evidence_fields and any((t.strip() for t in obs.evidence)) or obs.image_evidence):
             raise ValueError('Preference observation needs product evidence')
-        if obs.attribute in ('material', 'brand', 'category_path', 'title_keywords') and not obs.evidence_fields:
+        if obs.attribute in ('material', 'brand', 'category_path', 'title_keywords') and (not obs.evidence_fields):
             raise ValueError('This attribute requires metadata, not visual inference')
         if obs.attribute == 'title_keywords' and 'title' not in obs.evidence_fields:
             raise ValueError('Title keywords require title evidence')
         if obs.attribute == 'category_path':
             values = obs.value if isinstance(obs.value, list) else [obs.value]
-            if 'category_path' not in obs.evidence_fields or any(v != item.category_path for v in values):
+            if 'category_path' not in obs.evidence_fields or any((v != item.category_path for v in values)):
                 raise ValueError('Category path must preserve the exact source metadata')
-
-
 
 @_preserve_function('validate_evidence_batch', 'fashion_recommendation_v2.search.product_validation')
 def validate_evidence_batch(result: EvaluationBatchOutput, request: EvaluationBatchInput, *, judgment_requirement_ids=None) -> None:
@@ -57,27 +53,24 @@ def validate_evidence_batch(result: EvaluationBatchOutput, request: EvaluationBa
     for output in result.items:
         actual = [entry.requirement_id for entry in output.judgments]
         if len(actual) != len(set(actual)) or set(actual) != expected_judgments:
-            raise InvalidEvaluation('Missing, duplicate or unknown requirement judgments. '
-                f'Expected: {sorted(expected_judgments)}; received: {actual}', 'missing_assessments',
-                requirement_id=next((key for key in sorted(expected_judgments) if actual.count(key) != 1), None))
+            raise InvalidEvaluation(f'Missing, duplicate or unknown requirement judgments. Expected: {sorted(expected_judgments)}; received: {actual}', 'missing_assessments', requirement_id=next((key for key in sorted(expected_judgments) if actual.count(key) != 1), None))
         item = expected_items[output.item_id]
         for judgment in output.judgments:
             missing = [field for field in judgment.evidence_fields if not present_field_base(item, field, request.price_conversion)]
             if missing:
-                raise InvalidEvaluation('Judgment cites an absent metadata field.',
-                                        requirement_id=judgment.requirement_id, fields=missing)
-            if any(e.image_url != item.image_url for e in judgment.image_evidence):
+                raise InvalidEvaluation('Judgment cites an absent metadata field.', requirement_id=judgment.requirement_id, fields=missing)
+            if any((e.image_url != item.image_url for e in judgment.image_evidence)):
                 raise InvalidEvaluation('Judgment cites another image.', requirement_id=judgment.requirement_id)
-            supported = (judgment.evidence_fields and any(text.strip() for text in judgment.evidence)) or judgment.image_evidence
-            if judgment.status != 'unknown' and not supported:
+            supported = judgment.evidence_fields and any((text.strip() for text in judgment.evidence)) or judgment.image_evidence
+            if judgment.status != 'unknown' and (not supported):
                 raise InvalidEvaluation('Non-unknown judgments require product evidence.', requirement_id=judgment.requirement_id)
-            if judgment.status == 'unknown' and not any(text.strip() for text in judgment.evidence):
+            if judgment.status == 'unknown' and (not any((text.strip() for text in judgment.evidence))):
                 raise InvalidEvaluation('Unknown judgments must explain missing information.', requirement_id=judgment.requirement_id)
         hard_ids = {r.requirement_id for r in request.resolved_requirements.requirements if r.kind == 'hard'}
         try:
             validate_observations(output.preference_features, item)
             allowed = {entry['attribute'] for entry in request.preference_vocabulary}
-            if any(obs.attribute not in allowed for obs in output.preference_features):
+            if any((obs.attribute not in allowed for obs in output.preference_features)):
                 raise ValueError('Preference observation outside requested attributes')
         except ValueError as exc:
             raise InvalidEvaluation(str(exc)) from exc
@@ -87,25 +80,22 @@ def validate_evidence_batch(result: EvaluationBatchOutput, request: EvaluationBa
             missing = [field for field in feature.evidence_fields if not present_field_base(item, field, request.price_conversion)]
             if missing:
                 raise InvalidEvaluation('Diversity feature cites an absent metadata field.', fields=missing)
-            if any(e.image_url != item.image_url for e in feature.image_evidence):
+            if any((e.image_url != item.image_url for e in feature.image_evidence)):
                 raise InvalidEvaluation('Diversity feature cites another image.')
-            if not ((feature.evidence_fields and any(t.strip() for t in feature.evidence)) or feature.image_evidence):
+            if not (feature.evidence_fields and any((t.strip() for t in feature.evidence)) or feature.image_evidence):
                 raise InvalidEvaluation('Diversity features require product evidence.')
         for conflict in output.conflicts:
             if conflict.requirement_id is not None and conflict.requirement_id not in expected_requirements:
                 raise InvalidEvaluation('Conflict cites an unknown requirement.')
-            if any(not present_field_base(item, field, request.price_conversion) for field in conflict.evidence_fields):
-                raise InvalidEvaluation('Conflict cites an absent metadata field.', requirement_id=conflict.requirement_id,
-                    fields=[field for field in conflict.evidence_fields if not present_field_base(item, field, request.price_conversion)])
-            if any(e.image_url != item.image_url for e in conflict.image_evidence):
+            if any((not present_field_base(item, field, request.price_conversion) for field in conflict.evidence_fields)):
+                raise InvalidEvaluation('Conflict cites an absent metadata field.', requirement_id=conflict.requirement_id, fields=[field for field in conflict.evidence_fields if not present_field_base(item, field, request.price_conversion)])
+            if any((e.image_url != item.image_url for e in conflict.image_evidence)):
                 raise InvalidEvaluation('Conflict cites another image.')
-
-
-
 from fashion_recommendation_v2.llm.base import ImageInput
+
 @_preserve_function('validate_analysis', 'fashion_recommendation_v2.search.product_validation')
 def validate_analysis(analysis, item, requirements, conversion):
-    if analysis.evaluation_policy in {'v36', 'v40', 'v41', 'v42', 'v43', 'v44', 'v45'}:
+    if analysis.evaluation_policy in {'v36', 'v40', 'v41', 'v42', 'v43', 'v44', 'v45', 'v57', 'v59'}:
         from fashion_recommendation_v2.search.product_evaluation import validate_analysis as validate_v36
         return validate_v36(analysis, item, requirements, conversion)
     from fashion_recommendation_v2.schemas.search.product_evaluation.search_product_evaluation_validation import EvaluationBatchInput
@@ -121,24 +111,19 @@ def validate_analysis(analysis, item, requirements, conversion):
         raise ValueError('Search visual analysis item/image identity mismatch.')
     if item.image_url:
         ImageInput(item_id=item.item_id, image_url=item.image_url)
-    request = EvaluationBatchInput(
-        user_request='Validate saved Search evidence', resolved_requirements=requirements,
-        price_conversion=conversion,
-        items=[EvaluationItem(item=item, hard_constraint_assessments=[])],
-    )
-    validate_evidence_batch(EvaluationBatchOutput(items=[ItemJudgments(
-        item_id=item.item_id, judgments=analysis.judgments, conflicts=analysis.conflicts,
-        diversity_features=analysis.known_attributes)]), request)
+    request = EvaluationBatchInput(user_request='Validate saved Search evidence', resolved_requirements=requirements, price_conversion=conversion, items=[EvaluationItem(item=item, hard_constraint_assessments=[])])
+    validate_evidence_batch(EvaluationBatchOutput(items=[ItemJudgments(item_id=item.item_id, judgments=analysis.judgments, conflicts=analysis.conflicts, diversity_features=analysis.known_attributes)]), request)
     for feature in analysis.known_attributes:
-        if any(conflict.attribute == feature.attribute for conflict in analysis.conflicts):
+        if any((conflict.attribute == feature.attribute for conflict in analysis.conflicts)):
             raise ValueError('Unresolved conflicting attributes must be omitted from observed features.')
-        if feature.attribute in {'material', 'gender'} and not feature.evidence_fields:
+        if feature.attribute in {'material', 'gender'} and (not feature.evidence_fields):
             raise ValueError('Material and product gender require metadata evidence.')
     if not item.image_url and (analysis.thum_quality != 'low' or analysis.thumbnail_kind != 'unknown'):
         raise ValueError('Missing image must have unknown thumbnail kind and low quality.')
 
 
 # ---- product_validation_v29 ----
+
 """Derive usable evidence without rewriting or relaxing the model response.
 
 Only the explicitly supported evidence errors are localized. The resulting slot
@@ -148,14 +133,11 @@ Identity, unknown fields, missing condition IDs and invalid types remain errors.
 from copy import deepcopy
 from fashion_recommendation_v2.search.product_sources import present_field
 from fashion_recommendation_v2.search.condition_semantics import METADATA_ONLY_FACTS
-
-
 from fashion_recommendation_v2.search.condition_semantics import observation_key as key
 
 @_preserve_function('related', 'fashion_recommendation_v2.search.product_validation_v29')
 def related(a, b):
     return a == b or (a == 'detail' and b.startswith('detail.')) or (b == 'detail' and a.startswith('detail.'))
-
 
 @_preserve_function('project_slot', 'fashion_recommendation_v2.search.product_validation_v29')
 def project_slot(raw, item, context, core_schema):
@@ -166,7 +148,7 @@ def project_slot(raw, item, context, core_schema):
     required = {*core_schema.model_fields, 'product_facts_v26'}
     if not isinstance(raw, dict) or not required <= set(raw) <= required | {'visual_confirmation_v5'}:
         raise ValueError('Cannot project missing/unknown product fields or identity fields.')
-    data, changes = deepcopy(raw), []
+    data, changes = (deepcopy(raw), [])
     requirements = {r['requirement_id']: r for r in context['resolved_requirements']['requirements']}
     definitions = context['resolved_requirements'].get('condition_contract_v26') or {}
 
@@ -190,7 +172,7 @@ def project_slot(raw, item, context, core_schema):
 
     def citations(row, path):
         old = row['evidence_fields']
-        if not isinstance(old, list) or any(not isinstance(p, str) for p in old):
+        if not isinstance(old, list) or any((not isinstance(p, str) for p in old)):
             raise ValueError('Evidence paths must remain a list of strings.')
         valid = [p for p in old if present_field(item, p, None)]
         if valid != old:
@@ -198,16 +180,15 @@ def project_slot(raw, item, context, core_schema):
             row['evidence_fields'] = valid
         # Image URLs are code-bound. Never delete or rewrite an unexpected URL.
         for image in row['image_evidence']:
-            if set(image) != {'observation'} or not isinstance(image['observation'], str) or not image['observation'].strip():
+            if set(image) != {'observation'} or not isinstance(image['observation'], str) or (not image['observation'].strip()):
                 raise ValueError('Invalid image observation or unexpected image identity.')
-        return bool((valid and any(t.strip() for t in row.get('evidence', row.get('metadata_evidence', []))))
-                    or row['image_evidence'])
-
-    disputed, disputed_ids = set(), set()
+        return bool(valid and any((t.strip() for t in row.get('evidence', row.get('metadata_evidence', [])))) or row['image_evidence'])
+    disputed, disputed_ids = (set(), set())
     conflicts = []
     conflict_schema = core_schema.model_fields['conflicts'].annotation.__args__[0]
     for index, row in enumerate(data['conflicts']):
         path = f'conflicts.{index}'
+        # Validate fields/status without constraining citations to the item yet.
         # Validate structure independently of the evidence-path enum first.
         from fashion_recommendation_v2.schemas.search.product_evaluation.search_product_evaluation import ConflictV10
         ConflictV10.model_validate(row)
@@ -223,34 +204,27 @@ def project_slot(raw, item, context, core_schema):
         else:
             note(path, 'unverifiable_conflict_kept_in_diagnostics; affected_values_unknown', raw['conflicts'][index], None)
     data['conflicts'] = conflicts
-
     for index, row in enumerate(data['attributes']):
         # Do not conceal unrelated shape/type/group errors by replacing a row.
         AttributeV10.model_validate(row)
         path = f'attributes.{index}'
         supported = citations(row, path)
-        is_disputed = any(related(key(row), d) for d in disputed)
-        if row['value'] != 'unknown' and (is_disputed or not supported or
-                (row['attribute'] in {'material', 'gender'} and not row['evidence_fields'])):
+        is_disputed = any((related(key(row), d) for d in disputed))
+        if row['value'] != 'unknown' and (is_disputed or not supported or (row['attribute'] in {'material', 'gender'} and (not row['evidence_fields']))):
             before = deepcopy(row)
-            row.update(value='unknown', evidence_fields=[], image_evidence=[],
-                       evidence=['Code: conflicting or unsupported observation.'], fixed_by_requirement_ids=[])
+            row.update(value='unknown', evidence_fields=[], image_evidence=[], evidence=['Code: conflicting or unsupported observation.'], fixed_by_requirement_ids=[])
             note(path, 'conflicting_or_unsupported_attribute', before, row)
         elif row['value'] != 'unknown':
-            fixed = [rid for rid, req in requirements.items()
-                if req['kind'] == 'hard' and not req.get('unrestricted')
-                and key(req) == key(row) and isinstance(req['value'], str)
-                and req['value'] == row['value']]
+            fixed = [rid for rid, req in requirements.items() if req['kind'] == 'hard' and (not req.get('unrestricted')) and (key(req) == key(row)) and isinstance(req['value'], str) and (req['value'] == row['value'])]
             if row['fixed_by_requirement_ids'] != fixed:
                 note(path + '.fixed_by_requirement_ids', 'code_exact_hard_value_binding', row['fixed_by_requirement_ids'], fixed)
                 row['fixed_by_requirement_ids'] = fixed
-        # Existing unknown-with-evidence validation is deliberately unchanged.
-
+    # Existing unknown-with-evidence validation is deliberately unchanged.
     facts = []
     for index, row in enumerate(data['product_facts_v26']):
         path = f'product_facts_v26.{index}'
-        # Type/attribute/value/identity errors remain fatal, including duplicate facts.
         # The known-fact evidence validator is evaluated after source projection.
+        # Type/attribute/value/identity errors remain fatal, including duplicate facts.
         fields = ProductFactDraftV26.model_fields
         if set(row) != set(fields):
             raise ValueError('Missing/unknown product fact fields.')
@@ -260,7 +234,7 @@ def project_slot(raw, item, context, core_schema):
         if (row['attribute'] == 'detail') != isinstance(row['value'], dict):
             raise ValueError('Only detail uses the key/values shape.')
         supported = citations(row, path)
-        if any(related(key(row), d) for d in disputed) or not supported or (key(row) in METADATA_ONLY_FACTS and not row['evidence_fields']):
+        if any((related(key(row), d) for d in disputed)) or not supported or (key(row) in METADATA_ONLY_FACTS and (not row['evidence_fields'])):
             note(path, 'conflicting_or_unsupported_product_fact', raw['product_facts_v26'][index], None)
         else:
             ProductFactDraftV26.model_validate(row)
@@ -268,32 +242,26 @@ def project_slot(raw, item, context, core_schema):
     data['product_facts_v26'] = facts
 
     def judgment(row, rid, path):
-        # Validate fields/status without constraining citations to the item yet.
         from fashion_recommendation_v2.schemas.search.product_evaluation.search_product_evaluation import JudgmentV10_v10 as JudgmentV10
         JudgmentV10.model_validate(dict(requirement_id=rid, **row))
         supported = citations(row, path)
-        if rid in disputed_ids or any(related(condition_key(rid), d) for d in disputed) or not supported:
+        if rid in disputed_ids or any((related(condition_key(rid), d) for d in disputed)) or (not supported):
             if row['status'] != 'unknown':
                 old = deepcopy(row)
-                row.update(status='unknown', evidence_fields=[], image_evidence=[],
-                           evidence=['Code: no validated evidence for this condition, or unresolved conflict.'])
+                row.update(status='unknown', evidence_fields=[], image_evidence=[], evidence=['Code: no validated evidence for this condition, or unresolved conflict.'])
                 note(path, 'unsupported_condition_judgment', old, row)
-        if row['status'] == 'unknown' and not any(t.strip() for t in row['evidence']):
+        if row['status'] == 'unknown' and (not any((t.strip() for t in row['evidence']))):
             row['evidence'] = ['Code: condition evidence unavailable.']
-
     for rid, row in data['judgments'].items():
         judgment(row, rid, f'judgments.{rid}')
     for rid, alternatives in data['alternative_judgments'].items():
         for aid, row in alternatives.items():
             judgment(row, rid, f'alternative_judgments.{rid}.{aid}')
         statuses = [r['status'] for r in alternatives.values()]
-        status = ('met' if 'met' in statuses else 'unmet' if all(s == 'unmet' for s in statuses) else 'unknown')
+        status = 'met' if 'met' in statuses else 'unmet' if all((s == 'unmet' for s in statuses)) else 'unknown'
         old = deepcopy(data['judgments'][rid])
         contributing = [r for r in alternatives.values() if r['status'] == status]
-        aggregate = dict(status=status,
-            evidence_fields=list(dict.fromkeys(p for r in contributing for p in r['evidence_fields'])),
-            image_evidence=[deepcopy(e) for r in contributing for e in r['image_evidence']],
-            evidence=[e for r in contributing for e in r['evidence']] or ['Code: OR alternatives are not conclusively satisfied.'])
+        aggregate = dict(status=status, evidence_fields=list(dict.fromkeys((p for r in contributing for p in r['evidence_fields']))), image_evidence=[deepcopy(e) for r in contributing for e in r['image_evidence']], evidence=[e for r in contributing for e in r['evidence']] or ['Code: OR alternatives are not conclusively satisfied.'])
         if old != aggregate:
             data['judgments'][rid] = aggregate
             note(f'judgments.{rid}', 'code_OR_aggregation', old, aggregate)
@@ -303,7 +271,7 @@ def project_slot(raw, item, context, core_schema):
         core_schema.model_fields['hard_condition_findings'].annotation.model_fields[rid].annotation.model_validate(finding)
         status = data['judgments'][rid]['status']
         expected = 'matched' if status == 'met' else 'clear_mismatch' if status == 'unmet' else 'insufficient_evidence'
-        if finding['finding'] != 'matched' and status == 'met' and rid not in data['alternative_judgments']:
+        if finding['finding'] != 'matched' and status == 'met' and (rid not in data['alternative_judgments']):
             note(f'judgments.{rid}.status', 'hard_finding_disagrees_with_met_judgment', 'met', 'unknown')
             data['judgments'][rid]['status'] = 'unknown'
             expected = 'insufficient_evidence'
@@ -311,7 +279,6 @@ def project_slot(raw, item, context, core_schema):
         if finding['finding'] != expected:
             note(f'hard_condition_findings.{rid}', 'code_condition_finding', finding, derived)
             data['hard_condition_findings'][rid] = derived
-
     # photo_type and support remain separate. Only the redundant root is derived.
     observation = core_schema.model_fields['thumbnail_observation_v8'].annotation.model_validate(data['thumbnail_observation_v8'])
     if data['thumbnail_kind'] != observation.photo_type:
@@ -325,4 +292,4 @@ def project_slot(raw, item, context, core_schema):
         note('visual_confirmation_v5', 'auxiliary_ranking_observation_invalid', data.get('visual_confirmation_v5'), None)
         data['visual_confirmation_v5'] = None
     core_schema.model_validate({k: data[k] for k in core_schema.model_fields})
-    return data, dict(status='projected' if changes else 'passed', changes=changes), ranking_error
+    return (data, dict(status='projected' if changes else 'passed', changes=changes), ranking_error)

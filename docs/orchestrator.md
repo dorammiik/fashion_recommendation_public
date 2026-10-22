@@ -1,6 +1,6 @@
 # Orchestrator — 요청 상태와 실행 흐름
 
-현재 서비스: **v10**. [전체 구조](architecture.md) · [Planner](planner.md)
+현재 서비스: **v12**. [전체 구조](architecture.md) · [Planner](planner.md)
 
 ## 1. 역할과 책임
 
@@ -73,7 +73,7 @@ LLM은 목표·추천 수·의미 단위·실행 가능성, 대화 연결을 판
 
 ## 7. 프롬프트 구성
 
-[요청 프롬프트](../src/fashion_recommendation_v2/prompts/orchestrator.py)는 명확한 조건, 값 제한 없음, 해석이 필요한 상황 표현을 구분하고 정확한 원문 위치와 미해결 상태를 요구한다. 교정에는 이전 실패 응답과 구체적인 검증 진단을 전달하며 전체 연결을 다시 확인하게 한다. [대화 프롬프트](../src/fashion_recommendation_v2/prompts/conversation.py)는 제공된 이전 요청·추천 요약 범위에서 후속 맥락을 구성한다.
+[요청 프롬프트](../src/fashion_recommendation_v2/prompts/orchestrator.py)는 명확한 조건, 값 제한 없음, 해석이 필요한 상황 표현을 구분하고 원문 인용과 미해결 상태를 요구한다. v12는 모델이 문자 위치를 계산하지 않고 코드가 인용문의 원문 위치를 복원한다. 교정에는 이전 실패 응답과 구체적인 검증 진단을 전달하며 전체 연결을 다시 확인하게 한다. [대화 프롬프트](../src/fashion_recommendation_v2/prompts/conversation.py)는 제공된 이전 요청·추천 요약 범위에서 후속 맥락을 구성한다.
 
 ## 8. 정책과 종료 조건
 

@@ -1,17 +1,21 @@
-"""Validate ranking references, generate copy, and join original presentation URLs."""
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
 from __future__ import annotations
-from fashion_recommendation_v2.module_compat import import_module as _role_module
+
+from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
+
+
+# ---- summary ----
+
+"""Validate ranking references, generate copy, and join original presentation URLs."""
 from fashion_recommendation_v2.validation_reuse import reuse_for
 from fashion_recommendation_v2.validation_reuse import measure_processing
-
 from copy import deepcopy
 from typing import Any
 from typing import Literal
 from typing import TYPE_CHECKING
 from uuid import uuid4
-
 from pydantic import Field
-
 from fashion_recommendation_v2.llm.base import StructuredLLM
 from fashion_recommendation_v2.prompts.summary import summary__SUMMARY_PROMPT as SUMMARY_PROMPT
 from fashion_recommendation_v2.prompts.summary import BLOCKED_SUMMARY_PROMPT
@@ -25,8 +29,8 @@ from fashion_recommendation_v2.schemas.summary import BlockedSummaryCopy
 from fashion_recommendation_v2.schemas.summary import BlockedResponse
 from fashion_recommendation_v2.schemas.summary import OmittedCondition
 from fashion_recommendation_v2.schemas.summary import feedback_notice_base as feedback_notice
-
-
+# Presentation fields, raw search history, scores and normalization diagnostics
+# are deliberately not included in the copy-generation payload.
 if TYPE_CHECKING:
     from fashion_recommendation_v2.schemas.summary import RecommendationCopy_v1 as RecommendationCopyV1
     from fashion_recommendation_v2.schemas.summary import RecommendationResponse_v1 as RecommendationResponseV1
@@ -35,12 +39,12 @@ if TYPE_CHECKING:
     from fashion_recommendation_v2.schemas.summary import RecommendationResponse_v4 as RecommendationResponseV4
     from fashion_recommendation_v2.schemas.summary import RecommendationResponse_v6 as RecommendationResponseV6
 
-
+@_preserve_class('BlockedSummaryGenerationInput', 'fashion_recommendation_v2.agents.summary')
 class BlockedSummaryGenerationInput(BlockedSummaryInput):
     validation_feedback: list[str] = Field(default_factory=list)
     failure_context: list[str] = Field(default_factory=list)
 
-
+@_preserve_class('SummaryCopyInput', 'fashion_recommendation_v2.agents.summary')
 class SummaryCopyInput(StrictBaseModel):
     interaction_collection_enabled: bool = False
     profile_updates_enabled: bool = False
@@ -55,24 +59,17 @@ class SummaryCopyInput(StrictBaseModel):
     relation_warnings: list[str] = Field(default_factory=list)
     validation_feedback: list[str] = Field(default_factory=list)
 
-
+@_preserve_class('SummaryExecutionError', 'fashion_recommendation_v2.agents.summary')
 class SummaryExecutionError(RuntimeError):
+
     def __init__(self, *, code: str, message: str, attempts: list[dict]):
         self.code = code
         self.retry_count = len(attempts) - 1
         self.attempts = [dict(attempt) for attempt in attempts]
         super().__init__(f'{code}: {message}')
+COPY_FIELDS = {'title', 'category_path', 'condition', 'condition_description', 'color', 'size', 'fit', 'material', 'pattern', 'brand', 'strength', 'garment_care', 'theme', 'season', 'occasion', 'detail'}
 
-
-# Presentation fields, raw search history, scores and normalization diagnostics
-# are deliberately not included in the copy-generation payload.
-COPY_FIELDS = {
-    'title', 'category_path', 'condition', 'condition_description', 'color',
-    'size', 'fit', 'material', 'pattern', 'brand', 'strength', 'garment_care',
-    'theme', 'season', 'occasion', 'detail',
-}
-
-
+@_preserve_function('_preference_support', 'fashion_recommendation_v2.agents.summary')
 def _preference_support(source, ranked):
     record = source.final_ranking.personalization_v12 or source.final_ranking.personalization_v11
     if record is not None:
@@ -80,20 +77,11 @@ def _preference_support(source, ranked):
         if not entry.get('p_active') or not record.get('bundle'):
             return []
         claims = {i['interpretation_id']: i for i in record['bundle']['profile']['interpretations']}
-        return [dict(interpretation_id=a['interpretation_id'], preference=claims[a['interpretation_id']]['preference'],
-            direction=claims[a['interpretation_id']]['direction'], judgment=a['judgment'],
-            uncertainty=claims[a['interpretation_id']]['uncertainty'], explanation=a['explanation'],
-            evidence_refs=sorted(set(ranked.preference_evidence_refs) & set(
-                claims[a['interpretation_id']]['supporting_evidence_refs'] + claims[a['interpretation_id']]['counter_evidence_refs'])),
-            basis='inferred_from_item_interactions')
-            for a in entry['assessment']['interpretation_assessments'] if a['judgment'] in {'supports','opposes','neutral'}]
+        return [dict(interpretation_id=a['interpretation_id'], preference=claims[a['interpretation_id']]['preference'], direction=claims[a['interpretation_id']]['direction'], judgment=a['judgment'], uncertainty=claims[a['interpretation_id']]['uncertainty'], explanation=a['explanation'], evidence_refs=sorted(set(ranked.preference_evidence_refs) & set(claims[a['interpretation_id']]['supporting_evidence_refs'] + claims[a['interpretation_id']]['counter_evidence_refs'])), basis='inferred_from_item_interactions') for a in entry['assessment']['interpretation_assessments'] if a['judgment'] in {'supports', 'opposes', 'neutral'}]
     from fashion_recommendation_v2.schemas.ranking import RankingAgentInput_base as RankingAgentInput
     from fashion_recommendation_v2.agents.ranking_preferences import request_profile
     from fashion_recommendation_v2.agents.preference_scoring import combined
-    profile = request_profile(RankingAgentInput(
-        candidate_set=source.candidate_set, user_request=source.user_request,
-        requested_count=source.final_ranking.requested_count, preference_profile=source.preference_profile,
-        preference_category=source.preference_category))
+    profile = request_profile(RankingAgentInput(candidate_set=source.candidate_set, user_request=source.user_request, requested_count=source.final_ranking.requested_count, preference_profile=source.preference_profile, preference_category=source.preference_category))
     if profile is None:
         return []
     refs = set(ranked.preference_evidence_refs)
@@ -101,129 +89,65 @@ def _preference_support(source, ranked):
     for feature in [*profile.global_preferences.features, *profile.global_preferences.title_keywords]:
         used = refs & set(feature.evidence_refs)
         if used:
-            support.append(dict(attribute=getattr(feature, 'attribute', 'title_keywords'),
-                value=(feature.value.model_dump() if hasattr(feature.value, 'model_dump') else feature.value)
-                      if hasattr(feature, 'value') else feature.normalized,
-                direction='positive' if combined(feature)>0 else 'negative' if combined(feature)<0 else 'mixed',
-                evidence_refs=sorted(used), basis='inferred_from_item_interactions'))
+            support.append(dict(attribute=getattr(feature, 'attribute', 'title_keywords'), value=(feature.value.model_dump() if hasattr(feature.value, 'model_dump') else feature.value) if hasattr(feature, 'value') else feature.normalized, direction='positive' if combined(feature) > 0 else 'negative' if combined(feature) < 0 else 'mixed', evidence_refs=sorted(used), basis='inferred_from_item_interactions'))
     return support
 
-
+@_preserve_function('_copy_input', 'fashion_recommendation_v2.agents.summary')
 def _copy_input(source: SummaryAgentInput, *, version=None) -> SummaryCopyInput:
     ranking = source.final_ranking
     items = {candidate.item.item_id: candidate.item for candidate in source.candidate_set.candidates}
-    analyses = {c.item.item_id: (c.search_analysis if source.candidate_set.search_policy_version in {'v26', 'v30', 'v31', 'v32', 'v33', 'v34', 'v35', 'v36', 'v37', 'v40', 'v41', 'v42', 'v43', 'v44', 'v45', 'v46', 'v47', 'v48', 'v49', 'v50', 'v51', 'v52', 'v53', 'v54', 'v55', 'v56'} else None)
-                for c in source.candidate_set.candidates}
+    analyses = {c.item.item_id: c.search_analysis if source.candidate_set.search_policy_version in {'v26', 'v30', 'v31', 'v32', 'v33', 'v34', 'v35', 'v36', 'v37', 'v40', 'v41', 'v42', 'v43', 'v44', 'v45', 'v46', 'v47', 'v48', 'v49', 'v50', 'v51', 'v52', 'v53', 'v54', 'v55', 'v56', 'v57', 'v58', 'v59', 'v60', 'v61'} else None for c in source.candidate_set.candidates}
     from fashion_recommendation_v2.search.evidence_projection import semantic_projection
     projected = []
     for ranked in sorted(ranking.ranked_items, key=lambda item: item.rank):
         assessments = []
         for assessment in ranked.requirement_assessments:
-            assessments.append(dict(
-                requirement_id=assessment.requirement_id, status=assessment.status,
-                evidence_fields=assessment.evidence_fields, evidence=assessment.evidence,
-                image_observations=[entry.observation for entry in assessment.image_evidence],
-            ))
-        conflicts = [dict(
-            attribute=entry.attribute, requirement_id=entry.requirement_id,
-            evidence_fields=entry.evidence_fields, metadata_evidence=entry.metadata_evidence,
-            image_observations=[image.observation for image in entry.image_evidence],
-            explanation=entry.explanation,
-        ) for entry in ranked.conflicts]
-        projected.append(dict(
-            item_id=ranked.item_id, rank=ranked.rank,
-            preference_support=_preference_support(source, ranked),
-            relation_evaluation=ranked.relation_evaluation.model_dump() if ranked.relation_evaluation else None,
-            relation_anchor=source.ralationRatio.intent.model_dump() if source.ralationRatio else None,
-            preference_observations=[dict(attribute=o.attribute,
-                value=o.value.model_dump() if hasattr(o.value, 'model_dump') else o.value,
-                evidence_fields=o.evidence_fields, evidence=o.evidence,
-                image_observations=[e.observation for e in o.image_evidence])
-                for o in ranked.preference_observations],
-            metadata=items[ranked.item_id].model_dump(include=(
-                {'title', 'category_path', 'condition', 'condition_description'}
-                if analyses[ranked.item_id] is not None else COPY_FIELDS), exclude_none=True),
-            **({'search_analysis': semantic_projection(analyses[ranked.item_id])}
-                if analyses[ranked.item_id] is not None else {}),
-            hard_constraint_assessments=[entry.model_dump() for entry in ranked.hard_constraint_assessments],
-            requirement_assessments=assessments, conflicts=conflicts,
-            uncertainties=ranked.uncertainties,
-        ))
-    if version in {'v9', 'v10', 'v11'}:
+            assessments.append(dict(requirement_id=assessment.requirement_id, status=assessment.status, evidence_fields=assessment.evidence_fields, evidence=assessment.evidence, image_observations=[entry.observation for entry in assessment.image_evidence]))
+        conflicts = [dict(attribute=entry.attribute, requirement_id=entry.requirement_id, evidence_fields=entry.evidence_fields, metadata_evidence=entry.metadata_evidence, image_observations=[image.observation for image in entry.image_evidence], explanation=entry.explanation) for entry in ranked.conflicts]
+        projected.append(dict(item_id=ranked.item_id, rank=ranked.rank, preference_support=_preference_support(source, ranked), relation_evaluation=ranked.relation_evaluation.model_dump() if ranked.relation_evaluation else None, relation_anchor=source.ralationRatio.intent.model_dump() if source.ralationRatio else None, preference_observations=[dict(attribute=o.attribute, value=o.value.model_dump() if hasattr(o.value, 'model_dump') else o.value, evidence_fields=o.evidence_fields, evidence=o.evidence, image_observations=[e.observation for e in o.image_evidence]) for o in ranked.preference_observations], metadata=items[ranked.item_id].model_dump(include={'title', 'category_path', 'condition', 'condition_description'} if analyses[ranked.item_id] is not None else COPY_FIELDS, exclude_none=True), **{'search_analysis': semantic_projection(analyses[ranked.item_id])} if analyses[ranked.item_id] is not None else {}, hard_constraint_assessments=[entry.model_dump() for entry in ranked.hard_constraint_assessments], requirement_assessments=assessments, conflicts=conflicts, uncertainties=ranked.uncertainties))
+    if version in {'v9', 'v10', 'v11', 'v12', 'v13'}:
         from fashion_recommendation_v2.summary.personalization_v9 import attach_context
         attach_context(source, projected)
-    return SummaryCopyInput(
-        interaction_collection_enabled=source.interaction_collection_enabled,
-        profile_updates_enabled=source.profile_updates_enabled,
-        user_request=source.user_request,
-        resolved_requirements=source.candidate_set.resolved_requirements,
-        requested_count=ranking.requested_count, returned_count=ranking.returned_count,
-        status=ranking.status, items=projected, shortfall_reasons=ranking.shortfall_reasons,
-        omitted_conditions=source.omitted_conditions,
-        relation_warnings=source.ralationRatio.warnings if source.ralationRatio else [],
-    )
+    return SummaryCopyInput(interaction_collection_enabled=source.interaction_collection_enabled, profile_updates_enabled=source.profile_updates_enabled, user_request=source.user_request, resolved_requirements=source.candidate_set.resolved_requirements, requested_count=ranking.requested_count, returned_count=ranking.returned_count, status=ranking.status, items=projected, shortfall_reasons=ranking.shortfall_reasons, omitted_conditions=source.omitted_conditions, relation_warnings=source.ralationRatio.warnings if source.ralationRatio else [])
+_EMPTY_REASONS = {'hard_requirement_unmet': '필수 조건에 맞지 않는 상품이 있었어요.', 'hard_requirement_unknown': '필수 조건 충족 여부를 확인할 정보가 부족한 상품이 있었어요.', 'below_minimum_relevance': '요청과의 적합도가 추천 기준에 미치지 못한 상품이 있었어요.', 'hard_requirement_conflict': '상품 정보와 평가 근거에서 필수 조건 위반이 확인된 상품이 있었어요.', 'evaluation_failed': '일부 상품의 평가 처리에 실패했어요.'}
 
-
-_EMPTY_REASONS = {
-    'hard_requirement_unmet': '필수 조건에 맞지 않는 상품이 있었어요.',
-    'hard_requirement_unknown': '필수 조건 충족 여부를 확인할 정보가 부족한 상품이 있었어요.',
-    'below_minimum_relevance': '요청과의 적합도가 추천 기준에 미치지 못한 상품이 있었어요.',
-    'hard_requirement_conflict': '상품 정보와 평가 근거에서 필수 조건 위반이 확인된 상품이 있었어요.',
-    'evaluation_failed': '일부 상품의 평가 처리에 실패했어요.',
-}
-
-
+@_preserve_function('_empty_reasons', 'fashion_recommendation_v2.agents.summary')
 def _empty_reasons(source: SummaryAgentInput) -> list[str]:
     reasons = []
     if not source.candidate_set.candidates:
         reasons.append('검색에서 반환된 상품이 없어요.')
     codes = {code for item in source.final_ranking.excluded_items for code in item.reason_codes}
-    reasons.extend(text for code, text in _EMPTY_REASONS.items() if code in codes)
+    reasons.extend((text for code, text in _EMPTY_REASONS.items() if code in codes))
     if not reasons:
         reasons.extend(source.final_ranking.shortfall_reasons)
     return reasons
 
-
+@_preserve_function('_empty_copy', 'fashion_recommendation_v2.agents.summary')
 def _empty_copy(source: SummaryAgentInput) -> RecommendationCopy:
     reasons = _empty_reasons(source)
-    return RecommendationCopy(
-        intro=(f'요청하신 조건으로 상품을 찾아봤지만, 요청하신 {source.final_ranking.requested_count}개 중 '
-               '추천할 수 있는 상품은 0개예요. ' + ' '.join(reasons) + ' eBay 검색 결과를 바탕으로 찾아봤어요.'),
-        recommendations=[], source_notice='상품 정보는 eBay 검색 결과를 바탕으로 안내해 드려요.',
-        outro='원하시는 조건을 조금 바꿔서 다시 찾아보셔도 좋아요.',
-    )
+    return RecommendationCopy(intro=f'요청하신 조건으로 상품을 찾아봤지만, 요청하신 {source.final_ranking.requested_count}개 중 추천할 수 있는 상품은 0개예요. ' + ' '.join(reasons) + ' eBay 검색 결과를 바탕으로 찾아봤어요.', recommendations=[], source_notice='상품 정보는 eBay 검색 결과를 바탕으로 안내해 드려요.', outro='원하시는 조건을 조금 바꿔서 다시 찾아보셔도 좋아요.')
 
-
+@_preserve_function('_empty_copy_v1', 'fashion_recommendation_v2.agents.summary')
 def _empty_copy_v1(source: SummaryAgentInput):
     from fashion_recommendation_v2.schemas.summary import RecommendationCopy_v1 as CopyV1
     reasons = _empty_reasons(source)
-    return CopyV1(
-        intro=(f'요청하신 조건으로 상품을 찾아봤지만, 요청하신 {source.final_ranking.requested_count}개 중 '
-               '추천할 수 있는 상품은 0개예요.'),
-        remarks=' '.join([*reasons, '상품 정보는 eBay 검색 결과를 바탕으로 안내해 드려요.']),
-        recommendations=[],
-        outro='조건을 조정해 다시 요청하신다면, 꼭 유지하고 싶은 조건과 바꿔도 되는 조건을 알려주실래요?',
-    )
+    return CopyV1(intro=f'요청하신 조건으로 상품을 찾아봤지만, 요청하신 {source.final_ranking.requested_count}개 중 추천할 수 있는 상품은 0개예요.', remarks=' '.join([*reasons, '상품 정보는 eBay 검색 결과를 바탕으로 안내해 드려요.']), recommendations=[], outro='조건을 조정해 다시 요청하신다면, 꼭 유지하고 싶은 조건과 바꿔도 되는 조건을 알려주실래요?')
 
-
+@_preserve_function('_empty_copy_v4', 'fashion_recommendation_v2.agents.summary')
 def _empty_copy_v4(source: SummaryAgentInput):
     """Code-only empty copy; use upstream reasons without diagnosing new causes."""
     from fashion_recommendation_v2.schemas.summary import RecommendationCopy_v4 as CopyV4
     # Translate only a single, explicit resolved product type. Unknown/OR types
     # retain the neutral label instead of reinterpreting the user's request.
-    labels = {'dress': '원피스', 'skirt': '스커트', 'shirt': '셔츠', 'trench coat': '트렌치 코트',
-              'pants': '바지', 't-shirt': '티셔츠', 'jacket': '재킷', 'coat': '코트'}
-    types = [r.value for r in source.candidate_set.resolved_requirements.requirements
-             if r.attribute == 'product_type']
+    labels = {'dress': '원피스', 'skirt': '스커트', 'shirt': '셔츠', 'trench coat': '트렌치 코트', 'pants': '바지', 't-shirt': '티셔츠', 'jacket': '재킷', 'coat': '코트'}
+    types = [r.value for r in source.candidate_set.resolved_requirements.requirements if r.attribute == 'product_type']
     label = labels.get(types[0], '상품') if len(types) == 1 and isinstance(types[0], str) else '상품'
-    object_name = label + ('을' if (ord(label[-1]) - 0xAC00) % 28 else '를')
+    object_name = label + ('을' if (ord(label[-1]) - 44032) % 28 else '를')
     candidates = source.candidate_set.candidates
-    failures = {entry.item_id for entry in source.final_ranking.excluded_items
-                if 'evaluation_failed' in entry.reason_codes}
-    all_failed = bool(candidates) and all(c.item.item_id in failures for c in candidates)
+    failures = {entry.item_id for entry in source.final_ranking.excluded_items if 'evaluation_failed' in entry.reason_codes}
+    all_failed = bool(candidates) and all((c.item.item_id in failures for c in candidates))
     if not candidates:
-        remarks = ('검색에서 반환된 후보 상품이 없어 추천할 상품을 고르지 못했어요. '
-                   '제공된 결과만으로는 후보가 없었던 구체적인 이유를 확인하기 어려워요.')
+        remarks = '검색에서 반환된 후보 상품이 없어 추천할 상품을 고르지 못했어요. 제공된 결과만으로는 후보가 없었던 구체적인 이유를 확인하기 어려워요.'
         outro = f'어떤 {object_name} 원하시는지 좀 더 구체적으로 설명해주시면 다시 검색해볼게요.'
     elif all_failed:
         remarks = '후보 상품은 있었지만 모든 후보의 평가 처리에 실패해 추천을 확정하지 못했어요.'
@@ -231,14 +155,16 @@ def _empty_copy_v4(source: SummaryAgentInput):
     else:
         remarks = ' '.join(_empty_reasons(source)) or '제공된 평가 결과에서 추천을 확정할 수 있는 상품이 없어요.'
         outro = '우선할 조건이나 조정할 수 있는 조건을 말씀해주시면 다시 검색해볼게요.'
-    return CopyV4(intro=f'조건에 맞는 {object_name} 찾지 못했어요.', remarks=remarks,
-                  recommendations=[], outro=outro)
+    return CopyV4(intro=f'조건에 맞는 {object_name} 찾지 못했어요.', remarks=remarks, recommendations=[], outro=outro)
 
-
+@_preserve_class('SummaryAgent', 'fashion_recommendation_v2.agents.summary')
 class SummaryAgent:
-    def __init__(self, *, llm: StructuredLLM, version: Literal['v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11'] = 'v0'):
-        if version not in {'v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11'}:
+
+    def __init__(self, *, llm: StructuredLLM, version: Literal['v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13']='v0', fx_client=None, current_date=None):
+        if version not in {'v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13'}:
             raise ValueError(f'Unknown Summary version: {version}')
+        self.fx_client = fx_client
+        self.current_date = current_date
         self.version = version
         self.copy_schema = RecommendationCopy
         self.response_schema = RecommendationResponse
@@ -276,7 +202,7 @@ class SummaryAgent:
             from fashion_recommendation_v2.schemas.summary import RecommendationCopy_v5 as CopyV5
             from fashion_recommendation_v2.schemas.summary import RecommendationResponse_v5 as ResponseV5
             from fashion_recommendation_v2.schemas.summary import feedback_notice_v5 as notice_v5
-            from fashion_recommendation_v2.prompts.summary import summary_v4__SUMMARY_PROMPT as PROMPT_V5
+            from fashion_recommendation_v2.prompts.summary import SUMMARY_PROMPT_summary_v5 as PROMPT_V5
             self.copy_schema = CopyV5
             self.response_schema = ResponseV5
             self.summary_prompt = PROMPT_V5
@@ -294,19 +220,19 @@ class SummaryAgent:
             from fashion_recommendation_v2.schemas.summary import RecommendationCopy_v7 as CopyV7
             from fashion_recommendation_v2.schemas.summary import RecommendationResponse_v7 as ResponseV7
             from fashion_recommendation_v2.schemas.summary import feedback_notice_v7 as notice_v7
-            from fashion_recommendation_v2.prompts.summary import summary_v6__SUMMARY_PROMPT as PROMPT_V7
+            from fashion_recommendation_v2.prompts.summary import SUMMARY_PROMPT_summary_v7 as PROMPT_V7
             self.copy_schema = CopyV7
             self.response_schema = ResponseV7
             self.summary_prompt = PROMPT_V7
             self.feedback_notice = notice_v7
-        if version in {'v9', 'v10', 'v11'}:
+        if version in {'v9', 'v10', 'v11', 'v12', 'v13'}:
             from fashion_recommendation_v2.schemas.summary import RecommendationCopy_v9 as CopyV9
             from fashion_recommendation_v2.schemas.summary import RecommendationResponse_v9 as ResponseV9
             from fashion_recommendation_v2.schemas.summary import feedback_notice_v9 as notice_v9
-            from fashion_recommendation_v2.prompts.summary import PREVIOUS_PROMPT as PROMPT_V9
-            self.copy_schema, self.response_schema = CopyV9, ResponseV9
-            self.summary_prompt, self.feedback_notice = PROMPT_V9, notice_v9
-        if version in {'v10', 'v11'}:
+            from fashion_recommendation_v2.prompts.summary import SUMMARY_PROMPT_summary_v9 as PROMPT_V9
+            self.copy_schema, self.response_schema = (CopyV9, ResponseV9)
+            self.summary_prompt, self.feedback_notice = (PROMPT_V9, notice_v9)
+        if version in {'v10', 'v11', 'v12', 'v13'}:
             from fashion_recommendation_v2.prompts.summary import SUMMARY_PROMPT as PROMPT_V10
             self.summary_prompt = PROMPT_V10
         self.llm = llm
@@ -325,16 +251,11 @@ class SummaryAgent:
         source = BlockedSummaryInput.model_validate(input_data.model_dump())
         feedback: list[str] = []
         for retry in range(max_attempts):
-            request = BlockedSummaryGenerationInput(
-                **source.model_dump(), validation_feedback=feedback, failure_context=failure_context,
-            )
+            request = BlockedSummaryGenerationInput(**source.model_dump(), validation_feedback=feedback, failure_context=failure_context)
             code = 'api_error'
             result = None
             try:
-                result = self.llm.generate(
-                    system_prompt=BLOCKED_SUMMARY_PROMPT, user_input=request,
-                    output_schema=BlockedSummaryCopy,
-                )
+                result = self.llm.generate(system_prompt=BLOCKED_SUMMARY_PROMPT, user_input=request, output_schema=BlockedSummaryCopy)
                 code = 'invalid_response'
                 if not isinstance(result, BlockedSummaryCopy):
                     raise ValueError('Expected a BlockedSummaryCopy structured response.')
@@ -343,20 +264,13 @@ class SummaryAgent:
                 if isinstance(exc, (ValueError, TypeError)):
                     code = 'invalid_response'
                 message = str(exc) or type(exc).__name__
-                self.generation_attempts.append(dict(
-                    retry_count=retry, status='error', code=code,
-                    error_type=type(exc).__name__, message=message,
-                ))
+                self.generation_attempts.append(dict(retry_count=retry, status='error', code=code, error_type=type(exc).__name__, message=message))
                 if retry == max_attempts - 1:
-                    raise SummaryExecutionError(
-                        code=code, message=message, attempts=self.generation_attempts,
-                    ) from exc
+                    raise SummaryExecutionError(code=code, message=message, attempts=self.generation_attempts) from exc
                 feedback = [message] if code == 'invalid_response' else []
             else:
                 self.generation_attempts.append(dict(retry_count=retry, status='success'))
-                return BlockedResponse(
-                    response_id=f'response_{uuid4().hex}', **copy.model_dump(),
-                ).validate_against(source)
+                return BlockedResponse(response_id=f'response_{uuid4().hex}', **copy.model_dump()).validate_against(source)
         raise AssertionError('unreachable')
 
     @reuse_for('summary')
@@ -365,8 +279,23 @@ class SummaryAgent:
         # Revalidate mutable model instances and work on a detached snapshot.
         with measure_processing('summary.input_reconstruction_validation'):
             source = SummaryAgentInput.model_validate(input_data.model_dump())
-        if source.final_ranking.status == 'empty' and not source.omitted_conditions:
-            if self.version in {'v6', 'v7', 'v8', 'v9', 'v10', 'v11'}:
+        if self.version == 'v13':
+            from concurrent.futures import ThreadPoolExecutor
+            from contextvars import copy_context
+            from fashion_recommendation_v2.summary.display_price import fetch_display_fx
+            selected = {item.item_id for item in source.final_ranking.ranked_items}
+            needs_fx = any((c.item.item_id in selected and c.item.price and (c.item.price.currency == 'USD') for c in source.candidate_set.candidates))
+            if needs_fx:
+                # Only FX runs in a worker. LLM, retries, validation and response
+                # histories retain the caller's request-local execution context.
+                with ThreadPoolExecutor(max_workers=1, thread_name_prefix='summary-fx') as pool:
+                    future = pool.submit(copy_context().run, fetch_display_fx, fx_client=self.fx_client, current_date=self.current_date)
+                    return self._render(source, fx_future=future)
+        return self._render(source)
+
+    def _render(self, source, *, fx_future=None):
+        if source.final_ranking.status == 'empty' and (not source.omitted_conditions):
+            if self.version in {'v6', 'v7', 'v8', 'v9', 'v10', 'v11', 'v12', 'v13'}:
                 copy = self.copy_schema(**_empty_copy_v4(source).model_dump(), next_recommendation=[]).validate_against(source)
             elif self.version in {'v4', 'v5'}:
                 copy = _empty_copy_v4(source).validate_against(source)
@@ -375,17 +304,13 @@ class SummaryAgent:
         else:
             copy = self._generate(source)
         items = {candidate.item.item_id: candidate.item for candidate in source.candidate_set.candidates}
-        response = self.response_schema(
-            feedback_notice=self.feedback_notice(source),
-            response_id=f'response_{uuid4().hex}',
-            **copy.model_dump(exclude={'recommendations'}),
-            recommendations=[entry.model_dump() | dict(
-                title=items[entry.item_id].title,
-                price=items[entry.item_id].price.model_copy(deep=True) if items[entry.item_id].price is not None else None,
-                item_web_url=items[entry.item_id].item_web_url,
-                image_url=items[entry.item_id].image_url,
-            ) for entry in copy.recommendations],
-        )
+        response = self.response_schema(feedback_notice=self.feedback_notice(source), response_id=f'response_{uuid4().hex}', **copy.model_dump(exclude={'recommendations'}), recommendations=[entry.model_dump() | dict(title=items[entry.item_id].title, price=items[entry.item_id].price.model_copy(deep=True) if items[entry.item_id].price is not None else None, item_web_url=items[entry.item_id].item_web_url, image_url=items[entry.item_id].image_url) for entry in copy.recommendations])
+        if self.version == 'v12':
+            from fashion_recommendation_v2.summary.display_price import add_krw_prices
+            response = add_krw_prices(response, fx_client=self.fx_client, current_date=self.current_date)
+        elif self.version == 'v13':
+            from fashion_recommendation_v2.summary.display_price import apply_krw_prices
+            response = apply_krw_prices(response, fx_future.result() if fx_future else (None, None), version='v13')
         with measure_processing('summary.response_validation'):
             return response.validate_against(source)
 
@@ -393,7 +318,7 @@ class SummaryAgent:
         request = _copy_input(source, version=self.version)
         mapping = None
         output_schema = self.copy_schema
-        if self.version in {'v10', 'v11'}:
+        if self.version in {'v10', 'v11', 'v12', 'v13'}:
             from fashion_recommendation_v2.summary.evidence_references import reference_map
             from fashion_recommendation_v2.summary.evidence_references import project_references
             from fashion_recommendation_v2.summary.evidence_references import resolve_references
@@ -408,10 +333,7 @@ class SummaryAgent:
             code = 'api_error'
             result = None
             try:
-                result = self.llm.generate(
-                    system_prompt=self.summary_prompt, user_input=request,
-                    output_schema=output_schema,
-                )
+                result = self.llm.generate(system_prompt=self.summary_prompt, user_input=request, output_schema=output_schema)
                 code = 'invalid_response'
                 if not isinstance(result, self.copy_schema):
                     raise ValueError('Expected a RecommendationCopy structured response.')
@@ -430,35 +352,26 @@ class SummaryAgent:
                 if isinstance(exc, (ValueError, TypeError)):
                     code = 'invalid_response'
                 message = str(exc) or type(exc).__name__
-                self.generation_attempts.append(dict(
-                    retry_count=retry, status='error', code=code,
-                    error_type=type(exc).__name__, message=message,
-                ))
-                if self.version in {'v9', 'v10', 'v11'}:
+                self.generation_attempts.append(dict(retry_count=retry, status='error', code=code, error_type=type(exc).__name__, message=message))
+                if self.version in {'v9', 'v10', 'v11', 'v12', 'v13'}:
                     raw = getattr(result, '_model_response', None)
                     if raw is None and result is not None:
                         raw = result.model_dump(mode='json') if hasattr(result, 'model_dump') else deepcopy(result)
                     snapshot = getattr(exc, 'response_snapshot', {}) or {}
                     self.generation_attempts[-1].update(model_response=deepcopy(raw if raw is not None else snapshot.get('model_response')), model_response_text=getattr(result, '_model_response_text', None) or snapshot.get('model_response_text'), response_snapshot=deepcopy(snapshot), code_validation={'valid': False, 'error': message})
                 if mapping is not None:
-                    self.generation_attempts[-1].update(reference_map=deepcopy(mapping),
-                        summary_version=self.version, attempt_id=retry, corrects_attempt=retry - 1 if retry else None,
-                        code_derived=None)
+                    self.generation_attempts[-1].update(reference_map=deepcopy(mapping), summary_version=self.version, attempt_id=retry, corrects_attempt=retry - 1 if retry else None, code_derived=None)
                 if retry == 1:
-                    raise SummaryExecutionError(
-                        code=code, message=message, attempts=self.generation_attempts,
-                    ) from exc
+                    raise SummaryExecutionError(code=code, message=message, attempts=self.generation_attempts) from exc
                 request = initial_request.model_copy(deep=True) if mapping is not None else _copy_input(source, version=self.version)
                 if code == 'invalid_response':
                     request.validation_feedback = [message]
             else:
                 self.generation_attempts.append(dict(retry_count=retry, status='success'))
-                if self.version in {'v9', 'v10', 'v11'}:
+                if self.version in {'v9', 'v10', 'v11', 'v12', 'v13'}:
                     raw = getattr(result, '_model_response', None)
                     self.generation_attempts[-1].update(model_response=deepcopy(raw if raw is not None else result.model_dump(mode='json')), model_response_text=getattr(result, '_model_response_text', None), code_validation={'valid': True})
                 if mapping is not None:
-                    self.generation_attempts[-1].update(reference_map=deepcopy(mapping),
-                        summary_version=self.version, attempt_id=retry, corrects_attempt=retry - 1 if retry else None,
-                        code_derived=copy.model_dump(mode='json'))
+                    self.generation_attempts[-1].update(reference_map=deepcopy(mapping), summary_version=self.version, attempt_id=retry, corrects_attempt=retry - 1 if retry else None, code_derived=copy.model_dump(mode='json'))
                 return copy
         raise AssertionError('unreachable')

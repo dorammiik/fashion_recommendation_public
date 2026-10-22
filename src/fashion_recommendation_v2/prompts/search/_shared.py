@@ -1,19 +1,29 @@
-"""Consolidated search._shared prompts. Service exports appear first; compatibility names follow.
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
 
-Prompt text is preserved byte-for-byte from the service snapshot.
-"""
 from __future__ import annotations
-from fashion_recommendation_v2.module_compat import import_module as _role_module
 
-from typing import Any
-import json as json
+from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
 
-# Source: search._formatting
-def _json(value: Any) -> str:
-    return json.dumps(value, ensure_ascii=False, indent=2, default=str)
 
-# Source: search._identity
-SEARCH_AGENT_ROLE = """You are the Search Agent for a conversational fashion recommendation system.
+# ---- _formatting ----
+
+"""prompts.search._formatting: definitions relocated without semantic changes."""
+from typing import Any as Any__formatting
+import json as json__formatting
+
+@_preserve_function('_json', 'fashion_recommendation_v2.prompts.search._formatting')
+def _json(value: Any__formatting) -> str:
+    return json__formatting.dumps(value, ensure_ascii=False, indent=2, default=str)
+
+
+# ---- _identity ----
+
+"""prompts.search._identity: definitions relocated without semantic changes."""
+# ============================================================
+# ============================================================
+# Shared
+SEARCH_AGENT_ROLE = """
+You are the Search Agent for a conversational fashion recommendation system.
 
 Your goal is to build a sufficiently good Candidate Set from eBay.
 
@@ -53,4 +63,5 @@ Important principles:
   names or category IDs; use supported lookup results.
 - Preferences should usually expand the search space rather than become hard constraints.
 - Do not invent product attributes that are not supported by the input.
-- Return only data compatible with the requested output schema."""
+- Return only data compatible with the requested output schema.
+""".strip()

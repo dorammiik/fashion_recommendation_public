@@ -1,25 +1,37 @@
-"""Compatibility preparation shared by orchestration and styling, without agent imports."""
-from fashion_recommendation_v2.module_compat import import_module as _role_module
-from copy import deepcopy
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
 
+from __future__ import annotations
+
+from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
+
+
+# ---- compatibility ----
+
+"""Compatibility preparation shared by orchestration and styling, without agent imports."""
+from copy import deepcopy
 ORCHESTRATOR_VERSION = 'v1'
 STYLIST_VERSION = 'v1'
 
-
+@_preserve_function('validate_compatibility_assessment', 'fashion_recommendation_v2.compatibility')
 def validate_compatibility_assessment(request, assessment):
     intent = assessment.relation_intent
     if assessment.decision != 'proceed' or not intent or intent.relation_type != 'compatibility':
+        return
+    from fashion_recommendation_v2.orchestrator_quotes import quote_based
+    from fashion_recommendation_v2.orchestrator_quotes import related_units
+    if quote_based(assessment):
+        assigned = {s.state_id for s in assessment.unresolved_states if s.resolution_agent == 'stylist_agent'}
+        if not any((u.state_id in assigned for u in related_units(assessment, intent.source_text))):
+            raise ValueError('Compatibility requires a Stylist unresolved state for the relationship phrase.')
         return
     # Enforce routing against supplied semantic spans, not case IDs or Korean keywords.
     starts = [i for i in range(len(request.user_query)) if request.user_query.startswith(intent.source_text, i)]
     assigned = {s.state_id for s in assessment.unresolved_states if s.resolution_agent == 'stylist_agent'}
     spans = [s for u in assessment.semantic_units if u.state_id in assigned for s in u.spans]
-    if not any(max(start, span.start) < min(start + len(intent.source_text), span.end)
-               for start in starts for span in spans):
-        raise ValueError('Compatibility requires a Stylist unresolved state for the relationship phrase; '
-                         'a resolved anchor does not resolve target styling conditions.')
+    if not any((max(start, span.start) < min(start + len(intent.source_text), span.end) for start in starts for span in spans)):
+        raise ValueError('Compatibility requires a Stylist unresolved state for the relationship phrase; a resolved anchor does not resolve target styling conditions.')
 
-
+@_preserve_function('validate_stylist_compatibility', 'fashion_recommendation_v2.compatibility')
 def validate_stylist_compatibility(source, result, criteria, *, profile_indices=frozenset()):
     compatibility = source.relation_intent and source.relation_intent.relation_type == 'compatibility'
     rows = result.compatibility_guidance
@@ -42,10 +54,9 @@ def validate_stylist_compatibility(source, result, criteria, *, profile_indices=
                 raise ValueError('Stylist must cite a supplied known anchor observation.')
             if ref == CATEGORY_REF and row.criterion != 'category_pairing':
                 raise ValueError('Category-only anchor has no other observed features.')
-            if fact['kind'] == 'search_image_observation' and (
-                fact['attribute'] in definitions['metadata_only_attributes'] or row.criterion in definitions['metadata_only_facets']):
+            if fact['kind'] == 'search_image_observation' and (fact['attribute'] in definitions['metadata_only_attributes'] or row.criterion in definitions['metadata_only_facets']):
                 raise ValueError('Metadata-only evidence cannot use image observations.')
-        if not row.anchor_evidence_refs and not row.limitations:
+        if not row.anchor_evidence_refs and (not row.limitations):
             raise ValueError('Missing anchor evidence requires an explicit limitation.')
         if len(set(row.interpretation_indices)) != len(row.interpretation_indices):
             raise ValueError('Duplicate interpretation index.')
@@ -57,10 +68,10 @@ def validate_stylist_compatibility(source, result, criteria, *, profile_indices=
         raise ValueError('Profile-grounded interpretations must not be connected to compatibility guidance.')
     if used != set(range(len(result.interpretations))) - profile_indices:
         raise ValueError('Every proposed interpretation must be connected to compatibility guidance.')
-    if any(not i.search_text for i in result.interpretations):
+    if any((not i.search_text for i in result.interpretations)):
         raise ValueError('Compatibility interpretations require target search_text.')
 
-
+@_preserve_function('response_record', 'fashion_recommendation_v2.compatibility')
 def response_record(response=None, error=None):
     """Snapshot received payload before validation; absence remains explicit."""
     snapshot = getattr(error, 'response_snapshot', None) if error else None

@@ -1,5 +1,13 @@
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
+from __future__ import annotations
+
+from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
+
+
+# ---- preference_http ----
+
 """Small WSGI JSON API for local prototypes; asynchronous recommendations."""
-from fashion_recommendation_v2.module_compat import import_module as _role_module
 import hmac
 import json
 import sqlite3
@@ -8,7 +16,6 @@ from http import HTTPStatus
 from http.cookies import SimpleCookie
 from http.cookies import CookieError
 from typing import Literal
-
 from pydantic import Field
 from pydantic import ValidationError
 from fashion_recommendation_v2.schemas.quick_start import QuickStartID
@@ -19,10 +26,9 @@ from fashion_recommendation_v2.schemas.preference_profile import UTCDateTime
 from fashion_recommendation_v2.storage import StoreConflict
 from fashion_recommendation_v2.storage import UserUnavailable
 from fashion_recommendation_v2.server.preference_service import csrf_token
-
 COOKIE_NAME = 'fashion_anon'
 
-
+@_preserve_class('EventInput', 'fashion_recommendation_v2.server.preference_http')
 class EventInput(StrictBaseModel):
     event_id: Identifier
     item_snapshot_id: Identifier
@@ -32,17 +38,17 @@ class EventInput(StrictBaseModel):
     occurred_at: UTCDateTime
     csrf_token: str | None = None
 
-
+@_preserve_class('StartSessionInput', 'fashion_recommendation_v2.server.preference_http')
 class StartSessionInput(StrictBaseModel):
     previous_session_id: Identifier | None = None
     csrf_token: str | None = None
 
-
+@_preserve_class('EndSessionInput', 'fashion_recommendation_v2.server.preference_http')
 class EndSessionInput(StrictBaseModel):
     session_id: Identifier
     csrf_token: str | None = None
 
-
+@_preserve_class('RecommendationInput', 'fashion_recommendation_v2.server.preference_http')
 class RecommendationInput(StrictBaseModel):
     quick_start: QuickStartID | None = None
     idempotency_key: Identifier
@@ -52,19 +58,20 @@ class RecommendationInput(StrictBaseModel):
     personalization_mode: Literal['cold', 'warm'] | None = None
     csrf_token: str | None = None
 
-
+@_preserve_class('ConfirmationInput', 'fashion_recommendation_v2.server.preference_http')
 class ConfirmationInput(StrictBaseModel):
     request_id: Identifier
     kind: Literal['new', 'followup']
     csrf_token: str | None = None
 
-
+@_preserve_class('RequestStatusInput', 'fashion_recommendation_v2.server.preference_http')
 class RequestStatusInput(StrictBaseModel):
     request_id: Identifier
     csrf_token: str | None = None
 
-
+@_preserve_class('PreferenceAPI', 'fashion_recommendation_v2.server.preference_http')
 class PreferenceAPI:
+
     def __init__(self, service, *, allowed_origins=('http://127.0.0.1:8765',), secure_cookie=True, runtime=None, recommendations=None):
         self.service = service
         self.origins = frozenset(allowed_origins)
@@ -73,9 +80,9 @@ class PreferenceAPI:
         self.recommendations = recommendations
 
     def __call__(self, env, start_response):
-        headers = [('Content-Type', 'application/json; charset=utf-8'), ('Cache-Control', 'no-store'),
-                   ('X-Content-Type-Options', 'nosniff')]
+        headers = [('Content-Type', 'application/json; charset=utf-8'), ('Cache-Control', 'no-store'), ('X-Content-Type-Options', 'nosniff')]
         origin = env.get('HTTP_ORIGIN')
+
         def respond(status, body):
             data = json.dumps(body, ensure_ascii=False).encode()
             start_response(f'{status} {HTTPStatus(status).phrase}', headers + [('Content-Length', str(len(data)))])
@@ -84,18 +91,13 @@ class PreferenceAPI:
             return respond(403, {'error': 'origin_not_allowed'})
         if origin:
             headers.extend([('Access-Control-Allow-Origin', origin), ('Access-Control-Allow-Credentials', 'true'), ('Vary', 'Origin')])
-        if env.get('HTTP_SEC_FETCH_SITE') == 'cross-site' and not origin:
+        if env.get('HTTP_SEC_FETCH_SITE') == 'cross-site' and (not origin):
             return respond(403, {'error': 'origin_required'})
-        method, path = env['REQUEST_METHOD'], env.get('PATH_INFO', '/')
+        method, path = (env['REQUEST_METHOD'], env.get('PATH_INFO', '/'))
         if method == 'OPTIONS':
-            headers.extend([('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'),
-                            ('Access-Control-Allow-Headers', 'Content-Type, X-CSRF-Token')])
+            headers.extend([('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'), ('Access-Control-Allow-Headers', 'Content-Type, X-CSRF-Token')])
             return respond(200, {})
-        routes = {('/api/preference/bootstrap', 'POST'), ('/api/preference/sessions', 'POST'),
-                  ('/api/preference/sessions/end', 'POST'), ('/api/preference/events', 'POST'),
-                  ('/api/preference/profile', 'GET'), ('/health', 'GET'),
-                  ('/api/recommendations', 'POST'), ('/api/recommendations/confirm', 'POST'),
-                  ('/api/recommendations/status', 'POST')}
+        routes = {('/api/preference/bootstrap', 'POST'), ('/api/preference/sessions', 'POST'), ('/api/preference/sessions/end', 'POST'), ('/api/preference/events', 'POST'), ('/api/preference/profile', 'GET'), ('/health', 'GET'), ('/api/recommendations', 'POST'), ('/api/recommendations/confirm', 'POST'), ('/api/recommendations/status', 'POST')}
         if (path, method) not in routes:
             return respond(404, {'error': 'not_found'})
         try:
@@ -103,8 +105,7 @@ class PreferenceAPI:
             jar.load(env.get('HTTP_COOKIE', ''))
             cookie = jar[COOKIE_NAME].value if COOKIE_NAME in jar else None
             if path == '/health':
-                return respond(200, {'status': 'ok', 'processor_connected': bool(self.runtime and self.runtime.processor),
-                                     'scheduler_running': bool(self.runtime and self.runtime.running)})
+                return respond(200, {'status': 'ok', 'processor_connected': bool(self.runtime and self.runtime.processor), 'scheduler_running': bool(self.runtime and self.runtime.running)})
             raw = b'{}'
             if method == 'POST':
                 # JSON beacon requests use Blob(type='application/json') and a body CSRF token.
@@ -126,8 +127,7 @@ class PreferenceAPI:
                     if self.secure_cookie:
                         value += '; Secure'
                     headers.append(('Set-Cookie', value))
-                return respond(201 if created else 200, {'user_id': user.user_id,
-                    'expires_at': user.expires_at.isoformat(), 'csrf_token': csrf_token(token)})
+                return respond(201 if created else 200, {'user_id': user.user_id, 'expires_at': user.expires_at.isoformat(), 'csrf_token': csrf_token(token)})
             user = self.service.authenticate(cookie)
             if method == 'GET':
                 with self.service.store() as store:
@@ -136,12 +136,7 @@ class PreferenceAPI:
                 if lookup.status == 'failed':
                     return respond(503, {'status': 'failed', 'error': 'profile_read_failed'})
                 return respond(200, {**lookup.model_dump(mode='json', by_alias=True), 'update_job': update_job})
-            schema = {'/api/preference/sessions': StartSessionInput,
-                      '/api/preference/sessions/end': EndSessionInput,
-                      '/api/preference/events': EventInput,
-                      '/api/recommendations': RecommendationInput,
-                      '/api/recommendations/confirm': ConfirmationInput,
-                      '/api/recommendations/status': RequestStatusInput}[path]
+            schema = {'/api/preference/sessions': StartSessionInput, '/api/preference/sessions/end': EndSessionInput, '/api/preference/events': EventInput, '/api/recommendations': RecommendationInput, '/api/recommendations/confirm': ConfirmationInput, '/api/recommendations/status': RequestStatusInput}[path]
             payload = schema.model_validate_json(raw)
             supplied = env.get('HTTP_X_CSRF_TOKEN') or payload.csrf_token or ''
             if not hmac.compare_digest(supplied.encode(), csrf_token(cookie).encode()):
@@ -154,30 +149,18 @@ class PreferenceAPI:
                 elif path.endswith('/status'):
                     record = self.recommendations.get(user.user_id, payload.request_id)
                 else:
-                    record = self.recommendations.submit(user.user_id, payload.user_query,
-                        previous_request_id=payload.previous_request_id, new_request=payload.new_request,
-                        personalization_mode=payload.personalization_mode,
-                        idempotency_key=payload.idempotency_key,
-                        **({'quick_start': payload.quick_start} if payload.quick_start else {}))
+                    record = self.recommendations.submit(user.user_id, payload.user_query, previous_request_id=payload.previous_request_id, new_request=payload.new_request, personalization_mode=payload.personalization_mode, idempotency_key=payload.idempotency_key, **{'quick_start': payload.quick_start} if payload.quick_start else {})
                 output = record.state.agent_outputs if record.state else None
-                response = (output.recommendation_response or output.blocked_response or output.fallback_response) if output else None
+                response = output.recommendation_response or output.blocked_response or output.fallback_response if output else None
                 snapshots = []
                 with self.service.store() as store:
                     store.get_user(user.user_id, now=self.service.clock())
-                    rows = store.db.execute('SELECT payload FROM snapshots WHERE user_id=? AND request_id=?',
-                        (user.user_id, record.request_id)).fetchall()
+                    rows = store.db.execute('SELECT payload FROM snapshots WHERE user_id=? AND request_id=?', (user.user_id, record.request_id)).fetchall()
                     for row in rows:
                         snap = json.loads(row['payload'])
-                        snapshots.append({'item_id': snap['item']['item_id'], 'rank': snap['rank'],
-                                          'item_snapshot_id': snap['item_snapshot_id']})
+                        snapshots.append({'item_id': snap['item']['item_id'], 'rank': snap['rank'], 'item_snapshot_id': snap['item_snapshot_id']})
                 code = 202 if not path.endswith('/status') and record.status in ('queued', 'classifying', 'running') else 200
-                return respond(code, {'personalization_mode': record.personalization_mode, 'request_id': record.request_id, 'session_id': record.session_id,
-                    'status': record.status, 'question': record.question,
-                    'response': response.model_dump(mode='json') if response else None,
-                    'item_snapshots': snapshots, 'error_type': record.error_type,
-                    'profile_lookup_status': record.state.request.profile_lookup_status if record.state else 'not_requested',
-                    'progress': record.progress, 'updated_at': record.updated_at,
-                    'resumable': record.resumable, 'recovery_reason': record.recovery_reason})
+                return respond(code, {'personalization_mode': record.personalization_mode, 'request_id': record.request_id, 'session_id': record.session_id, 'status': record.status, 'question': record.question, 'response': response.model_dump(mode='json') if response else None, 'item_snapshots': snapshots, 'error_type': record.error_type, 'profile_lookup_status': record.state.request.profile_lookup_status if record.state else 'not_requested', 'progress': record.progress, 'updated_at': record.updated_at, 'resumable': record.resumable, 'recovery_reason': record.recovery_reason})
             if path == '/api/preference/sessions':
                 session = self.service.start_session(user.user_id, payload.previous_session_id)
                 return respond(201, session.model_dump(mode='json'))

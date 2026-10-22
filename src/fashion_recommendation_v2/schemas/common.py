@@ -1,35 +1,16 @@
+"""Role-consolidated service implementation, refreshed from the v61/v13 release."""
+
 from __future__ import annotations
-from fashion_recommendation_v2.module_compat import import_module as _role_module
+
+from fashion_recommendation_v2.module_compat import import_module as _role_module, preserve_class as _preserve_class, preserve_function as _preserve_function
+
+
+# ---- common ----
+
 from typing import Literal
-
-
-AgentName = Literal[
-    "stylist_agent",
-    "search_agent",
-    "relation_agent",
-    "ranking_agent",
-    "summary_agent",
-]
-
-
-OutputName = Literal[
-    "StylistResult",
-    "CandidateSet",
-    "ralationRatio",
-    "FinalRanking",
-    "RecommendationResponse",
-]
-
-
-StateRef = Literal[
-    "request.user_query",
-    "request.requested_count",
-    "request.preference_profile",
-    "agent_outputs.stylist_result",
-    "agent_outputs.candidate_set",
-    "agent_outputs.ralationRatio",
-    "agent_outputs.final_ranking",
-]
+AgentName = Literal["stylist_agent", "search_agent", "relation_agent", "ranking_agent", "summary_agent"]
+OutputName = Literal["StylistResult", "CandidateSet", "ralationRatio", "FinalRanking", "RecommendationResponse"]
+StateRef = Literal["request.user_query", "request.requested_count", "request.preference_profile", "agent_outputs.stylist_result", "agent_outputs.candidate_set", "agent_outputs.ralationRatio", "agent_outputs.final_ranking"]
 
 # Raw marketplace values shared by retrieval and normalization.
 from pydantic import Field
